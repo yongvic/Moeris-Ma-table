@@ -1,6 +1,10 @@
+---
+baseline_commit: NO_VCS
+---
+
 # Story 1.6: Carte table print — dualité Wi‑Fi / Ma table
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -22,31 +26,31 @@ so that chaque table expose clairement 1. Wi‑Fi et 2. Ma table.
 
 ## Tasks / Subtasks
 
-- [ ] T1. Spec print Carte table (AC: #1, #2, #3)
-  - [ ] Rédiger `docs/print/carte-table.md` (FR) : objet unique, deux QR numérotés côte à côte
-  - [ ] QR **1 — Wi‑Fi** : payload connexion native (`WIFI:S:<ssid>;T:<WPA|WEP|>;P:<password>;;` ou doc équivalente) — **hors runtime Ma table**
-  - [ ] QR **2 — Ma table** : URL absolue `https://<host>/t/<tableId>` alignée story 1.2 (AD-9)
-  - [ ] Interdiction explicite : un seul QR qui combine Wi‑Fi + URL / captive portal
-  - [ ] Libellés FR : « 1. Wi‑Fi », « 2. Ma table » ; grands numéros lisibles à distance table
-  - [ ] Contraste fort encre / fond ; pont couleur « Ma table » avec `{colors.accent}` (#E8C200) sans compromettre le scan QR (zone QR reste noir/blanc fort)
-  - [ ] Note matériau : support durable usure de table (plastification / PVC / chevalet — choix documenté, pas code)
-  - [ ] Pas de 3ᵉ QR ; pas de long texte pédagogique sur la carte
+- [x] T1. Spec print Carte table (AC: #1, #2, #3)
+  - [x] Rédiger `docs/print/carte-table.md` (FR) : objet unique, deux QR numérotés côte à côte
+  - [x] QR **1 — Wi‑Fi** : payload connexion native (`WIFI:S:<ssid>;T:<WPA|WEP|>;P:<password>;;` ou doc équivalente) — **hors runtime Ma table**
+  - [x] QR **2 — Ma table** : URL absolue `https://<host>/t/<tableId>` alignée story 1.2 (AD-9)
+  - [x] Interdiction explicite : un seul QR qui combine Wi‑Fi + URL / captive portal
+  - [x] Libellés FR : « 1. Wi‑Fi », « 2. Ma table » ; grands numéros lisibles à distance table
+  - [x] Contraste fort encre / fond ; pont couleur « Ma table » avec `{colors.accent}` (#E8C200) sans compromettre le scan QR (zone QR reste noir/blanc fort)
+  - [x] Note matériau : support durable usure de table (plastification / PVC / chevalet — choix documenté, pas code)
+  - [x] Pas de 3ᵉ QR ; pas de long texte pédagogique sur la carte
 
-- [ ] T2. Assets générables (AC: #1)
-  - [ ] Script ou procédure sous `docs/print/` **ou** assets sous `public/print/` :
+- [x] T2. Assets générables (AC: #1)
+  - [x] Script ou procédure sous `docs/print/` **ou** assets sous `public/print/` :
     - Exemples PNG/SVG pour tables seed (ex. `t-1` …) : QR Ma table
     - Exemple QR Wi‑Fi avec SSID/mot de passe **placeholder** documentés (ne pas committer de secrets prod)
-  - [ ] README : comment régénérer (outil CLI `qrcode`, `uqr`, etc.) + variables `BASE_URL`, `WIFI_SSID`, `WIFI_PASSWORD`
-  - [ ] Template mise en page (HTML print / PDF / Figma-export notes) montrant 1 | 2 côte à côte
+  - [x] README : comment régénérer (outil CLI `qrcode`, `uqr`, etc.) + variables `BASE_URL`, `WIFI_SSID`, `WIFI_PASSWORD`
+  - [x] Template mise en page (HTML print / PDF / Figma-export notes) montrant 1 | 2 côte à côte
 
-- [ ] T3. Lien produit (AC: #1, #3)
-  - [ ] Référencer l’URL entry 1.2 ; confirmer qu’aucune route app ne sert de captive Wi‑Fi
-  - [ ] Checklist QA print : scan Wi‑Fi → OS native ; scan Ma table → Accueil session
+- [x] T3. Lien produit (AC: #1, #3)
+  - [x] Référencer l’URL entry 1.2 ; confirmer qu’aucune route app ne sert de captive Wi‑Fi
+  - [x] Checklist QA print : scan Wi‑Fi → OS native ; scan Ma table → Accueil session
 
-- [ ] T4. Garde-fous
-  - [ ] **Pas** une feature app runtime (pas de page `/print` métier obligatoire)
-  - [ ] Pas de fusion des deux QR
-  - [ ] Pas d’Auth / Prisma nouveaux modèles pour le print
+- [x] T4. Garde-fous
+  - [x] **Pas** une feature app runtime (pas de page `/print` métier obligatoire)
+  - [x] Pas de fusion des deux QR
+  - [x] Pas d’Auth / Prisma nouveaux modèles pour le print
 
 ## Dev Notes
 
@@ -111,12 +115,37 @@ Story **print / spec / assets** (FR1 / UX Carte table). Ce n’est **pas** une f
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Composer (Cursor Agent)
 
 ### Debug Log References
 
+- `npm run print:qr` → SVG Wi‑Fi placeholder + `t-1`…`t-5` Ma table
+- Aucune route captive / payload `WIFI:` dans `app/`
+
 ### Completion Notes List
 
-Ultimate context engine analysis completed - comprehensive developer guide created
+- Spec FR complète `docs/print/carte-table.md` (dualité, payloads, contraste, matériau)
+- Générateur `docs/print/generate-qr.mjs` + `npm run print:qr`
+- Preview HTML print `docs/print/layout-carte-table.html`
+- Assets exemples sous `public/print/examples/` (secrets Wi‑Fi = placeholders)
+
+### Change Log
+
+- 2026-07-24 — Story 1.6 kit Carte table print → status `review`
 
 ### File List
+
+- docs/print/carte-table.md
+- docs/print/README.md
+- docs/print/generate-qr.mjs
+- docs/print/layout-carte-table.html
+- public/print/examples/wifi-placeholder.svg
+- public/print/examples/t-1-ma-table.svg
+- public/print/examples/t-2-ma-table.svg
+- public/print/examples/t-3-ma-table.svg
+- public/print/examples/t-4-ma-table.svg
+- public/print/examples/t-5-ma-table.svg
+- package.json
+- package-lock.json
+- _bmad-output/implementation-artifacts/1-6-carte-table-print-dualite-wifi-ma-table.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml

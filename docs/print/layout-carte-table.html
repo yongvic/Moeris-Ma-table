@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Carte table — preview print (dualité Wi‑Fi / Ma table)</title>
+  <style>
+    /*
+      Preview print V1 — deux QR côte à côte, jamais combinés.
+      Ouvrir dans le navigateur puis Ctrl+P / PDF pour validation.
+    */
+    :root {
+      --surface-base: #fffef8;
+      --ink-primary: #1a1a00;
+      --ink-secondary: #6b6b3a;
+      --accent: #e8c200;
+      --border: #e8e0b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px;
+      background: #e8e4d4;
+      color: var(--ink-primary);
+      font-family: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+    }
+    h1 {
+      font-family: Fredoka, "Segoe UI Rounded", system-ui, sans-serif;
+      font-size: 22px;
+      margin: 0 0 8px;
+    }
+    .hint {
+      color: var(--ink-secondary);
+      font-size: 14px;
+      margin-bottom: 24px;
+      max-width: 720px;
+    }
+    .card {
+      width: 150mm;
+      height: 100mm;
+      background: var(--surface-base);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10mm 12mm;
+      display: flex;
+      flex-direction: column;
+      gap: 6mm;
+      box-shadow: 0 8px 24px rgba(26, 26, 0, 0.12);
+    }
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+    }
+    .qrs {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8mm;
+      align-items: stretch;
+    }
+    .slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3mm;
+      padding: 3mm;
+      border-radius: 6px;
+    }
+    .slot.ma-table {
+      background: color-mix(in srgb, var(--accent) 28%, transparent);
+      outline: 2px solid var(--accent);
+    }
+    .num {
+      font-family: Fredoka, "Segoe UI Rounded", system-ui, sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .label {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .qr {
+      width: 32mm;
+      height: 32mm;
+      background: #fff;
+      padding: 1.5mm;
+    }
+    .qr img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .footer {
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+    .warn {
+      margin-top: 20px;
+      max-width: 150mm;
+      font-size: 13px;
+      color: var(--ink-secondary);
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .hint, .warn, h1 { display: none; }
+      .card { box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Preview — Carte table V1</h1>
+  <p class="hint">
+    Dualité stricte : <strong>1. Wi‑Fi</strong> (native) et <strong>2. Ma table</strong> (URL).
+    Aucun QR combiné. Relatif aux assets dans <code>../../public/print/examples/</code>
+    (régénérer via <code>npm run print:qr</code>).
+  </p>
+
+  <article class="card" aria-label="Carte table exemple t-1">
+    <header class="brand">
+      <span>Résidence Moeris</span>
+      <span>Ma table</span>
+    </header>
+    <div class="qrs">
+      <div class="slot">
+        <div class="num" aria-hidden="true">1</div>
+        <div class="label">1. Wi‑Fi</div>
+        <div class="qr">
+          <img src="../../public/print/examples/wifi-placeholder.svg" alt="QR Wi‑Fi placeholder" />
+        </div>
+      </div>
+      <div class="slot ma-table">
+        <div class="num" aria-hidden="true">2</div>
+        <div class="label">2. Ma table</div>
+        <div class="qr">
+          <img src="../../public/print/examples/t-1-ma-table.svg" alt="QR Ma table t-1" />
+        </div>
+      </div>
+    </div>
+    <footer class="footer">Table · t-1</footer>
+  </article>
+
+  <p class="warn">
+    QA : scan 1 → OS propose le réseau · scan 2 → ouvre <code>/t/t-1</code>.
+    Zones QR restent noir/blanc ; l’accent citron n’entoure que le bloc Ma table.
+  </p>
+</body>
+</html>
