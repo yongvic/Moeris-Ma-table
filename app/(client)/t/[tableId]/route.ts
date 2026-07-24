@@ -36,7 +36,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
   }
 
   const response = NextResponse.redirect(new URL("/accueil", request.url));
-  const secure = process.env.NODE_ENV === "production";
+  const secure =
+    process.env.VERCEL === "1" || process.env.COOKIE_SECURE === "true";
   response.cookies.set(SESSION_COOKIE_NAME, result.opaqueKey, {
     httpOnly: true,
     secure,

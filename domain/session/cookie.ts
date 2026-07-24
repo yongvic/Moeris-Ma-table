@@ -12,7 +12,9 @@ export async function readSessionOpaqueKey(): Promise<string | undefined> {
 
 export async function writeSessionOpaqueKey(opaqueKey: string): Promise<void> {
   const jar = await cookies();
-  const secure = process.env.NODE_ENV === "production";
+  // Secure only on real HTTPS deploy (Vercel) — local `next start` is HTTP
+  const secure =
+    process.env.VERCEL === "1" || process.env.COOKIE_SECURE === "true";
 
   jar.set(SESSION_COOKIE_NAME, opaqueKey, {
     httpOnly: true,

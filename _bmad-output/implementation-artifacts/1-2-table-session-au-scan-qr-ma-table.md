@@ -4,7 +4,7 @@ baseline_commit: NO_VCS
 
 # Story 1.2: Table + Session au scan QR Ma table
 
-Status: in-progress
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -30,43 +30,43 @@ so that je démarre le séjour digital sans compte ni choix de table in-app.
 
 ## Tasks / Subtasks
 
-- [ ] T1. Brancher Prisma 7.9 + Neon (Node) (AC: #1)
-  - [ ] Installer pins : `prisma@7.9.0`, `@prisma/client@7.9.0`, `@prisma/adapter-neon@7.9.0`, `@neondatabase/serverless@1.1.0`
-  - [ ] Créer `prisma/schema.prisma` avec modèles **Table** et **Session** uniquement (pas Menu/Order/Guest)
-  - [ ] Configurer `infra/prisma/` (client singleton Node + adapter Neon)
-  - [ ] Env : `DATABASE_URL` (pooled) + `DIRECT_URL` (migrations) — AD-11
-  - [ ] Migration initiale + seed minimal (ex. tables `T1`…`T5` ou `table-1`… avec `tableId` stables)
-  - [ ] Runtime **Node** uniquement — pas `runtime = 'edge'` sur les routes session
+- [x] T1. Brancher Prisma 7.9 + Neon (Node) (AC: #1)
+  - [x] Installer pins : `prisma@7.9.0`, `@prisma/client@7.9.0`, `@prisma/adapter-neon@7.9.0`, `@neondatabase/serverless@1.1.0`
+  - [x] Créer `prisma/schema.prisma` avec modèles **Table** et **Session** uniquement (pas Menu/Order/Guest)
+  - [x] Configurer `infra/prisma/` (client singleton Node + adapter Neon)
+  - [x] Env : `DATABASE_URL` (pooled) + `DIRECT_URL` (migrations) — AD-11
+  - [x] Migration initiale + seed minimal (ex. tables `T1`…`T5` ou `table-1`… avec `tableId` stables)
+  - [x] Runtime **Node** uniquement — pas `runtime = 'edge'` sur les routes session
 
-- [ ] T2. Domaine Session — ouvrir / reprendre (AC: #1, #2, #3)
-  - [ ] `domain/session/` : use-case + Server Action(s) (ex. `openOrResumeSession({ tableId })`)
-  - [ ] Si cookie opaque valide + Session `active` + `expiresAt` > now → reprendre
-  - [ ] Sinon si Session `active` non expirée pour ce `tableId` → lier cookie à cette Session (rescan même table)
-  - [ ] Sinon créer Session anonyme (`status: active`, `step: welcome` / Accueil, `expiresAt = now + 6h`)
-  - [ ] Garantir **au plus une** Session `active` / `tableId` dans le TTL (contrainte app + index / transaction ; fermer ou expirer les concurrentes)
-  - [ ] Erreurs Server Action : `{ ok: false, code, message }` (FR) ; succès `{ ok: true, ... }`
+- [x] T2. Domaine Session — ouvrir / reprendre (AC: #1, #2, #3)
+  - [x] `domain/session/` : use-case + Server Action(s) (ex. `openOrResumeSession({ tableId })`)
+  - [x] Si cookie opaque valide + Session `active` + `expiresAt` > now → reprendre
+  - [x] Sinon si Session `active` non expirée pour ce `tableId` → lier cookie à cette Session (rescan même table)
+  - [x] Sinon créer Session anonyme (`status: active`, `step: welcome` / Accueil, `expiresAt = now + 6h`)
+  - [x] Garantir **au plus une** Session `active` / `tableId` dans le TTL (contrainte app + index / transaction ; fermer ou expirer les concurrentes)
+  - [x] Erreurs Server Action : `{ ok: false, code, message }` (FR) ; succès `{ ok: true, ... }`
 
-- [ ] T3. Cookie httpOnly opaque (AC: #1, #3)
-  - [ ] Cookie client séjour : nom dédié (ex. `mt_session`) — **préfixe distinct** de tout futur Auth.js staff
-  - [ ] Valeur = id opaque (UUID/cuid) ; **pas** de panier / étape / PII dans le cookie (AD-5)
-  - [ ] Flags : `httpOnly`, `secure` (prod), `sameSite: 'lax'`, path `/`, `maxAge` ≈ 6 h aligné TTL
-  - [ ] Stocker en Neon le lien opaque → `Session.id` (hash ou id opaque en colonne dédiée)
+- [x] T3. Cookie httpOnly opaque (AC: #1, #3)
+  - [x] Cookie client séjour : nom dédié (ex. `mt_session`) — **préfixe distinct** de tout futur Auth.js staff
+  - [x] Valeur = id opaque (UUID/cuid) ; **pas** de panier / étape / PII dans le cookie (AD-5)
+  - [x] Flags : `httpOnly`, `secure` (prod), `sameSite: 'lax'`, path `/`, `maxAge` ≈ 6 h aligné TTL
+  - [x] Stocker en Neon le lien opaque → `Session.id` (hash ou id opaque en colonne dédiée)
 
-- [ ] T4. Route QR + redirection Accueil (AC: #1, #3, #4)
-  - [ ] Route client du type `app/(client)/t/[tableId]/page.tsx` (ou équivalent documenté) — URL QR = `https://<host>/t/<tableId>`
-  - [ ] Au GET : résoudre table → open/resume → redirect Accueil (`/(client)/` ou `/(client)/accueil`)
-  - [ ] Table inconnue → erreur UX claire FR (pas de stack trace) ; shape erreur domain cohérente
-  - [ ] **Aucun** choix de table in-app ; **aucun** login client
-  - [ ] Documenter explicitement : QR Wi‑Fi = hors produit (AC #4) — pas de route captive / WIFI: générée par l’app ici
+- [x] T4. Route QR + redirection Accueil (AC: #1, #3, #4)
+  - [x] Route client du type `app/(client)/t/[tableId]/page.tsx` (ou équivalent documenté) — URL QR = `https://<host>/t/<tableId>`
+  - [x] Au GET : résoudre table → open/resume → redirect Accueil (`/(client)/` ou `/(client)/accueil`)
+  - [x] Table inconnue → erreur UX claire FR (pas de stack trace) ; shape erreur domain cohérente
+  - [x] **Aucun** choix de table in-app ; **aucun** login client
+  - [x] Documenter explicitement : QR Wi‑Fi = hors produit (AC #4) — pas de route captive / WIFI: générée par l’app ici
 
-- [ ] T5. Accueil stub + smoke (AC: #1)
-  - [ ] Page Accueil minimale FR après session (peut être remplacée/enrichie en 1.3)
-  - [ ] Vérifier cookie posé + row Session Neon + rescan ne crée pas de 2ᵉ Session active
+- [x] T5. Accueil stub + smoke (AC: #1)
+  - [x] Page Accueil minimale FR après session (peut être remplacée/enrichie en 1.3)
+  - [x] Vérifier cookie posé + row Session Neon + rescan ne crée pas de 2ᵉ Session active
 
-- [ ] T6. Garde-fous anti-scope
-  - [ ] Pas Auth.js Credentials, Pusher, Blob, Sheets, Order, Menu, Guest, Mémoire 2ᵉ visite
-  - [ ] Pas UI Accueil complète / bannière reprise / barre progression (stories 1.3–1.5)
-  - [ ] Pas génération Carte print (1.6)
+- [x] T6. Garde-fous anti-scope
+  - [x] Pas Auth.js Credentials, Pusher, Blob, Sheets, Order, Menu, Guest, Mémoire 2ᵉ visite
+  - [x] Pas UI Accueil complète / bannière reprise / barre progression (stories 1.3–1.5)
+  - [x] Pas génération Carte print (1.6)
 
 ## Dev Notes
 
@@ -197,20 +197,49 @@ Composer (Cursor Agent)
 
 ### Debug Log References
 
-- Pins installés : prisma/client/adapter-neon 7.9.0, @neondatabase/serverless 1.1.0 (+ `ws` requis Node pour adapter Neon).
-- `prisma generate` OK ; migration SQL créée (`20260724120000_init_table_session`) + index partiel 1 ACTIVE / table.
-- Tests domaine : 5/5 pass (`npm test`).
-- `npm run build` OK — routes `/t/[tableId]`, `/accueil`.
-- **BLOQUANT** : pas de `DATABASE_URL` / `DIRECT_URL` dans l’environnement → `migrate deploy` + seed + smoke Neon non exécutés.
+- Pins : prisma/client/adapter-neon 7.9.0, @neondatabase/serverless 1.1.0, ws (Node WebSocket).
+- `prisma migrate deploy` OK sur Neon ; seed `t-1`…`t-5`.
+- Smoke : `/t/t-1` → cookie `mt_session` httpOnly → `/accueil` ; rescan même opaque ; 1 seule Session ACTIVE.
+- Cookie `Secure` uniquement si `VERCEL=1` ou `COOKIE_SECURE=true` (HTTP local sinon).
+- Tests domaine 5/5 ; `npm run build` OK.
 
 ### Completion Notes List
 
-Ultimate context engine analysis completed - comprehensive developer guide created
+- Table + Session Prisma/Neon branchés (AD-11) ; open/resume transactionnel (AD-5/9).
+- Entrée QR `GET /t/[tableId]` (Route Handler Node) + Accueil stub `/accueil`.
+- QR Wi‑Fi hors produit documenté dans le route handler.
+- Hors scope respecté (pas Auth/Menu/Order/Guest/Pusher/Blob).
 
-### Implementation Plan
+### Change Log
 
-- QR GET via Route Handler Node (`app/(client)/t/[tableId]/route.ts`) pour Set-Cookie httpOnly + redirect Accueil (cookies non mutables depuis RSC).
-- Use-case `openOrResumeSession` transactionnel ; Server Action conservée pour appels futurs.
-- En attente credentials Neon pour finaliser T1 migrate/seed et smoke T5.
+- 2026-07-24 — Story 1.2 implémentée + Neon migrate/seed/smoke → status `review`
 
 ### File List
+
+- package.json
+- package-lock.json
+- .env.example
+- prisma.config.ts
+- prisma/schema.prisma
+- prisma/seed.ts
+- prisma/README.md
+- prisma/migrations/migration_lock.toml
+- prisma/migrations/20260724120000_init_table_session/migration.sql
+- infra/prisma/client.ts
+- infra/prisma/env.ts
+- infra/prisma/README.md
+- infra/README.md
+- domain/README.md
+- domain/session/constants.ts
+- domain/session/types.ts
+- domain/session/cookie.ts
+- domain/session/open-or-resume.ts
+- domain/session/open-or-resume.test.ts
+- domain/session/actions.ts
+- domain/session/get-current.ts
+- app/(client)/page.tsx
+- app/(client)/accueil/page.tsx
+- app/(client)/t/[tableId]/route.ts
+- scripts/check-sessions.ts
+- _bmad-output/implementation-artifacts/1-2-table-session-au-scan-qr-ma-table.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
