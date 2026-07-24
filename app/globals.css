@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/* Citrus design tokens — light mode only (V1) */
+:root {
+  /* Colors */
+  --citrus-surface-base: #fffef8;
+  --citrus-surface-raised: #f5e9b8;
+  --citrus-ink-primary: #1a1a00;
+  --citrus-ink-secondary: #6b6b3a;
+  --citrus-accent: #e8c200;
+  --citrus-accent-soft: #fff3a8;
+  --citrus-border: #e8e0b8;
+  --citrus-pattern-a: #ffe500;
+  --citrus-pattern-b: #ff8a00;
+  --citrus-focus-ring: #1a1a00;
+
+  /* Typography scale */
+  --text-display-size: 28px;
+  --text-display-line: 34px;
+  --text-display-weight: 600;
+  --text-title-size: 22px;
+  --text-title-line: 28px;
+  --text-title-weight: 600;
+  --text-subtitle-size: 17px;
+  --text-subtitle-line: 24px;
+  --text-subtitle-weight: 500;
+  --text-body-size: 16px;
+  --text-body-line: 24px;
+  --text-body-weight: 400;
+  --text-body-sm-size: 14px;
+  --text-body-sm-line: 20px;
+  --text-body-sm-weight: 400;
+  --text-meta-size: 12px;
+  --text-meta-line: 16px;
+  --text-meta-weight: 600;
+  --text-meta-tracking: 0.02em;
+  --text-button-size: 16px;
+  --text-button-line: 20px;
+  --text-button-weight: 700;
+
+  /* Spacing scale (1→4px … 7→48px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-gutter: 16px;
+  --space-margin-mobile: 20px;
+  --space-section-gap: 32px;
+  --tap-target-min: 44px;
+
+  /* Rounded */
+  --citrus-radius-sm: 8px;
+  --citrus-radius-md: 16px;
+  --citrus-radius-lg: 24px;
+  --citrus-radius-full: 9999px;
+
+  /* Elevation */
+  --elevation-soft: 0 2px 12px rgba(26, 26, 0, 0.1);
+}
+
+@theme inline {
+  --color-surface-base: var(--citrus-surface-base);
+  --color-surface-raised: var(--citrus-surface-raised);
+  --color-ink-primary: var(--citrus-ink-primary);
+  --color-ink-secondary: var(--citrus-ink-secondary);
+  --color-accent: var(--citrus-accent);
+  --color-accent-soft: var(--citrus-accent-soft);
+  --color-border: var(--citrus-border);
+  --color-pattern-a: var(--citrus-pattern-a);
+  --color-pattern-b: var(--citrus-pattern-b);
+  --color-focus-ring: var(--citrus-focus-ring);
+
+  --font-display: var(--font-fredoka), "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-nunito-sans), "Segoe UI", system-ui, sans-serif;
+
+  --radius-sm: var(--citrus-radius-sm);
+  --radius-md: var(--citrus-radius-md);
+  --radius-lg: var(--citrus-radius-lg);
+  --radius-full: var(--citrus-radius-full);
+
+  --shadow-soft: var(--elevation-soft);
+
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-gutter: var(--space-gutter);
+  --spacing-margin-mobile: var(--space-margin-mobile);
+  --spacing-section-gap: var(--space-section-gap);
+  --spacing-tap-min: var(--tap-target-min);
+}
+
+body {
+  background: var(--citrus-surface-base);
+  color: var(--citrus-ink-primary);
+  font-family: var(--font-nunito-sans), "Segoe UI", system-ui, sans-serif;
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line);
+  font-weight: var(--text-body-weight);
+}
+
+/* Alias used by a11y / focus docs */
+:root {
+  --color-focus-ring: var(--citrus-focus-ring);
+  --color-surface-base: var(--citrus-surface-base);
+  --color-ink-primary: var(--citrus-ink-primary);
+  --color-accent: var(--citrus-accent);
+}
+
+/* Global focus-ring for interactive demo elements */
+:where(a, button, [role="button"], input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

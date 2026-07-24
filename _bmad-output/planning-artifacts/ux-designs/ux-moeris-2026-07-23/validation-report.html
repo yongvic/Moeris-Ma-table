@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<!--
+  UX Design Validation Report — filled synthesis for Ma table (post-fix).
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>UX Design Validation: Ma table (Résidence Moeris)</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+
+  .findings-list { padding: 0 20px 4px; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
+  .badge-status-resolved { background: rgba(22, 163, 74, 0.12); color: #16a34a; }
+  .badge-status-open { background: rgba(220, 38, 38, 0.10); color: #dc2626; }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .reviewer-source {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="title">
+        <h1>Ma table (Résidence Moeris) — UX Design Validation Report</h1>
+        <div class="subtitle">_bmad-output/planning-artifacts/ux-designs/ux-moeris-2026-07-23/</div>
+      </div>
+    </header>
+
+    <div class="synthesis">
+      <p>La revue initiale signalait trois points mécaniques bloquants (rayon <code>card-menu-item</code>, noms de composants non joignables entre colonnes, référence Niva introuvable) plus des manques d’états, de Responsive et d’accessibilité (étoiles, surfaces, focus). <strong>Après corrections post-revue</strong>, les IDs de composants sont alignés entre <code>DESIGN.md</code> et <code>EXPERIENCE.md</code>, les étoiles/surfaces/focus-ring et cibles tactiles sont spécifiés côté a11y, les états d’échec (commande, menu, BO) et la section Responsive &amp; Platform sont en place.</p>
+      <p>La citation <code>imports/ref-niva-family-hero.png</code> est valide — le fichier <strong>existe</strong> sur disque (faux positif du reviewer). Restent ouverts surtout des sujets medium/low : maquettes absentes, échelle typo en rem/zoom 200&nbsp;%, marge de contraste du pill « reçue », contour de champs Contact, protagoniste BO générique, et légers doublons ASSUMPTION. Critical 5/5 résolus · High 6/6 résolus.</p>
+    </div>
+
+    <div class="dimension-summary">
+      <div class="dim-card">
+        <div class="dim-name">Flow coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Token completeness</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Component coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">State coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Visual reference coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-thin)">thin</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Bloat &amp; overspecification</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Inheritance discipline</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Shape fit</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+    </div>
+
+    <!-- 1. Flow coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Flow coverage</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>UJ-1, UJ-2, UJ-3 ont chacun une Key Flow nommée avec protagoniste, étapes et climax. Le cas limite Flow 3 a été ajouté post-revue ; le protagoniste BO reste générique (hérité PRD).</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Flow 3 sans cas limite</h3>
+              <span class="finding-location">EXPERIENCE.md §Key Flows</span>
+            </header>
+            <div class="finding-note">Contrairement aux Flows 1–2, le parcours équipe n’avait pas de chemin d’échec.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Cas limite ajouté (commande fantôme, staff déconnecté en cours de service).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-open">OUVERT</span>
+              <h3 class="finding-title">Protagoniste Flow 3 générique</h3>
+              <span class="finding-location">EXPERIENCE.md §Key Flows Flow 3</span>
+            </header>
+            <div class="finding-note">Toujours « il/elle », « responsable ou serveur » — écart hérité du PRD UJ-3.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Répercuter un persona staff nommé si le PRD en définit un.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 2. Token completeness -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Token completeness</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Tokens couleurs/typo/rayons/espacement complets. La contradiction de rayon et le token <code>section-gap</code> orphelin sont corrigés ; contraste accent chiffré (~10:1).</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Contradiction rayon card-menu-item</h3>
+              <span class="finding-location">DESIGN.md Components / Shapes</span>
+            </header>
+            <div class="finding-note">Frontmatter utilisait <code>{rounded.lg}</code> contre la règle Shapes <code>{rounded.md}</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Aligné sur <code>{rounded.md}</code> (composant + prose Shapes).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">spacing.section-gap orphelin</h3>
+              <span class="finding-location">DESIGN.md Layout &amp; Spacing</span>
+            </header>
+            <div class="finding-note">Token défini sans usage documenté, doublon de <code>spacing.6</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Usage explicite : séparation de sections sémantiques au sein d’un écran.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Cible de contraste accent non chiffrée</h3>
+              <span class="finding-location">DESIGN.md §Colors</span>
+            </header>
+            <div class="finding-note">Seule une affirmation qualitative était donnée.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Doc : ink-primary sur accent ~10:1, au-dessus AAA (7:1).</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 3. Component coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Component coverage</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Après corrections : noms canoniques partagés ; composants comportementaux (Contact, Reprise, Mémoire, Service, BO) ont une entrée visuelle ; <code>pattern-background</code> et <code>button-secondary</code> ont une ligne comportementale.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Aucun nom de composant partagé entre colonnes</h3>
+              <span class="finding-location">DESIGN.md.Components ↔ EXPERIENCE.md.Component Patterns</span>
+            </header>
+            <div class="finding-note">Un consommateur aval ne pouvait pas joindre les specs par nom.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Liste unique (<code>card-accueil</code>, <code>card-menu-item</code>, <code>avis-stars</code>, etc.) dans les deux fichiers.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Composants comportementaux sans spec visuelle</h3>
+              <span class="finding-location">DESIGN.md.Components</span>
+            </header>
+            <div class="finding-note">Sélecteur Contact, Bannière Reprise, Bloc Mémoire, Catalogue Service, lignes BO absents du Design.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Entrées frontmatter + prose ajoutées pour chacun.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">pattern-background sans ligne comportementale</h3>
+              <span class="finding-location">EXPERIENCE.md.Component Patterns</span>
+            </header>
+            <div class="finding-note">Spec visuelle seule, usage comportemental non confirmé.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Ligne « Fond motif » : statique, non-interactif, jamais devant le contenu.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">button-secondary sans ligne comportementale propre</h3>
+              <span class="finding-location">EXPERIENCE.md.Component Patterns</span>
+            </header>
+            <div class="finding-note">N’apparaissait qu’en creux dans Carte Accueil.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Ligne dédiée Bouton secondaire.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4. State coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>State coverage</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Échec réseau commande/menu et états BO vide / erreur de sauvegarde ajoutés. Couverture client + BO désormais cohérente avec le PRD réseau resto.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Pas d’échec d’envoi de commande</h3>
+              <span class="finding-location">EXPERIENCE.md §State Patterns</span>
+            </header>
+            <div class="finding-note">Seul le succès « Commande envoyée » était couvert (FR-8 / NFR réseau).</div>
+            <div class="finding-fix"><strong>Fix:</strong> État « Échec envoi commande » : message + retry, jamais de perte silencieuse.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">États BO vides / erreur de sauvegarde manquants</h3>
+              <span class="finding-location">EXPERIENCE.md §State Patterns</span>
+            </header>
+            <div class="finding-note">Surfaces BO Menu/Service/Connexion sans états dédiés au-delà de l’auth.</div>
+            <div class="finding-fix"><strong>Fix:</strong> « BO vide » et « BO erreur de sauvegarde » ajoutés.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Menu sans état hors-ligne / réseau</h3>
+              <span class="finding-location">EXPERIENCE.md §State Patterns</span>
+            </header>
+            <div class="finding-note">Seul « Plat indisponible » (métier), pas de chemin réseau.</div>
+            <div class="finding-fix"><strong>Fix:</strong> « Chargement à froid / échec réseau » sur Menu.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5. Visual reference coverage — thin → open -->
+    <section class="dimension">
+      <details open>
+        <summary>
+          <h2>Visual reference coverage</h2>
+          <span class="verdict-pill verdict-thin">thin</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>La référence structurelle Niva est présente sur disque (faux positif initial). Aucune maquette liée aux 15 surfaces — couverture Pass 1 encore vide, déclaré honnêtement.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">imports/ref-niva-family-hero.png introuvable</h3>
+              <span class="finding-location">DESIGN.md §Brand &amp; Style</span>
+            </header>
+            <div class="finding-note">Faux positif du reviewer : le fichier <strong>existe</strong> sous <code>imports/ref-niva-family-hero.png</code>.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Aucune action — référence valide.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-open">OUVERT</span>
+              <h3 class="finding-title">Aucune maquette pour les 15 surfaces IA</h3>
+              <span class="finding-location">EXPERIENCE.md §IA / Gaps hérités</span>
+            </header>
+            <div class="finding-note">Déclaré « maquettes à venir » — pas une omission silencieuse, mais couverture Pass 1 vide.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Lier les maquettes à l’étape suivante ; revalider alors.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 6. Bloat -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Bloat &amp; overspecification</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Peu de restatement. La note processus sur <code>status-pill-bo</code> a été démêlée ; les ASSUMPTION Elevation/Shapes restent encore doublonnées inline + Gaps.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-open">OUVERT</span>
+              <h3 class="finding-title">Doublon ASSUMPTION inline + Gaps</h3>
+              <span class="finding-location">DESIGN.md Elevation / Shapes / Gaps</span>
+            </header>
+            <div class="finding-note">Annotations encore répétées en fin de document.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Garder l’annotation courte inline et renvoyer vers Gaps.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">NOTE FOR UX imbriquée dans status-pill-bo</h3>
+              <span class="finding-location">DESIGN.md.Components</span>
+            </header>
+            <div class="finding-note">Mélangeait commentaire de processus et tokens dans la même puce.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Puce factuelle ; notes processus en Gaps / NOTE séparée.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 7. Inheritance -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Inheritance discipline</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Sources EXPERIENCE résolvent ; UJ et glossaire cohérents. Le point critique (noms composants identiques) est résolu — cf. Component coverage.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Noms composants non identiques entre colonnes</h3>
+              <span class="finding-location">Inheritance = règle §3</span>
+            </header>
+            <div class="finding-note">Non recompté séparément à la revue initiale — même finding que Component coverage.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Liste canonique unique alignée (voir Component coverage).</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 8. Shape fit -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Shape fit</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Ordre canonique DESIGN et sections EXPERIENCE respectés. Section Responsive &amp; Platform ajoutée pour les deux form-factors déclarés en Foundation.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">Section Responsive absente</h3>
+              <span class="finding-location">EXPERIENCE.md Foundation → Responsive</span>
+            </header>
+            <div class="finding-note">Deux form-factors déclarés déclenchaient une section Responsive requise-si-applicable.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Section Responsive &amp; Platform : client mobile web ; BO desktop/tablette.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Accessibility reviewer -->
+    <section class="reviewer-section">
+      <details>
+        <summary>
+          <h2>Accessibility review</h2>
+          <span class="reviewer-source">review-accessibility.md</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Persona Mame Fatou (gros boutons, contraste, zéro jargon). Les criticals C1/C2 et highs H1–H3 sont corrigés (étoiles forme+couleur + nom accessible, surfaces assombries + ombre soft, focus-ring, tap-target sur chips/étoiles, Accessible naming). Restent ouverts : rem/zoom (M1), marge pill « reçue » (M2), contour champs Contact (L1). Points forts déjà notés : ink sur accent ~10:1, tap-target-min nommé, Accessibility Floor comportemental solide.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">C1 — Avis stars : contraste ~1.3:1 et pas de nom accessible</h3>
+              <span class="finding-location">DESIGN.md avis-stars</span>
+            </header>
+            <div class="finding-note">Actif/inactif par couleur seule ; aucun pattern de nom accessible ni rôle emoji.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Plein vs contour, inactif ink-secondary, accessibleName « Note : {n} sur 5 », tap-target-min.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">C2 — Cartes / bouton secondaire quasi invisibles (~1.05:1)</h3>
+              <span class="finding-location">DESIGN.md Colors / Elevation</span>
+            </header>
+            <div class="finding-note">surface-raised trop proche de surface-base ; ombres interdites sur cartes/boutons.</div>
+            <div class="finding-fix"><strong>Fix:</strong> surface-raised #F5E9B8 ; elevation.soft sur card-menu-item et button-secondary.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">H1 — Pas de token focus-visible</h3>
+              <span class="finding-location">DESIGN.md Colors</span>
+            </header>
+            <div class="finding-note">BO clavier+souris sans indicateur de focus engagé.</div>
+            <div class="finding-fix"><strong>Fix:</strong> colors.focus-ring (#1A1A00), contour 2px + offset 2px, client et BO.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">H2 — chip-gout / étoiles hors tap-target-min</h3>
+              <span class="finding-location">DESIGN.md Components</span>
+            </header>
+            <div class="finding-note">Boutons seuls héritaient 44px ; chips et étoiles trop petites pour la persona.</div>
+            <div class="finding-fix"><strong>Fix:</strong> minHeight tap-target-min sur chip-gout et avis-stars.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">H3 — Stratégie de nommage accessible absente</h3>
+              <span class="finding-location">DESIGN.md Accessible naming</span>
+            </header>
+            <div class="finding-note">Illustrations, tuiles Service, status pills sans règles de naming portées en Design.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Sous-section Accessible naming + catalogue-service iconAndLabel.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-open">OUVERT</span>
+              <h3 class="finding-title">M1 — Typo en px fixes, pas de stance rem/zoom</h3>
+              <span class="finding-location">DESIGN.md Typography</span>
+            </header>
+            <div class="finding-note">Échelle encore en px littéraux ; WCAG 1.4.4 / 1.4.10 non adressés.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Autoriser l’échelle en rem ; vérifier reflow à 200&nbsp;% ; relever éventuellement meta.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-open">OUVERT</span>
+              <h3 class="finding-title">M2 — Contraste pill « reçue » borderline (~4.9:1)</h3>
+              <span class="finding-location">DESIGN.md status-pill-bo.recue</span>
+            </header>
+            <div class="finding-note">ink-secondary sur accent-soft juste au-dessus de AA, marge faible en glare.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Assombrir texte ou fond pour cibler ≥5.5:1.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">M3 — Opacité pattern sans plafond numérique</h3>
+              <span class="finding-location">DESIGN.md pattern-background</span>
+            </header>
+            <div class="finding-note">« Low » qualitatif risquait de dériver post-V1.</div>
+            <div class="finding-fix"><strong>Fix:</strong> opacity ≤10%, décoratif uniquement.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-open">OUVERT</span>
+              <h3 class="finding-title">L1 — border trop faible pour contours de champs</h3>
+              <span class="finding-location">DESIGN.md selecteur-contact</span>
+            </header>
+            <div class="finding-note">Composant présent avec fieldBorder=border et note « à renforcer » ; contour plus fort non engagé.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Exiger un contour plus fort que border (ou fond rempli) pour les champs localisables.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <span class="badge badge-status-resolved">RÉSOLU</span>
+              <h3 class="finding-title">L2 — Pas de stance font-loading</h3>
+              <span class="finding-location">DESIGN.md Typography</span>
+            </header>
+            <div class="finding-note">FOIT/FOUT non adressé au premier paint post-QR.</div>
+            <div class="finding-fix"><strong>Fix:</strong> font-display: swap + pile de repli métrique proche.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <div class="mechanical">
+      <h3>Mechanical notes</h3>
+      <ul>
+        <li>Noms de composants désormais partagés entre DESIGN.md et EXPERIENCE.md (critique initial résolu).</li>
+        <li><code>imports/ref-niva-family-hero.png</code> existe sur disque — faux positif de la revue rubric.</li>
+        <li>Contradiction rayon card-menu-item / Shapes résolue (<code>{rounded.md}</code>).</li>
+        <li>Frontmatter DESIGN.md sans <code>sources</code> — conforme à l’exemple ; EXPERIENCE sources 3/3 OK.</li>
+        <li>Aucun Mermaid dans les spines — sans objet.</li>
+        <li>Compteurs post-corrections : Critical 5 RÉSOLU / 0 OUVERT · High 6 RÉSOLU / 0 OUVERT · Medium 6/3 · Low 4/3.</li>
+      </ul>
+    </div>
+
+    <footer class="report-footer">
+      <div class="meta">
+        <span>Rubric: review-rubric.md</span>
+        <span>Accessibility: review-accessibility.md</span>
+        <span>Generated: 2026-07-23T15:45:00</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

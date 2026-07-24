@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ma table — Brainstorm Résidence Moeris</title>
+<style>
+  :root {
+    --charcoal: #1a1612;
+    --ink: #2a241c;
+    --amber-deep: #8b5a2b;
+    --amber: #c4893a;
+    --amber-glow: #e8b86a;
+    --cream: #f5efe3;
+    --cream-dim: #d4cbb8;
+    --ember: #d4783a;
+    --wine: #6b3a2a;
+    --paper: #e8dfd0;
+    --shadow: rgba(0,0,0,.45);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Candara, Calibri, sans-serif;
+    background: var(--charcoal);
+    color: var(--cream);
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  /* Paper grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, .display {
+    font-family: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: .01em;
+  }
+
+  /* ——— HERO ——— */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    position: relative;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, #3d2a18 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 80%, #4a2818 0%, transparent 50%),
+      linear-gradient(180deg, #1a1612 0%, #241c14 50%, #1a1612 100%);
+    overflow: hidden;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,.03) 2px,
+        rgba(0,0,0,.03) 4px
+      );
+    pointer-events: none;
+  }
+
+  .candle {
+    width: 12px;
+    height: 48px;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--paper) 100%);
+    margin: 0 auto 1.5rem;
+    position: relative;
+    border-radius: 2px 2px 0 0;
+    animation: flicker-base 4s ease-in-out infinite;
+  }
+
+  .candle::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 28px;
+    background: radial-gradient(ellipse at 50% 80%, #fff6d0 0%, var(--amber-glow) 30%, var(--ember) 55%, transparent 70%);
+    border-radius: 50% 50% 40% 40%;
+    animation: flicker 1.8s ease-in-out infinite;
+    filter: blur(.5px);
+  }
+
+  .candle::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 10px;
+    background: var(--ink);
+    border-radius: 50%;
+    opacity: .6;
+  }
+
+  @keyframes flicker {
+    0%, 100% { transform: translateX(-50%) scale(1) rotate(-2deg); opacity: 1; }
+    40% { transform: translateX(-48%) scale(1.08) rotate(3deg); opacity: .92; }
+    70% { transform: translateX(-52%) scale(.95) rotate(-1deg); opacity: .98; }
+  }
+
+  @keyframes flicker-base {
+    0%, 100% { box-shadow: 0 0 40px 8px rgba(232,184,106,.25); }
+    50% { box-shadow: 0 0 55px 14px rgba(232,184,106,.35); }
+  }
+
+  .hero .brand {
+    font-family: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    font-size: clamp(2.8rem, 8vw, 5.2rem);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.05;
+    text-shadow: 0 2px 40px rgba(196,137,58,.3);
+  }
+
+  .hero .brand em {
+    font-style: italic;
+    color: var(--amber-glow);
+    font-weight: 400;
+  }
+
+  .hero .tagline {
+    margin-top: 1rem;
+    font-size: clamp(.95rem, 2vw, 1.1rem);
+    color: var(--cream-dim);
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 300;
+  }
+
+  .hero .meta {
+    margin-top: 2.5rem;
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    opacity: .8;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    opacity: .5;
+    animation: bob 2.5s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ——— SHARED SECTION ——— */
+  section {
+    padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem);
+    position: relative;
+  }
+
+  .section-label {
+    font-size: .68rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: .75rem;
+    display: block;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    color: var(--cream);
+  }
+
+  .section-lede {
+    max-width: 36rem;
+    color: var(--cream-dim);
+    font-size: 1.05rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ——— ONE FEATURE ONLY ——— */
+  .one-feature {
+    background:
+      radial-gradient(ellipse at 70% 20%, rgba(196,137,58,.12) 0%, transparent 50%),
+      var(--charcoal);
+  }
+
+  .thread-stage {
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .thread-line {
+    position: absolute;
+    left: 28px;
+    top: 40px;
+    bottom: 40px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--amber-glow), var(--amber-deep), var(--wine));
+    opacity: .5;
+  }
+
+  .thread-node {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1.75rem;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .thread-node.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .thread-dot {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: var(--ink);
+    border: 1.5px solid var(--amber);
+    color: var(--amber-glow);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(196,137,58,.15);
+  }
+
+  .thread-dot.solo {
+    background: linear-gradient(145deg, var(--amber), var(--ember));
+    color: var(--charcoal);
+    border-color: var(--amber-glow);
+    animation: pulse-solo 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-solo {
+    0%, 100% { box-shadow: 0 0 20px rgba(232,184,106,.3); }
+    50% { box-shadow: 0 0 36px rgba(232,184,106,.55); }
+  }
+
+  .thread-card {
+    background: linear-gradient(135deg, rgba(42,36,28,.9), rgba(26,22,18,.95));
+    border: 1px solid rgba(196,137,58,.2);
+    padding: 1.1rem 1.3rem;
+    border-radius: 2px;
+  }
+
+  .thread-card strong {
+    display: block;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.25rem;
+    color: var(--amber-glow);
+    margin-bottom: .35rem;
+  }
+
+  .thread-card p {
+    font-size: .92rem;
+    color: var(--cream-dim);
+  }
+
+  .insight-ribbon {
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    border-left: 3px solid var(--amber);
+    background: rgba(139,90,43,.12);
+    font-style: italic;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.25rem;
+    color: var(--cream);
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ——— CROSS-POLLINATION ——— */
+  .cross-poll {
+    background:
+      linear-gradient(180deg, #1a1612, #221910 40%, #1a1612);
+  }
+
+  .grafts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .graft {
+    position: relative;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background:
+      linear-gradient(160deg, rgba(107,58,42,.25), transparent 60%),
+      var(--ink);
+    border: 1px solid rgba(212,203,184,.12);
+    overflow: hidden;
+    transition: transform .35s ease, border-color .35s;
+  }
+
+  .graft:hover {
+    transform: translateY(-4px);
+    border-color: rgba(196,137,58,.4);
+  }
+
+  .graft .stem {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 28px;
+    background: var(--amber-deep);
+    transform: translateX(-50%);
+  }
+
+  .graft .stem::before,
+  .graft .stem::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--amber));
+  }
+
+  .graft .stem::before { left: -40px; transform: rotate(-25deg); }
+  .graft .stem::after { right: -40px; background: linear-gradient(270deg, transparent, var(--amber)); transform: rotate(25deg); }
+
+  .graft .from {
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: .5rem;
+    margin-top: 1rem;
+  }
+
+  .graft .arrow {
+    display: block;
+    font-size: 1.4rem;
+    color: var(--amber-glow);
+    margin: .4rem 0;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  }
+
+  .graft h3 {
+    font-size: 1.35rem;
+    color: var(--cream);
+    margin-bottom: .5rem;
+  }
+
+  .graft p {
+    font-size: .88rem;
+    color: var(--cream-dim);
+  }
+
+  .constraint-stamp {
+    margin: 2.5rem auto 0;
+    max-width: 560px;
+    text-align: center;
+    padding: 1.5rem;
+    border: 2px dashed rgba(196,137,58,.35);
+    transform: rotate(-1.5deg);
+  }
+
+  .constraint-stamp .stamp-label {
+    font-size: .65rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: .5rem;
+  }
+
+  .constraint-stamp p {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+  }
+
+  /* ——— SHADOW WORK ——— */
+  .shadow-work {
+    background: #12100e;
+    overflow: hidden;
+  }
+
+  .shadow-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 320px;
+  }
+
+  @media (max-width: 700px) {
+    .shadow-split { grid-template-columns: 1fr; }
+  }
+
+  .shadow-panel {
+    padding: 2rem 1.75rem;
+    position: relative;
+  }
+
+  .shadow-panel.fear {
+    background:
+      radial-gradient(ellipse at 30% 50%, rgba(80,40,30,.4), transparent 70%),
+      #0e0c0a;
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+  }
+
+  @media (max-width: 700px) {
+    .shadow-panel.fear { clip-path: none; }
+  }
+
+  .shadow-panel.light {
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(196,137,58,.15), transparent 60%),
+      #1e1a14;
+  }
+
+  .shadow-panel h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .shadow-panel.fear h3 { color: #a07060; }
+  .shadow-panel.light h3 { color: var(--amber-glow); }
+
+  .fear-list, .antidote-list {
+    list-style: none;
+  }
+
+  .fear-list li, .antidote-list li {
+    padding: .65rem 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    font-size: .95rem;
+    color: var(--cream-dim);
+  }
+
+  .fear-list li::before {
+    content: '∅ ';
+    color: #8a5040;
+    opacity: .7;
+  }
+
+  .antidote-list li::before {
+    content: '→ ';
+    color: var(--amber);
+  }
+
+  .success-beacon {
+    margin: 2.5rem auto 0;
+    max-width: 520px;
+    text-align: center;
+    padding: 1.75rem;
+    background: linear-gradient(135deg, rgba(196,137,58,.2), rgba(107,58,42,.15));
+    border: 1px solid rgba(232,184,106,.35);
+    position: relative;
+  }
+
+  .success-beacon::before {
+    content: '★';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--charcoal);
+    padding: 0 .5rem;
+    color: var(--amber-glow);
+    font-size: 1.2rem;
+  }
+
+  .success-beacon .label {
+    font-size: .68rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: .5rem;
+  }
+
+  .success-beacon p {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.5rem;
+    color: var(--cream);
+  }
+
+  /* ——— DREAM FUSION ——— */
+  .dream {
+    background:
+      radial-gradient(ellipse at 50% 60%, rgba(212,120,58,.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 20%, rgba(139,90,43,.1) 0%, transparent 40%),
+      #1a1410;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .chef-stage {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 2rem;
+    position: relative;
+  }
+
+  .chef-aura {
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,184,106,.35) 0%, transparent 70%);
+    animation: aura-breathe 3s ease-in-out infinite;
+  }
+
+  @keyframes aura-breathe {
+    0%, 100% { transform: scale(1); opacity: .7; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+
+  .chef-face {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 40% 35%, #3a3028, #1a1612);
+    border: 2px solid rgba(232,184,106,.4);
+    display: grid;
+    place-items: center;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .chef-hat {
+    position: absolute;
+    top: 18px;
+    width: 70px;
+    height: 36px;
+    background: var(--cream);
+    border-radius: 8px 8px 2px 2px;
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,.08);
+  }
+
+  .chef-hat::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 22px;
+    background: var(--cream);
+    border-radius: 50% 50% 40% 40%;
+  }
+
+  .chef-smile {
+    margin-top: 50px;
+    width: 36px;
+    height: 18px;
+    border: 2.5px solid var(--amber-glow);
+    border-top: none;
+    border-radius: 0 0 50% 50%;
+    animation: smile-in 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes smile-in {
+    from { width: 28px; opacity: .7; }
+    to { width: 40px; opacity: 1; }
+  }
+
+  .chef-eyes {
+    position: absolute;
+    top: 72px;
+    display: flex;
+    gap: 22px;
+  }
+
+  .chef-eyes span {
+    width: 6px;
+    height: 6px;
+    background: var(--cream);
+    border-radius: 50%;
+  }
+
+  .emoji-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .emoji-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(196,137,58,.3);
+    background: rgba(26,22,18,.8);
+    font-size: 1.5rem;
+    cursor: default;
+    display: grid;
+    place-items: center;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    animation: emoji-float 3s ease-in-out infinite;
+  }
+
+  .emoji-btn:nth-child(2) { animation-delay: .4s; }
+  .emoji-btn:nth-child(3) { animation-delay: .8s; }
+
+  .emoji-btn:hover {
+    transform: scale(1.15);
+    border-color: var(--amber-glow);
+    box-shadow: 0 0 24px rgba(232,184,106,.3);
+  }
+
+  @keyframes emoji-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .dream-scripts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .75rem;
+    margin-top: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .dream-scripts span {
+    padding: .4rem .9rem;
+    font-size: .8rem;
+    border-radius: 2px;
+    background: rgba(196,137,58,.12);
+    border: 1px solid rgba(196,137,58,.25);
+    color: var(--cream-dim);
+  }
+
+  .dream-note {
+    margin-top: 2rem;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--amber-glow);
+  }
+
+  /* ——— REVERSE BRAINSTORMING ——— */
+  .reverse {
+    background: var(--charcoal);
+    position: relative;
+  }
+
+  .mirror-stage {
+    max-width: 800px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  @media (max-width: 700px) {
+    .mirror-stage {
+      grid-template-columns: 1fr;
+    }
+    .mirror-divider { display: none !important; }
+  }
+
+  .mirror-side {
+    padding: 1.5rem;
+  }
+
+  .mirror-side.fail {
+    background: rgba(80,30,20,.2);
+    border: 1px solid rgba(140,60,40,.3);
+    transform: scaleY(-1);
+  }
+
+  .mirror-side.fail .inner {
+    transform: scaleY(-1);
+  }
+
+  .mirror-side.win {
+    background: rgba(139,90,43,.15);
+    border: 1px solid rgba(196,137,58,.3);
+  }
+
+  .mirror-side h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .mirror-side.fail h3 { color: #c07060; }
+  .mirror-side.win h3 { color: var(--amber-glow); }
+
+  .mirror-side ul {
+    list-style: none;
+    font-size: .9rem;
+    color: var(--cream-dim);
+  }
+
+  .mirror-side li {
+    padding: .45rem 0;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .mirror-side.fail li::before {
+    content: '✕';
+    position: absolute;
+    left: 0;
+    color: #a05040;
+    font-size: .75rem;
+  }
+
+  .mirror-side.win li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--amber);
+    font-size: .75rem;
+  }
+
+  .mirror-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 2rem;
+    color: var(--amber);
+    writing-mode: vertical-rl;
+    letter-spacing: .1em;
+  }
+
+  .ban-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .6rem;
+    margin-top: 2.5rem;
+  }
+
+  .ban-chip {
+    padding: .45rem 1rem;
+    font-size: .78rem;
+    letter-spacing: .04em;
+    background: transparent;
+    border: 1.5px solid rgba(160,80,60,.5);
+    color: #c09080;
+    text-decoration: line-through;
+    text-decoration-color: rgba(200,100,80,.6);
+    position: relative;
+  }
+
+  .ban-chip::after {
+    content: 'BANNI';
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    font-size: .5rem;
+    letter-spacing: .1em;
+    color: var(--ember);
+    text-decoration: none;
+    background: var(--charcoal);
+    padding: 0 3px;
+  }
+
+  /* ——— PERSONA JOURNEY ——— */
+  .persona {
+    background:
+      linear-gradient(180deg, #1a1612 0%, #1e1812 50%, #1a1612 100%);
+  }
+
+  .journey-path {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    padding: 1rem 0;
+  }
+
+  .journey-path::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber-deep), var(--amber-glow), var(--amber));
+    opacity: .4;
+  }
+
+  @media (max-width: 600px) {
+    .journey-path::before { display: none; }
+  }
+
+  .journey-steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .j-step {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .j-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto .75rem;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 2px solid var(--amber);
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+    box-shadow: 0 0 0 6px var(--charcoal);
+  }
+
+  .j-step h4 {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.1rem;
+    color: var(--cream);
+    margin-bottom: .3rem;
+  }
+
+  .j-step p {
+    font-size: .8rem;
+    color: var(--cream-dim);
+  }
+
+  /* Printed card — 2 QR */
+  .print-card {
+    margin: 3rem auto 0;
+    max-width: 420px;
+    background: var(--paper);
+    color: var(--charcoal);
+    padding: 1.75rem 1.5rem;
+    box-shadow:
+      0 20px 50px rgba(0,0,0,.4),
+      inset 0 0 60px rgba(139,90,43,.08);
+    position: relative;
+    transform: rotate(-.8deg);
+    transition: transform .4s ease;
+  }
+
+  .print-card:hover { transform: rotate(0deg) scale(1.02); }
+
+  .print-card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(42,36,28,.15);
+    pointer-events: none;
+  }
+
+  .print-card .card-brand {
+    text-align: center;
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2a241c;
+    margin-bottom: .25rem;
+  }
+
+  .print-card .card-sub {
+    text-align: center;
+    font-size: .7rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #6b5a48;
+    margin-bottom: 1.5rem;
+  }
+
+  .qr-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .qr-block {
+    text-align: center;
+  }
+
+  .qr-num {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #8b5a2b;
+    line-height: 1;
+    margin-bottom: .35rem;
+  }
+
+  .qr-fake {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto .5rem;
+    background:
+      repeating-linear-gradient(0deg, #2a241c 0 4px, transparent 4px 8px),
+      repeating-linear-gradient(90deg, #2a241c 0 4px, transparent 4px 8px);
+    background-color: #f5efe3;
+    background-blend-mode: multiply;
+    border: 3px solid #2a241c;
+    position: relative;
+  }
+
+  .qr-fake::after {
+    content: '';
+    position: absolute;
+    inset: 28%;
+    background: #f5efe3;
+    border: 2px solid #2a241c;
+  }
+
+  .qr-label {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1a1612;
+  }
+
+  .print-note {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: .72rem;
+    color: #6b5a48;
+    font-style: italic;
+  }
+
+  /* ——— CRANK DIAL ——— */
+  .crank {
+    background:
+      radial-gradient(ellipse at 50% 80%, rgba(196,137,58,.2) 0%, transparent 50%),
+      #161310;
+    text-align: center;
+  }
+
+  .dial-wrap {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 2rem;
+    position: relative;
+  }
+
+  .dial-face {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background:
+      conic-gradient(
+        from 220deg,
+        #3a2818 0deg,
+        #8b5a2b 60deg,
+        #c4893a 120deg,
+        #e8b86a 160deg,
+        #d4783a 200deg,
+        #3a2818 280deg
+      );
+    box-shadow:
+      inset 0 0 30px rgba(0,0,0,.5),
+      0 0 40px rgba(196,137,58,.2);
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  .dial-inner {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--charcoal);
+    border: 3px solid rgba(232,184,106,.3);
+    display: grid;
+    place-items: center;
+    z-index: 1;
+  }
+
+  .dial-needle {
+    position: absolute;
+    width: 4px;
+    height: 70px;
+    background: linear-gradient(180deg, var(--amber-glow), var(--ember));
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(75deg);
+    border-radius: 2px;
+    z-index: 2;
+    animation: crank-up 2.5s ease-out forwards;
+    box-shadow: 0 0 12px rgba(232,184,106,.5);
+  }
+
+  @keyframes crank-up {
+    from { transform: translateX(-50%) rotate(-40deg); }
+    to { transform: translateX(-50%) rotate(75deg); }
+  }
+
+  .dial-label-val {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.6rem;
+    color: var(--amber-glow);
+    font-weight: 700;
+  }
+
+  .dial-label-sub {
+    font-size: .65rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+  }
+
+  .dial-ticks {
+    display: flex;
+    justify-content: space-between;
+    max-width: 280px;
+    margin: -1rem auto 2rem;
+    font-size: .65rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    opacity: .6;
+  }
+
+  .chaleur-pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 500px) {
+    .chaleur-pillars { grid-template-columns: 1fr; }
+  }
+
+  .chaleur-pillar {
+    padding: 1.5rem;
+    background: rgba(42,36,28,.6);
+    border-top: 3px solid var(--amber);
+  }
+
+  .chaleur-pillar h4 {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.25rem;
+    color: var(--amber-glow);
+    margin-bottom: .4rem;
+  }
+
+  .chaleur-pillar p {
+    font-size: .88rem;
+    color: var(--cream-dim);
+  }
+
+  /* ——— SCI-FI ARTIFACT ——— */
+  .scifi {
+    background: #0e0c0a;
+    position: relative;
+  }
+
+  .artifact-frame {
+    max-width: 480px;
+    margin: 0 auto;
+    perspective: 800px;
+  }
+
+  .google-stub {
+    background: #f8f6f2;
+    color: #202124;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,.5),
+      0 0 0 1px rgba(255,255,255,.05);
+    transform: rotateY(-4deg) rotateX(2deg);
+    transition: transform .5s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .google-stub:hover {
+    transform: rotateY(0) rotateX(0);
+  }
+
+  .google-stub .year-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: .65rem;
+    letter-spacing: .12em;
+    color: #8b5a2b;
+    background: rgba(196,137,58,.15);
+    padding: .2rem .5rem;
+    border-radius: 2px;
+  }
+
+  .google-stub .place-name {
+    font-family: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a0dab;
+    margin-bottom: .35rem;
+  }
+
+  .google-stub .stars {
+    color: #e8b020;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+    margin-bottom: .2rem;
+  }
+
+  .google-stub .rating {
+    font-size: .9rem;
+    color: #5f6368;
+    margin-bottom: .75rem;
+  }
+
+  .google-stub .snippet {
+    font-size: .88rem;
+    color: #3c4043;
+    line-height: 1.5;
+    border-left: 3px solid #c4893a;
+    padding-left: .75rem;
+  }
+
+  .google-stub .snippet em {
+    color: #8b5a2b;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .headline-2030 {
+    margin: 2.5rem auto 0;
+    max-width: 560px;
+    text-align: center;
+    padding: 1.5rem;
+    border-top: 3px double var(--amber-deep);
+    border-bottom: 3px double var(--amber-deep);
+  }
+
+  .headline-2030 .paper-name {
+    font-size: .65rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: .75rem;
+  }
+
+  .headline-2030 h3 {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.25;
+  }
+
+  /* ——— SYNTHESIS CLIMAX ——— */
+  .synthesis {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(3rem, 8vw, 5rem) clamp(1.25rem, 4vw, 3rem);
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(196,137,58,.22) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(107,58,42,.2) 0%, transparent 40%),
+      linear-gradient(180deg, #12100e, #1a1410 40%, #0e0c0a);
+    position: relative;
+  }
+
+  .synthesis .section-title {
+    text-align: center;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    margin-bottom: .5rem;
+  }
+
+  .synthesis .section-lede {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3rem;
+  }
+
+  .priority-constellation {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto 3rem;
+  }
+
+  .priority {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    background: rgba(26,22,18,.7);
+    border: 1px solid rgba(196,137,58,.2);
+    position: relative;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .5s ease, transform .5s ease, border-color .3s;
+  }
+
+  .priority.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .priority:hover {
+    border-color: var(--amber-glow);
+  }
+
+  .priority .p-num {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: .75rem;
+    color: var(--amber);
+    letter-spacing: .15em;
+    display: block;
+    margin-bottom: .4rem;
+  }
+
+  .priority h4 {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: .35rem;
+  }
+
+  .priority p {
+    font-size: .8rem;
+    color: var(--cream-dim);
+  }
+
+  .synthesis-verse {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border: 1px solid rgba(232,184,106,.25);
+    background: rgba(196,137,58,.06);
+  }
+
+  .synthesis-verse p {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+    line-height: 1.55;
+    color: var(--cream);
+    font-style: italic;
+  }
+
+  .synthesis-verse .link-note {
+    margin-top: 1.25rem;
+    font-family: 'Segoe UI', 'Helvetica Neue', Candara, sans-serif;
+    font-style: normal;
+    font-size: .85rem;
+    color: var(--amber);
+    letter-spacing: .04em;
+  }
+
+  /* ——— COLOPHON ——— */
+  footer {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid rgba(196,137,58,.15);
+    background: #0a0908;
+  }
+
+  footer .colophon-brand {
+    font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+    font-size: 1.5rem;
+    color: var(--amber-glow);
+    margin-bottom: .5rem;
+  }
+
+  footer p {
+    font-size: .75rem;
+    color: var(--cream-dim);
+    opacity: .7;
+  }
+
+  /* Reveal helper */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div>
+    <div class="candle" aria-hidden="true"></div>
+    <p class="brand">Résidence <em>Moeris</em></p>
+    <p class="tagline">Une soirée à table, un fil digital imprimé — brainstorm du 23 juillet 2026</p>
+    <p class="meta">Keepsake · Mode partenaire · Session complète</p>
+  </div>
+  <span class="scroll-hint">Descendre dans la salle ↓</span>
+</header>
+
+<!-- ONE FEATURE ONLY -->
+<section class="one-feature" id="one">
+  <span class="section-label">Technique · One Feature Only</span>
+  <h2 class="section-title reveal">Un seul fil, tout le séjour</h2>
+  <p class="section-lede reveal">La capacité unique demandée : voir le menu. Puis le menu devient l'accueil digital — et le fil conducteur d'un séjour à table.</p>
+
+  <div class="thread-stage">
+    <div class="thread-line" aria-hidden="true"></div>
+
+    <div class="thread-node">
+      <div class="thread-dot solo">1</div>
+      <div class="thread-card">
+        <strong>Le menu — seul</strong>
+        <p>Capacité unique pour rendre le restaurant tourné vers le numérique. Photos, disponibilité, « ce que la table d'à côté a adoré », commande d'eau ou de pain.</p>
+      </div>
+    </div>
+
+    <div class="thread-node">
+      <div class="thread-dot">→</div>
+      <div class="thread-card">
+        <strong>Identité anonyme</strong>
+        <p>Au scan : un « nouveau client » en base, sans nom. La session ouvre le fil.</p>
+      </div>
+    </div>
+
+    <div class="thread-node">
+      <div class="thread-dot">→</div>
+      <div class="thread-card">
+        <strong>Découverte → Action → Service</strong>
+        <p>Menu, commande, contact serveurs — étapes franchies au fil du parcours, pas comme destinations séparées.</p>
+      </div>
+    </div>
+
+    <div class="thread-node">
+      <div class="thread-dot">★</div>
+      <div class="thread-card">
+        <strong>Mémoire</strong>
+        <p>Fin du fil : notation, commentaire, contact volontaire. L'anonyme devient client concret s'il le souhaite. 2ᵉ visite : espace mémoire (préférés, goûts cuisine) — pas avantages ni dashboard.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="insight-ribbon reveal">Le menu unique est le fil conducteur : identité → découverte → action → service → mémoire.</p>
+</section>
+
+<!-- CROSS-POLLINATION -->
+<section class="cross-poll" id="cross">
+  <span class="section-label">Technique · Cross-Pollination</span>
+  <h2 class="section-title reveal">Trois greffes, un seul but</h2>
+  <p class="section-lede reveal">Pas de feed d'engagement. Des micro-missions de 10–30 secondes — comme un trajet Uber, pas comme un réseau social.</p>
+
+  <div class="grafts">
+    <article class="graft reveal">
+      <div class="stem" aria-hidden="true"></div>
+      <p class="from">Spotify · Discover Weekly</p>
+      <span class="arrow">↳</span>
+      <h3>« Pour toi ce soir »</h3>
+      <p>Une seule suggestion selon les goûts — pas un parcours. Découverte douce, pas un algorithme qui retient.</p>
+    </article>
+    <article class="graft reveal">
+      <div class="stem" aria-hidden="true"></div>
+      <p class="from">Uber · « Où allez-vous ? »</p>
+      <span class="arrow">↳</span>
+      <h3>Scan = table connue</h3>
+      <p>Un écran utile, but clair, refermer. Le modèle qui gagne : précision, pas immersion.</p>
+    </article>
+    <article class="graft reveal">
+      <div class="stem" aria-hidden="true"></div>
+      <p class="from">Coiffeur · fiche client</p>
+      <span class="arrow">↳</span>
+      <h3>Goûts en cuisine</h3>
+      <p>Le serveur voit les préférences sans que le client refasse tout. Mémoire utile, invisible.</p>
+    </article>
+  </div>
+
+  <div class="constraint-stamp reveal">
+    <p class="stamp-label">Contrainte UX majeure</p>
+    <p>Un seul scan au départ. Ensuite : flux continu en session — jamais d'aller-retour au QR. Onglet + cache local, TTL soirée. Fermeture → rescanner = reprise.</p>
+  </div>
+</section>
+
+<!-- SHADOW WORK -->
+<section class="shadow-work" id="shadow">
+  <span class="section-label">Technique · Shadow Work Mining</span>
+  <h2 class="section-title reveal" style="text-align:center;max-width:640px;margin-left:auto;margin-right:auto;">Ce qui fait fuir — et ce qui retient</h2>
+  <p class="section-lede reveal" style="text-align:center;margin-left:auto;margin-right:auto;">L'ombre du client : spam, jugement, formulaires. La peur principale : la surcharge.</p>
+
+  <div class="shadow-split reveal">
+    <div class="shadow-panel fear">
+      <h3>L'ombre</h3>
+      <ul class="fear-list">
+        <li>Plateforme trop chargée → abandon</li>
+        <li>Peur du spam / vente du numéro</li>
+        <li>Avis trop long, peur d'être jugé</li>
+        <li>Mur de champs à remplir</li>
+      </ul>
+    </div>
+    <div class="shadow-panel light">
+      <h3>L'antidote</h3>
+      <ul class="antidote-list">
+        <li>Chapitres optionnels, skip partout</li>
+        <li>Avis = 2 taps + contact optionnel</li>
+        <li>Contact après la valeur, phrase claire</li>
+        <li>« Terminer mon expérience » après la commande</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="success-beacon reveal">
+    <p class="label">Succès idéal du flux</p>
+    <p>Avis + contact — sans surcharger</p>
+  </div>
+</section>
+
+<!-- DREAM FUSION -->
+<section class="dream" id="dream">
+  <span class="section-label">Technique · Dream Fusion Laboratory</span>
+  <h2 class="section-title reveal">Quand la commande est reçue</h2>
+  <p class="section-lede reveal" style="margin-left:auto;margin-right:auto;text-align:center;">Fantasy : l'écran devient magique. Un chef remercie. Un emoji suffit. Le contact garde le goût pour la prochaine fois.</p>
+
+  <div class="chef-stage reveal">
+    <div class="chef-aura"></div>
+    <div class="chef-face">
+      <div class="chef-hat"></div>
+      <div class="chef-eyes"><span></span><span></span></div>
+      <div class="chef-smile"></div>
+    </div>
+  </div>
+
+  <div class="emoji-row reveal" aria-label="Notation par emoji">
+    <div class="emoji-btn" title="Super">😊</div>
+    <div class="emoji-btn" title="OK">🙂</div>
+    <div class="emoji-btn" title="Mitigé">😐</div>
+  </div>
+
+  <div class="dream-scripts reveal">
+    <span>Script · super</span>
+    <span>Script · ok</span>
+    <span>Script · mitigé</span>
+  </div>
+
+  <p class="dream-note reveal">Ton retenu : chaleureux. V1 : chef 2D léger + messages liés à la note. Contact juste après l'émotion du merci.</p>
+</section>
+
+<!-- REVERSE BRAINSTORMING -->
+<section class="reverse" id="reverse">
+  <span class="section-label">Technique · Reverse Brainstorming</span>
+  <h2 class="section-title reveal">Inverser l'échec</h2>
+  <p class="section-lede reveal">Si on voulait faire fuir le client… puis on retourne chaque échec en règle d'or.</p>
+
+  <div class="mirror-stage reveal">
+    <div class="mirror-side fail">
+      <div class="inner">
+        <h3>Comment échouer</h3>
+        <ul>
+          <li>12 écrans avant le menu</li>
+          <li>Client s'ennuie, trop demandé</li>
+          <li>Taper du texte partout</li>
+          <li>Créer un compte obligatoire</li>
+          <li>Deux questions par écran</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mirror-divider" aria-hidden="true">⇌</div>
+    <div class="mirror-side win">
+      <h3>Comment réussir</h3>
+      <ul>
+        <li>1 écran d'accueil, 1 but clair</li>
+        <li>1 geste + gratification immédiate</li>
+        <li>Taps, emojis, notes — pas de clavier</li>
+        <li>0 compte obligatoire</li>
+        <li>Max 1 écran par besoin</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ban-strip reveal">
+    <span class="ban-chip">Trop d'étapes</span>
+    <span class="ban-chip">Taper du texte</span>
+    <span class="ban-chip">Créer un compte</span>
+    <span class="ban-chip">Pop-ups</span>
+    <span class="ban-chip">Pub</span>
+    <span class="ban-chip">Mot de passe</span>
+  </div>
+</section>
+
+<!-- PERSONA JOURNEY -->
+<section class="persona" id="persona">
+  <span class="section-label">Technique · Persona Journey</span>
+  <h2 class="section-title reveal">De l'arrivée à Ma table</h2>
+  <p class="section-lede reveal">Persona : grand-mère peu à l'aise — gros boutons, photos des plats, zéro jargon. Besoin premier : Wi-Fi, puis la plateforme.</p>
+
+  <div class="journey-path reveal">
+    <div class="journey-steps">
+      <div class="j-step">
+        <div class="j-icon">📡</div>
+        <h4>Wi-Fi auto</h4>
+        <p>Connexion automatique — pas de page captive</p>
+      </div>
+      <div class="j-step">
+        <div class="j-icon">◇</div>
+        <h4>Scan séparé</h4>
+        <p>Le QR n'est pas le login Wi-Fi</p>
+      </div>
+      <div class="j-step">
+        <div class="j-icon">🍽</div>
+        <h4>Ma table</h4>
+        <p>Entrée du flux app — menu &amp; séjour</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-card reveal" aria-label="Carte table imprimée">
+    <p class="card-brand">Résidence Moeris</p>
+    <p class="card-sub">Ta table · un seul objet mental</p>
+    <div class="qr-pair">
+      <div class="qr-block">
+        <p class="qr-num">1</p>
+        <div class="qr-fake" aria-hidden="true"></div>
+        <p class="qr-label">Wi-Fi</p>
+      </div>
+      <div class="qr-block">
+        <p class="qr-num">2</p>
+        <div class="qr-fake" aria-hidden="true"></div>
+        <p class="qr-label">Ma table</p>
+      </div>
+    </div>
+    <p class="print-note">Deux QR côte à côte — imprimés, numéros grands, contraste, durable</p>
+  </div>
+</section>
+
+<!-- CRANK THE DIAL -->
+<section class="crank" id="crank">
+  <span class="section-label">Technique · Crank the Dial to 11</span>
+  <h2 class="section-title reveal">Dial à fond : la chaleur</h2>
+  <p class="section-lede reveal" style="margin-left:auto;margin-right:auto;text-align:center;">Pas la vitesse à outrance — chaque écran dit « bienvenue à la maison ». La chaleur passe par l'ambiance et le chef, pas par le jargon UI.</p>
+
+  <div class="dial-wrap reveal">
+    <div class="dial-face">
+      <div class="dial-needle" aria-hidden="true"></div>
+      <div class="dial-inner">
+        <div>
+          <div class="dial-label-val">11</div>
+          <div class="dial-label-sub">Chaleur</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dial-ticks" aria-hidden="true">
+    <span>Froid app</span>
+    <span>Maison</span>
+  </div>
+
+  <div class="chaleur-pillars reveal">
+    <div class="chaleur-pillar">
+      <h4>Images &amp; ambiance</h4>
+      <p>Photos de la Résidence, couleurs chaudes — le regard sent la maison avant les mots.</p>
+    </div>
+    <div class="chaleur-pillar">
+      <h4>Ton du chef</h4>
+      <p>À la fin du parcours : merci chaleureux, jamais « Submit » ni « Login ».</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCI-FI ARTIFACT -->
+<section class="scifi" id="scifi">
+  <span class="section-label">Technique · Sci-Fi Artifact From the Future</span>
+  <h2 class="section-title reveal">Artefact 2030</h2>
+  <p class="section-lede reveal">On a fait un Moeris — comme on dit on a Uber Eats. L'artefact retenu : l'avis Google qui prouve que le flux a débordé hors de la table.</p>
+
+  <div class="artifact-frame reveal">
+    <div class="google-stub">
+      <span class="year-tag">2030</span>
+      <p class="place-name">Résidence Moeris — scan Ma table</p>
+      <p class="stars">★★★★★</p>
+      <p class="rating">4,9 · Avis Google</p>
+      <p class="snippet">« Le téléphone est devenu la nappe. On scanne <em>Ma table</em>, on mange, on note en un geste — et on a envie d'y retourner. »</p>
+    </div>
+  </div>
+
+  <div class="headline-2030 reveal">
+    <p class="paper-name">Le Journal de Demain</p>
+    <h3>« Le resto où le téléphone devient la nappe »</h3>
+  </div>
+</section>
+
+<!-- SYNTHESIS -->
+<section class="synthesis" id="synthese">
+  <span class="section-label">Climax · Synthèse</span>
+  <h2 class="section-title">Ce qu'on garde</h2>
+  <p class="section-lede">Sept priorités — le cœur de la session. « Ma table » = fil digital imprimé.</p>
+
+  <div class="priority-constellation">
+    <article class="priority">
+      <span class="p-num">I</span>
+      <h4>Cœur digital</h4>
+      <p>Le menu / séjour à table — fil conducteur, pas une app à part.</p>
+    </article>
+    <article class="priority">
+      <span class="p-num">II</span>
+      <h4>Flux scan</h4>
+      <p>Un scan, session continue. Menu → commande → service → avis.</p>
+    </article>
+    <article class="priority">
+      <span class="p-num">III</span>
+      <h4>2ᵉ visite</h4>
+      <p>Mémoire des goûts &amp; préférés — pas tracking intrusif, pas allergies en V1.</p>
+    </article>
+    <article class="priority">
+      <span class="p-num">IV</span>
+      <h4>Peur surcharge</h4>
+      <p>0 compte, 0 texte forcé, 0 popup. Skip partout. Micro-missions.</p>
+    </article>
+    <article class="priority">
+      <span class="p-num">V</span>
+      <h4>2 QR imprimés</h4>
+      <p>1. Wi-Fi · 2. Ma table — même carte, contraste, numéros grands.</p>
+    </article>
+    <article class="priority">
+      <span class="p-num">VI</span>
+      <h4>Chaleur</h4>
+      <p>Ambiance visuelle + ton du chef. Convertit sans forcer.</p>
+    </article>
+    <article class="priority">
+      <span class="p-num">VII</span>
+      <h4>Succès</h4>
+      <p>Avis + contact après commande, via « Terminer mon expérience ».</p>
+    </article>
+  </div>
+
+  <div class="synthesis-verse reveal">
+    <p>« Ma table » est le fil digital imprimé. Le cœur, c'est le menu-séjour. Le succès, c'est l'avis et le contact après la commande. La deuxième visite se souvient des goûts. L'anti-surcharge bannit compte, texte et popup. La chaleur convertit ; Google vient en douce, après le chef.</p>
+    <p class="link-note">Contrainte durable : les QR sont imprimés — lisibles, contrastés, numérotés, faits pour la table.</p>
+  </div>
+</section>
+
+<footer>
+  <p class="colophon-brand">Résidence Moeris</p>
+  <p>Keepsake de brainstorm · 23 juillet 2026 · BMAD · Mode partenaire</p>
+  <p style="margin-top:.5rem">Source : .memlog.md — rien d'inventé hors session</p>
+</footer>
+
+<script>
+(function () {
+  const els = document.querySelectorAll('.reveal, .thread-node, .priority');
+  const io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  els.forEach(function (el, i) {
+    if (el.classList.contains('thread-node') || el.classList.contains('priority')) {
+      el.style.transitionDelay = (i % 8) * 0.08 + 's';
+    }
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ma table — Accueil (1ère visite) — Phone + Desktop</title>
+<style>
+/*
+  KEY SCREEN — Accueil, 1ère visite (session anonyme fraîche) — REGEN anti-fade 2026-07-24
+  Canonical state: scan QR Ma table → session anonyme s'ouvre, AVANT toute commande.
+  Deux frames : Phone (~390px) ET Desktop (~1100px content), même écran / même fil.
+
+  Illustrates (EXPERIENCE.md):
+    Component Patterns — card-accueil (un CTA principal "Voir le menu", accès secondaire
+      "Service"), illustration-panel (moment illustration dédié n°1, ici réinterprété en
+      pièce maîtresse photo-food : plate-photo + blob organique, énergie Obaa/booking plutôt
+      que personnage plat isolé), button-primary, button-secondary.
+    State Patterns — "Session anonyme fraîche" : illustration + CTA Voir le menu, pas de
+      demande d'identité ; "Avant commande reçue" : barre réduite à Menu|Service.
+    Responsive & Platform — Desktop (>1024px) : "Accueil type landing table (bloc couleur
+      organique + photo plat héroïque + CTA) inspiré Obaa/Medivise", coque max-width ~1100–1200px.
+    Key Flows — Flow 1 (UJ-1) étape 2 : scan → session anonyme → Accueil, un seul CTA.
+
+  Tokens applied (DESIGN.md, thème Citrus) :
+    colors.surface-base #FFFEF8, colors.accent #E8C200 (CTA, texte ink-primary jamais blanc),
+    colors.surface-raised #F5E9B8 (button-secondary), colors.pattern-a #FFE500 /
+    colors.pattern-b #FF8A00 (blobs organiques — ici en blocs pleins façon Obaa, plus la
+    déclinaison basse opacité pour la lueur secondaire), rounded.full (boutons/pilules),
+    rounded.lg (panneaux), elevation.soft (button-secondary, glass-panel desktop),
+    typography.display/body/button-label, spacing.tap-target-min 44px.
+    [ASSUMPTION craft] Le titre "Pose-toi." en composition desktop est agrandi visuellement
+    au-delà de typography.display (28px, échelle mobile DESIGN.md ne couvre pas le desktop) —
+    même police/poids/couleur, taille étendue pour porter la pièce maîtresse desktop.
+
+  Anti-fade craft : plate-photo = dégradés radiaux superposés (bruns/verts/ors, jamais un
+  carré gris plat), blobs organiques (border-radius asymétrique) en aplat pattern-b (bloc
+  Obaa) + halo pattern-a/accent basse opacité, superposition assiette/bloc couleur, glass
+  panel citrus-tinté réservé au desktop (aucun skin violet).
+
+  Fonts: Fredoka (titres) / 'Nunito Sans' (corps) déclarées en premier ; repli système si non
+  installées localement — mock 100% offline, aucune police/CDN chargée depuis le réseau.
+*/
+
+:root{
+  --surface-base:#FFFEF8;
+  --surface-raised:#F5E9B8;
+  --ink-primary:#1A1A00;
+  --ink-secondary:#6B6B3A;
+  --accent:#E8C200;
+  --accent-soft:#FFF3A8;
+  --border:#E8E0B8;
+  --pattern-a:#FFE500;
+  --pattern-b:#FF8A00;
+  --focus-ring:#1A1A00;
+
+  --font-display: 'Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+
+  --radius-sm:8px;
+  --radius-md:16px;
+  --radius-lg:24px;
+  --radius-full:9999px;
+
+  --shadow-soft: 0 2px 12px rgba(26,26,0,0.10);
+}
+
+*{ box-sizing:border-box; }
+html,body{
+  margin:0;
+  padding:0;
+  background:#EDEADB;
+  font-family: var(--font-body);
+}
+body{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  justify-content:center;
+  gap:64px;
+  padding:56px 24px 40px;
+  min-height:100vh;
+}
+
+.frame-col{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+.frame-label{
+  font-family: var(--font-body);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color: var(--ink-secondary);
+  background: var(--surface-raised);
+  padding:6px 16px;
+  border-radius: var(--radius-full);
+}
+
+/* ---------- Plate photo placeholders (anti-fade : jamais un carré gris) ---------- */
+.plate-photo{
+  border-radius:50%;
+  position:relative;
+  flex:0 0 auto;
+  box-shadow:
+    0 22px 44px rgba(26,26,0,0.24),
+    0 0 0 8px var(--surface-base);
+}
+.plate-photo.tone-thieb{
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 16%),
+    radial-gradient(circle at 68% 68%, #5C3A22 0%, rgba(92,58,34,0) 36%),
+    radial-gradient(circle at 22% 68%, #3F6B34 0%, rgba(63,107,52,0) 30%),
+    radial-gradient(circle at 76% 26%, #E8A25F 0%, rgba(232,162,95,0) 42%),
+    radial-gradient(circle at 50% 50%, #F0C46B 0%, #D89A45 55%, #B97A2E 100%);
+}
+.plate-photo.tone-yassa{
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 14%),
+    radial-gradient(circle at 70% 62%, #8A5A20 0%, rgba(138,90,32,0) 34%),
+    radial-gradient(circle at 28% 66%, #C99A3E 0%, rgba(201,154,62,0) 38%),
+    radial-gradient(circle at 50% 50%, #F2D06A 0%, #E0A93F 55%, #B97A22 100%);
+}
+
+/* ---------- Organic citrus blobs ---------- */
+.blob{ position:absolute; }
+.blob-shape-1{ border-radius: 58% 42% 61% 39% / 41% 55% 45% 59%; }
+.blob-shape-2{ border-radius: 42% 58% 38% 62% / 55% 40% 60% 45%; }
+.blob-solid-b{ background: var(--pattern-b); }
+.blob-glow-accent{ background: var(--accent); opacity:0.20; }
+.blob-glow-a{ background: var(--pattern-a); opacity:0.16; }
+
+/* ======================= PHONE ======================= */
+.phone-frame{
+  width:390px;
+  height:844px;
+  background:#141400;
+  border-radius:52px;
+  padding:14px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.30);
+  position:relative;
+}
+.phone-notch{
+  position:absolute;
+  top:14px; left:50%;
+  transform:translateX(-50%);
+  width:120px; height:26px;
+  background:#141400;
+  border-radius:0 0 18px 18px;
+  z-index:5;
+}
+.phone-screen{
+  width:100%; height:100%;
+  background:var(--surface-base);
+  border-radius:38px;
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.status-bar{
+  height:44px;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  font-family: var(--font-body);
+  font-size:13px;
+  font-weight:600;
+  color: var(--ink-primary);
+}
+.screen-content{
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding: 0 20px 18px;
+  position:relative;
+}
+
+/* Pièce maîtresse phone : blob plein + halo + assiette qui déborde */
+.hero-visual{
+  position:relative;
+  width:100%;
+  height:288px;
+  flex:0 0 auto;
+  margin-top:2px;
+}
+.hero-visual .blob-solid-b.phone-main{
+  width:250px; height:220px;
+  top:-6px; right:-36px;
+}
+.hero-visual .blob-glow-accent.phone-glow{
+  width:190px; height:190px;
+  bottom:-24px; left:-40px;
+  border-radius:58% 42% 61% 39% / 41% 55% 45% 59%;
+}
+.hero-visual .blob-glow-a.phone-glow-2{
+  width:70px; height:70px;
+  border-radius:50%;
+  top:6px; left:-6px;
+}
+.hero-visual .plate-photo.phone-plate{
+  width:216px; height:216px;
+  position:absolute;
+  left:50%; top:52px;
+  transform: translateX(-50%);
+  z-index:2;
+}
+
+.headline-block{ width:100%; text-align:center; flex:0 0 auto; }
+.brand-tag{
+  font-family: var(--font-body);
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.02em;
+  color: var(--ink-secondary);
+  text-transform:uppercase;
+  margin:0 0 8px;
+}
+.brand-tag strong{
+  color:var(--accent);
+  background:var(--ink-primary);
+  padding:3px 10px;
+  border-radius:999px;
+  -webkit-text-fill-color:var(--accent);
+}
+h1.display{
+  font-family: var(--font-display);
+  font-size:28px;
+  line-height:34px;
+  font-weight:600;
+  color: var(--ink-primary);
+  margin: 2px 0 8px;
+}
+p.subtext{
+  font-family: var(--font-body);
+  font-size:16px;
+  line-height:24px;
+  font-weight:400;
+  color: var(--ink-secondary);
+  margin:0 0 18px;
+  max-width:280px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.cta-stack{ width:100%; display:flex; flex-direction:column; gap:12px; margin-bottom:8px; flex:0 0 auto; }
+.btn-primary{
+  width:100%;
+  min-height:44px;
+  background: var(--accent);
+  color: var(--ink-primary);
+  font-family: var(--font-body);
+  font-size:16px;
+  font-weight:700;
+  line-height:20px;
+  border:none;
+  border-radius: var(--radius-full);
+  cursor:pointer;
+}
+.btn-primary:focus-visible{ outline: 2px solid var(--focus-ring); outline-offset:2px; }
+.btn-secondary{
+  width:100%;
+  min-height:44px;
+  background: var(--surface-raised);
+  color: var(--ink-primary);
+  font-family: var(--font-body);
+  font-size:16px;
+  font-weight:700;
+  line-height:20px;
+  border:1px solid var(--border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-soft);
+  cursor:pointer;
+}
+.btn-secondary:focus-visible{ outline: 2px solid var(--focus-ring); outline-offset:2px; }
+
+.tab-bar{ flex:0 0 auto; display:flex; border-top:1px solid var(--border); background: var(--surface-base); }
+.tab-item{
+  flex:1; min-height:56px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  font-family: var(--font-body); font-size:12px; font-weight:600; letter-spacing:0.02em;
+  color: var(--ink-secondary);
+}
+.tab-item.is-active{ color: var(--ink-primary); }
+.tab-item .tab-dot{ width:6px; height:6px; border-radius:50%; background: transparent; }
+.tab-item.is-active .tab-dot{ background: var(--accent); }
+
+/* ======================= DESKTOP ======================= */
+.browser-frame{
+  width:1160px;
+  max-width:96vw;
+  background: var(--surface-base);
+  border-radius:20px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.28);
+  overflow:hidden;
+}
+.browser-toolbar{
+  height:44px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:0 14px;
+  background:#E4E0CB;
+  border-bottom:1px solid #CFCAAE;
+}
+.traffic-lights{ display:flex; gap:7px; }
+.traffic-lights span{ width:11px; height:11px; border-radius:50%; display:block; }
+.tl-1{ background:#ED6A5E; } .tl-2{ background:#F4BF4F; } .tl-3{ background:#61C554; }
+.addr-bar{
+  flex:1 1 auto; height:26px; background:#FFFEF8; border:1px solid #CFCAAE; border-radius:7px;
+  display:flex; align-items:center; padding:0 12px; font-family: var(--font-body);
+  font-size:12px; color: var(--ink-secondary); gap:6px;
+}
+
+.desktop-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 56px 8px;
+  position:relative; z-index:3;
+}
+.desktop-brand{
+  font-family: var(--font-display); font-size:20px; font-weight:600; color: var(--ink-primary);
+  display:flex; align-items:center; gap:10px;
+}
+.desktop-brand .dot-accent{ width:10px; height:10px; border-radius:50%; background:var(--accent); display:inline-block; }
+.desktop-nav{ display:flex; align-items:center; gap:36px; }
+.desktop-nav .nav-link{
+  font-family: var(--font-body); font-size:14px; font-weight:700; color: var(--ink-secondary);
+  position:relative; padding-bottom:4px;
+}
+.desktop-nav .nav-link.is-active{ color: var(--ink-primary); }
+.desktop-nav .nav-link.is-active::after{
+  content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px;
+  background:var(--accent); border-radius:999px;
+}
+
+/* Split composition — Obaa-style : bloc organique + assiette héroïque | copie + CTA */
+.hero-split{
+  display:flex;
+  align-items:center;
+  padding: 16px 56px 60px;
+  min-height:520px;
+  position:relative;
+  gap:24px;
+}
+.hero-visual-desktop{
+  flex: 0 0 44%;
+  position:relative;
+  height:460px;
+}
+.hero-visual-desktop .blob-glow-accent.d-back{
+  width:420px; height:420px;
+  top:-10px; left:-40px;
+  border-radius: 42% 58% 38% 62% / 55% 40% 60% 45%;
+}
+.hero-visual-desktop .blob-solid-b.d-main{
+  width:360px; height:400px;
+  top:20px; left:10px;
+}
+.hero-visual-desktop .plate-photo.d-plate-main{
+  width:300px; height:300px;
+  position:absolute;
+  top:56px; right:-70px;
+  z-index:2;
+}
+.hero-visual-desktop .plate-photo.d-plate-small{
+  width:150px; height:150px;
+  position:absolute;
+  bottom:0px; left:8px;
+  z-index:3;
+}
+.hero-visual-desktop .blob-glow-a.d-spark{
+  width:26px; height:26px; border-radius:50%;
+  top:24px; right:60px;
+}
+.hero-visual-desktop .blob-glow-a.d-spark2{
+  width:16px; height:16px; border-radius:50%;
+  bottom:60px; right:20px;
+  background:var(--accent); opacity:0.9;
+}
+
+.hero-copy{ flex:1 1 56%; position:relative; z-index:2; }
+.glass-panel{
+  background: rgba(255,243,168,0.42);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border:1px solid rgba(255,255,255,0.65);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding:44px 48px;
+  max-width:460px;
+}
+.glass-panel .brand-tag{ margin-bottom:12px; }
+h1.display-desktop{
+  font-family: var(--font-display);
+  font-weight:600;
+  color: var(--ink-primary);
+  font-size:46px;
+  line-height:50px;
+  margin:0 0 16px;
+}
+p.subtext-desktop{
+  font-family: var(--font-body);
+  font-size:17px;
+  line-height:26px;
+  color: var(--ink-secondary);
+  margin:0 0 32px;
+  max-width:380px;
+}
+.cta-row{ display:flex; gap:16px; flex-wrap:wrap; }
+.cta-row .btn-primary, .cta-row .btn-secondary{ width:auto; padding:0 30px; }
+
+.caption{
+  width:100%;
+  text-align:center;
+  font-family: var(--font-body);
+  font-size:12px;
+  color:#8a8a5a;
+  margin-top:8px;
+}
+</style>
+</head>
+<body>
+
+<div class="frame-col">
+  <p class="frame-label">Phone · ~390px</p>
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+
+      <div class="status-bar">
+        <span>9:41</span>
+        <span>●●●●</span>
+      </div>
+
+      <div class="screen-content">
+        <!-- illustration-panel réinterprété : blob organique plein + halo + assiette héroïque -->
+        <div class="hero-visual" aria-hidden="true">
+          <div class="blob blob-solid-b blob-shape-1 phone-main"></div>
+          <div class="blob blob-glow-accent phone-glow"></div>
+          <div class="blob blob-glow-a phone-glow-2"></div>
+          <div class="plate-photo tone-thieb phone-plate"></div>
+        </div>
+
+        <div class="headline-block">
+          <p class="brand-tag"><strong>Ma table</strong> · Résidence Moeris</p>
+          <h1 class="display">Pose-toi.</h1>
+          <p class="subtext">Bienvenue à table. On s'occupe de toi.</p>
+        </div>
+
+        <div class="cta-stack">
+          <button class="btn-primary">Voir le menu</button>
+          <button class="btn-secondary">J'ai besoin de quelque chose</button>
+        </div>
+      </div>
+
+      <nav class="tab-bar" aria-label="Navigation Ma table">
+        <div class="tab-item is-active"><span class="tab-dot"></span>Menu</div>
+        <div class="tab-item"><span class="tab-dot"></span>Service</div>
+      </nav>
+
+    </div>
+  </div>
+</div>
+
+<div class="frame-col">
+  <p class="frame-label">Desktop · ~1100px</p>
+  <div class="browser-frame">
+    <div class="browser-toolbar">
+      <div class="traffic-lights"><span class="tl-1"></span><span class="tl-2"></span><span class="tl-3"></span></div>
+      <div class="addr-bar"><span>🔒</span>matable.residence-moeris.local</div>
+    </div>
+
+    <header class="desktop-header">
+      <div class="desktop-brand"><span class="dot-accent"></span>Ma table</div>
+      <nav class="desktop-nav" aria-label="Navigation Ma table">
+        <span class="nav-link is-active">Menu</span>
+        <span class="nav-link">Service</span>
+      </nav>
+    </header>
+
+    <div class="hero-split">
+      <!-- illustration-panel réinterprété desktop : composition split façon Obaa -->
+      <div class="hero-visual-desktop" aria-hidden="true">
+        <div class="blob blob-glow-accent d-back"></div>
+        <div class="blob blob-solid-b blob-shape-2 d-main"></div>
+        <div class="blob blob-glow-a d-spark"></div>
+        <div class="blob blob-glow-a d-spark2"></div>
+        <div class="plate-photo tone-thieb d-plate-main"></div>
+        <div class="plate-photo tone-yassa d-plate-small"></div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="glass-panel">
+          <p class="brand-tag"><strong>Ma table</strong> · Résidence Moeris</p>
+          <h1 class="display-desktop">Pose-toi.</h1>
+          <p class="subtext-desktop">Bienvenue à table. On s'occupe de toi.</p>
+          <div class="cta-row">
+            <button class="btn-primary">Voir le menu</button>
+            <button class="btn-secondary">J'ai besoin de quelque chose</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="caption">2ᵉ visite (mémoire) : même écran + bloc « Bon retour » (Préférés, Goûts cuisine en 1 tap) — non illustré ici, un seul état canonique par fichier.</p>
+
+</body>
+</html>

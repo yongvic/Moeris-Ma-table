@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ma table — BO Commandes</title>
+<style>
+/*
+  KEY SCREEN — Back-office salle, onglet Commandes (desktop, staff authentifié) — REGEN
+  anti-fade 2026-07-24. Chrome navigateur desktop uniquement (pas de layout mobile BO en V1).
+  Canonical state : file de commandes en cours de soirée, 3 statuts (reçue, en préparation,
+  servie), goûts cuisine visibles sans quitter la fiche — Table 5 porte le goût « sans piment ».
+
+  Illustrates (EXPERIENCE.md):
+    Information Architecture — BO Commandes : "Voir les commandes entrantes par
+      table/session, Goûts cuisine inline, statut (reçue / en préparation / servie)."
+    Component Patterns — carte-commande-bo (table/session identifiable, Goûts cuisine visibles
+      sans quitter la fiche, statut en 3 crans, + mini plate-photo par ligne de plat pour une
+      lecture plus rapide, cohérente avec l'univers photo-food client — polish "salle", pas un
+      admin gris) ; status-pill-bo (reçue = accent-soft, en préparation = accent, servie =
+      surface-raised + texte ink-secondary, label texte toujours visible).
+    Responsive & Platform — desktop/tablette, clavier + souris, un seul shell à onglets.
+    Accessibility Floor — statuts distinguables sans dépendre de la couleur seule (texte +
+      couleur) ; focus clavier visible (colors.focus-ring, 2px + offset), démontré sur une action.
+    Key Flows — Flow 3 (UJ-3) étape 3-4 : commandes classées par table/session, Goûts cuisine
+      affichés inline, progression du statut reçue → en préparation → servie.
+
+  Tokens applied (DESIGN.md) :
+    colors.surface-base (fond général), colors.surface-raised (carte-commande-bo, statut
+    "servie"), colors.accent (statut "en préparation"), colors.accent-soft (statut "reçue",
+    chip-gout, halo de marque sidebar), colors.ink-secondary (texte secondaire/méta),
+    colors.border (séparateurs), colors.focus-ring (focus clavier), rounded.md (cartes),
+    rounded.full (pilules/chips), typography.title/body/body-sm/button-label.
+
+  Anti-fade craft (registre "salle", plus sobre que le client mais jamais gris/plat) : mini
+  plate-photo (dégradés radiaux) par ligne de plat, blob de marque discret dans la sidebar,
+  bandeau de synthèse par statut en tête d'écran pour une hiérarchie immédiate.
+
+  Fonts: Fredoka (titres) / 'Nunito Sans' (corps) déclarées en premier ; repli système si non
+  installées localement — mock 100% offline, aucune police/CDN chargée depuis le réseau.
+*/
+
+:root{
+  --surface-base:#FFFEF8;
+  --surface-raised:#F5E9B8;
+  --ink-primary:#1A1A00;
+  --ink-secondary:#6B6B3A;
+  --accent:#E8C200;
+  --accent-soft:#FFF3A8;
+  --border:#E8E0B8;
+  --pattern-a:#FFE500;
+  --pattern-b:#FF8A00;
+  --focus-ring:#1A1A00;
+
+  --font-display: 'Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+
+  --radius-sm:8px;
+  --radius-md:16px;
+  --radius-lg:24px;
+  --radius-full:9999px;
+
+  --shadow-soft: 0 2px 12px rgba(26,26,0,0.10);
+}
+
+*{ box-sizing:border-box; }
+html,body{
+  margin:0; padding:0; background:#DCD8C4; font-family: var(--font-body);
+  display:flex; align-items:center; justify-content:center; min-height:100vh;
+}
+
+/* ---------- Mini plate photos (lignes de commande) ---------- */
+.mini-plate{ border-radius:50%; flex:0 0 auto; box-shadow: 0 4px 10px rgba(26,26,0,0.18), 0 0 0 3px var(--surface-base); }
+.mini-plate.tone-thieb{
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 18%),
+    radial-gradient(circle at 68% 68%, #5C3A22 0%, rgba(92,58,34,0) 40%),
+    radial-gradient(circle at 22% 68%, #3F6B34 0%, rgba(63,107,52,0) 34%),
+    radial-gradient(circle at 76% 26%, #E8A25F 0%, rgba(232,162,95,0) 46%),
+    radial-gradient(circle at 50% 50%, #F0C46B 0%, #D89A45 55%, #B97A2E 100%);
+}
+.mini-plate.tone-yassa{
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 16%),
+    radial-gradient(circle at 70% 62%, #8A5A20 0%, rgba(138,90,32,0) 38%),
+    radial-gradient(circle at 28% 66%, #C99A3E 0%, rgba(201,154,62,0) 40%),
+    radial-gradient(circle at 50% 50%, #F2D06A 0%, #E0A93F 55%, #B97A22 100%);
+}
+.mini-plate.tone-mafe{
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 16%),
+    radial-gradient(circle at 68% 68%, #C97B3E 0%, rgba(201,123,62,0) 38%),
+    radial-gradient(circle at 50% 50%, #6B4426 0%, #4A2E18 60%, #3A2412 100%);
+}
+
+/* Browser chrome */
+.browser-frame{ width:1220px; max-width:96vw; background:#EDEADB; border-radius:14px; box-shadow: 0 30px 70px rgba(0,0,0,0.28); overflow:hidden; }
+.browser-toolbar{ height:44px; display:flex; align-items:center; gap:16px; padding:0 14px; background:#E4E0CB; border-bottom:1px solid #CFCAAE; }
+.traffic-lights{ display:flex; gap:7px; }
+.traffic-lights span{ width:11px; height:11px; border-radius:50%; display:block; }
+.tl-1{ background:#ED6A5E; } .tl-2{ background:#F4BF4F; } .tl-3{ background:#61C554; }
+.addr-bar{ flex:1 1 auto; height:26px; background:#FFFEF8; border:1px solid #CFCAAE; border-radius:7px; display:flex; align-items:center; padding:0 12px; font-family: var(--font-body); font-size:12px; color: var(--ink-secondary); gap:6px; }
+
+.bo-shell{ display:flex; min-height:700px; }
+
+/* Sidebar — un seul shell à onglets, blob de marque discret pour ne pas être un admin gris */
+.bo-sidebar{ width:224px; flex:0 0 auto; background: var(--surface-base); border-right:1px solid var(--border); padding:24px 0; position:relative; overflow:hidden; }
+.bo-sidebar-blob{
+  position:absolute; top:-40px; left:-50px; width:180px; height:150px;
+  background: var(--accent-soft); opacity:0.7;
+  border-radius: 58% 42% 61% 39% / 41% 55% 45% 59%;
+  z-index:0;
+}
+.bo-brand{ font-family: var(--font-display); font-size:20px; font-weight:600; color: var(--ink-primary); padding:0 24px 20px; position:relative; z-index:1; display:flex; align-items:center; gap:8px; }
+.bo-brand .dot-accent{ width:9px; height:9px; border-radius:50%; background:var(--accent); display:inline-block; }
+.bo-brand span{ display:block; font-family: var(--font-body); font-size:11px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; color: var(--ink-secondary); margin-top:2px; }
+.bo-nav{ display:flex; flex-direction:column; position:relative; z-index:1; }
+.bo-nav-item{ padding:13px 24px; font-family: var(--font-body); font-size:15px; font-weight:600; color: var(--ink-secondary); border-left:3px solid transparent; cursor:default; }
+.bo-nav-item.is-active{ color: var(--ink-primary); background: var(--accent-soft); border-left:3px solid var(--accent); }
+.bo-nav-item:focus-visible{ outline:2px solid var(--focus-ring); outline-offset:-2px; }
+.bo-staff{ margin-top:220px; padding:16px 24px 0; font-family: var(--font-body); font-size:12px; color: var(--ink-secondary); border-top:1px solid var(--border); position:relative; z-index:1; }
+
+.bo-main{ flex:1 1 auto; padding:28px 32px 32px; overflow-y:auto; }
+.bo-header{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:20px; }
+h1.bo-title{ font-family: var(--font-display); font-size:22px; line-height:28px; font-weight:600; color: var(--ink-primary); margin:0; }
+p.bo-sub{ font-family: var(--font-body); font-size:14px; color: var(--ink-secondary); margin:4px 0 0; }
+.bo-live{ display:flex; align-items:center; gap:6px; font-family: var(--font-body); font-size:12px; font-weight:600; color: var(--ink-secondary); letter-spacing:0.02em; }
+.bo-live .dot{ width:8px; height:8px; border-radius:50%; background:#3FA34D; }
+
+/* Bandeau de synthèse — hiérarchie immédiate, pas un tableau gris */
+.stats-row{ display:grid; grid-template-columns: repeat(3,1fr); gap:16px; margin-bottom:24px; }
+.stat-card{ background: var(--surface-base); border:1px solid var(--border); border-radius: var(--radius-md); padding:16px 18px; box-shadow: var(--shadow-soft); display:flex; align-items:center; gap:14px; }
+.stat-dot{ width:14px; height:14px; border-radius:50%; flex:0 0 auto; }
+.stat-dot.recue{ background: var(--accent-soft); border:2px solid var(--ink-secondary); }
+.stat-dot.en-prep{ background: var(--accent); }
+.stat-dot.servie{ background: var(--surface-raised); border:2px solid var(--border); }
+.stat-num{ font-family: var(--font-display); font-size:22px; font-weight:600; color: var(--ink-primary); margin:0; line-height:1; }
+.stat-label{ font-family: var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.02em; color: var(--ink-secondary); text-transform:uppercase; margin:2px 0 0; }
+
+.orders-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+
+/* carte-commande-bo */
+.order-card{ background: var(--surface-raised); border-radius: var(--radius-md); padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow: var(--shadow-soft); }
+.order-top{ display:flex; align-items:flex-start; justify-content:space-between; }
+.order-table{ font-family: var(--font-display); font-size:18px; font-weight:600; color: var(--ink-primary); margin:0; }
+.order-session{ font-family: var(--font-body); font-size:12px; font-weight:600; letter-spacing:0.02em; color: var(--ink-secondary); margin:2px 0 0; }
+
+.status-pill{ font-family: var(--font-body); font-size:12px; font-weight:700; letter-spacing:0.02em; padding:5px 12px; border-radius: var(--radius-full); white-space:nowrap; }
+.status-pill.recue{ background: var(--accent-soft); color: var(--ink-secondary); }
+.status-pill.en-prep{ background: var(--accent); color: var(--ink-primary); }
+.status-pill.servie{ background: var(--surface-base); color: var(--ink-secondary); border:1px solid var(--border); }
+
+.order-items{ display:flex; flex-direction:column; gap:10px; }
+.order-item{ display:flex; align-items:center; gap:10px; }
+.order-item-text{ display:flex; flex-direction:column; }
+.order-item-text .name{ font-family: var(--font-body); font-size:15px; font-weight:600; color: var(--ink-primary); }
+.order-item-text .qty{ font-family: var(--font-body); font-size:12px; color: var(--ink-secondary); }
+
+.gout-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+.gout-chip{ background: var(--accent-soft); color: var(--ink-primary); font-family: var(--font-body); font-size:12px; font-weight:600; padding:4px 10px; border-radius: var(--radius-full); }
+
+.order-footer{ margin-top:2px; display:flex; align-items:center; justify-content:space-between; }
+.order-time{ font-family: var(--font-body); font-size:12px; color: var(--ink-secondary); }
+.bo-action{ font-family: var(--font-body); font-size:13px; font-weight:700; color: var(--ink-primary); background: var(--surface-base); border:1px solid var(--border); padding:7px 14px; border-radius: var(--radius-full); cursor:default; }
+.bo-action.is-focus-demo{ outline:2px solid var(--focus-ring); outline-offset:2px; }
+
+.caption{ text-align:center; font-family: var(--font-body); font-size:12px; color:#6f6a4a; margin-top:14px; }
+</style>
+</head>
+<body>
+
+<div>
+  <div class="browser-frame">
+    <div class="browser-toolbar">
+      <div class="traffic-lights"><span class="tl-1"></span><span class="tl-2"></span><span class="tl-3"></span></div>
+      <div class="addr-bar"><span>🔒</span>bo.residence-moeris.local/commandes</div>
+    </div>
+
+    <div class="bo-shell">
+      <aside class="bo-sidebar">
+        <div class="bo-sidebar-blob" aria-hidden="true"></div>
+        <div class="bo-brand"><span class="dot-accent"></span>Ma table<span>Back-office salle</span></div>
+        <nav class="bo-nav" aria-label="Sections Back-office">
+          <div class="bo-nav-item">Menu</div>
+          <div class="bo-nav-item is-active" tabindex="0">Commandes</div>
+          <div class="bo-nav-item">Service</div>
+        </nav>
+        <div class="bo-staff">Connecté·e — Salle · Aïssatou</div>
+      </aside>
+
+      <main class="bo-main">
+        <div class="bo-header">
+          <div>
+            <h1 class="bo-title">Commandes</h1>
+            <p class="bo-sub">Résidence Moeris · service du soir</p>
+          </div>
+          <div class="bo-live"><span class="dot"></span>Mise à jour en temps réel</div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card"><span class="stat-dot recue"></span><div><p class="stat-num">1</p><p class="stat-label">Reçue</p></div></div>
+          <div class="stat-card"><span class="stat-dot en-prep"></span><div><p class="stat-num">1</p><p class="stat-label">En préparation</p></div></div>
+          <div class="stat-card"><span class="stat-dot servie"></span><div><p class="stat-num">1</p><p class="stat-label">Servie</p></div></div>
+        </div>
+
+        <div class="orders-grid">
+          <!-- carte-commande-bo : statut "reçue", goût "sans piment" -->
+          <div class="order-card">
+            <div class="order-top">
+              <div>
+                <p class="order-table">Table 5</p>
+                <p class="order-session">Session #482</p>
+              </div>
+              <span class="status-pill recue">Reçue</span>
+            </div>
+            <div class="order-items">
+              <div class="order-item">
+                <div class="mini-plate tone-thieb" style="width:40px;height:40px;"></div>
+                <div class="order-item-text"><span class="name">Thiéboudienne</span><span class="qty">1×</span></div>
+              </div>
+              <div class="order-item">
+                <div class="mini-plate tone-yassa" style="width:40px;height:40px;"></div>
+                <div class="order-item-text"><span class="name">Yassa poulet</span><span class="qty">1×</span></div>
+              </div>
+            </div>
+            <div class="gout-chips">
+              <span class="gout-chip">Sans piment</span>
+            </div>
+            <div class="order-footer">
+              <span class="order-time">Reçue il y a 2 min</span>
+              <button class="bo-action">Préparer</button>
+            </div>
+          </div>
+
+          <!-- carte-commande-bo : statut "en préparation" -->
+          <div class="order-card">
+            <div class="order-top">
+              <div>
+                <p class="order-table">Table 12</p>
+                <p class="order-session">Session #479</p>
+              </div>
+              <span class="status-pill en-prep">En préparation</span>
+            </div>
+            <div class="order-items">
+              <div class="order-item">
+                <div class="mini-plate tone-mafe" style="width:40px;height:40px;"></div>
+                <div class="order-item-text"><span class="name">Mafé bœuf</span><span class="qty">2×</span></div>
+              </div>
+            </div>
+            <div class="gout-chips">
+              <span class="gout-chip">Sauce à part</span>
+            </div>
+            <div class="order-footer">
+              <span class="order-time">En cuisine depuis 6 min</span>
+              <button class="bo-action is-focus-demo">Marquer servie</button>
+            </div>
+          </div>
+
+          <!-- carte-commande-bo : statut "servie" -->
+          <div class="order-card">
+            <div class="order-top">
+              <div>
+                <p class="order-table">Table 3</p>
+                <p class="order-session">Session #471</p>
+              </div>
+              <span class="status-pill servie">Servie</span>
+            </div>
+            <div class="order-items">
+              <div class="order-item">
+                <div class="mini-plate tone-thieb" style="width:40px;height:40px;"></div>
+                <div class="order-item-text"><span class="name">Thiéboudienne</span><span class="qty">1×</span></div>
+              </div>
+            </div>
+            <div class="gout-chips">
+              <span class="gout-chip">Sans arachide</span>
+            </div>
+            <div class="order-footer">
+              <span class="order-time">Servie il y a 14 min</span>
+              <button class="bo-action">Voir la fiche</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <p class="caption">Focus clavier visible (contour ink-primary, 2px + offset) démontré sur « Marquer servie » — un seul état canonique par fichier.</p>
+</div>
+
+</body>
+</html>

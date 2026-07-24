@@ -1,0 +1,45 @@
+// prisma/schema.prisma — Table + Session only (story 1.2)
+// URL lives in prisma.config.ts (Prisma 7)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Table {
+  id        String    @id // tableId QR stable (ex. "t-1")
+  label     String?
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+}
+
+model Session {
+  id        String        @id @default(cuid())
+  tableId   String
+  table     Table         @relation(fields: [tableId], references: [id])
+  opaqueKey String        @unique // cookie opaque value
+  status    SessionStatus @default(ACTIVE)
+  step      SessionStep   @default(WELCOME)
+  cartJson  Json          @default("{}") // AD-18 — empty in 1.2
+  expiresAt DateTime
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([tableId, status])
+}
+
+enum SessionStatus {
+  ACTIVE
+  CLOSED
+  EXPIRED
+}
+
+enum SessionStep {
+  WELCOME
+  MENU
+  ORDER
+  END
+}

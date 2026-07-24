@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ma table — Thèmes couleur V1</title>
+<style>
+  /* ============================================================
+     Ma table — Résidence Moeris · Color themes V1 (light only)
+     Ambiance F: frais & contemporain — blanc dominant, accents vifs
+     ============================================================ */
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #F0F2F5;
+    color: #1A1A1A;
+    line-height: 1.45;
+    padding: 24px 16px 48px;
+  }
+
+  .page-head {
+    max-width: 1280px;
+    margin: 0 auto 28px;
+  }
+  .page-head h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .page-head p {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #333;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 4px 10px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .theme {
+    background: #fff;
+    border: 1px solid #D8DCE3;
+    overflow: hidden;
+  }
+
+  .theme-meta {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid #E8EAEF;
+  }
+  .theme-meta h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .theme-meta .register {
+    margin-top: 4px;
+    font-size: 0.82rem;
+    color: #5A5A5A;
+  }
+
+  .tokens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 16px;
+    background: #FAFBFC;
+    border-bottom: 1px solid #E8EAEF;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", Menlo, Consolas, monospace;
+    color: #333;
+    background: #fff;
+    border: 1px solid #D0D4DC;
+    padding: 3px 7px 3px 4px;
+    border-radius: 3px;
+  }
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+
+  .snippet-wrap {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Shared phone chrome */
+  .phone {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1.5px solid #C8CDD6;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .phone-bar {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    opacity: 0.7;
+  }
+  .phone-body {
+    padding: 18px 16px 20px;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-bottom: 14px;
+  }
+  .greeting {
+    font-size: 1.75rem;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .sub {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    max-width: 22ch;
+  }
+  .pattern-strip {
+    height: 52px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Simple 2D character mark (CSS shapes) — warmth via illustration, not brown palette */
+  .char {
+    position: absolute;
+    right: 10px;
+    bottom: 4px;
+    width: 36px;
+    height: 40px;
+  }
+  .char-head {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin: 0 auto 2px;
+  }
+  .char-body {
+    width: 24px;
+    height: 18px;
+    border-radius: 8px 8px 4px 4px;
+    margin: 0 auto;
+  }
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 16px 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: default;
+    letter-spacing: -0.01em;
+  }
+  .btn-primary { color: #fff; }
+  .btn-secondary {
+    background: transparent;
+    border: 2px solid;
+    font-weight: 650;
+  }
+
+  /* ============================================================
+     V1 · AURORA
+     Register: rubans abstraits jaunes / oranges / pourpres / bleus
+     surface-base:  #FFFFFF
+     surface-raised:#F7F8FC
+     ink-primary:   #12131A
+     ink-secondary: #5B6178
+     accent:        #5B4CFF
+     accent-soft:   #EEECFF
+     border:        #E2E4EF
+     pattern-a:     #FFB020
+     pattern-b:     #7B5CFF
+     ============================================================ */
+  .v1 .phone { background: #FFFFFF; }
+  .v1 .phone-bar { background: #F7F8FC; color: #12131A; }
+  .v1 .phone-body { background: #FFFFFF; color: #12131A; }
+  .v1 .sub { color: #5B6178; }
+  .v1 .pattern-strip {
+    background:
+      radial-gradient(ellipse 80% 120% at 10% 80%, #FFB020 0%, transparent 55%),
+      radial-gradient(ellipse 70% 100% at 70% 20%, #FF6B3D 0%, transparent 50%),
+      radial-gradient(ellipse 60% 90% at 95% 70%, #7B5CFF 0%, transparent 55%),
+      linear-gradient(115deg, #FFE8A3 0%, #C9B8FF 45%, #8EC5FF 100%);
+  }
+  .v1 .char-head { background: #12131A; }
+  .v1 .char-body { background: #5B4CFF; }
+  .v1 .btn-primary { background: #5B4CFF; }
+  .v1 .btn-secondary { color: #12131A; border-color: #E2E4EF; background: #F7F8FC; }
+
+  /* ============================================================
+     V2 · CITRUS
+     Register: zeste électrique — citron vif sur blanc clinique
+     surface-base:  #FFFEF8
+     surface-raised:#FFF8DC
+     ink-primary:   #1A1A00
+     ink-secondary: #6B6B3A
+     accent:        #E8C200
+     accent-soft:   #FFF3A8
+     border:        #E8E0B8
+     pattern-a:     #FFE500
+     pattern-b:     #FF8A00
+     ============================================================ */
+  .v2 .phone { background: #FFFEF8; }
+  .v2 .phone-bar { background: #FFF8DC; color: #1A1A00; }
+  .v2 .phone-body { background: #FFFEF8; color: #1A1A00; }
+  .v2 .sub { color: #6B6B3A; }
+  .v2 .pattern-strip {
+    background:
+      radial-gradient(circle at 20% 50%, #FFE500 0%, transparent 45%),
+      radial-gradient(circle at 80% 30%, #FF8A00 0%, transparent 40%),
+      linear-gradient(100deg, #FFF3A8 0%, #FFE500 50%, #FFB347 100%);
+  }
+  .v2 .char-head { background: #1A1A00; }
+  .v2 .char-body { background: #FF8A00; }
+  .v2 .btn-primary { background: #1A1A00; color: #FFE500; }
+  .v2 .btn-secondary { color: #1A1A00; border-color: #E8E0B8; background: #FFF8DC; }
+
+  /* ============================================================
+     V3 · LAGOON
+     Register: lagon clair — cyan profond, eau vive, blanc net
+     surface-base:  #F5FCFF
+     surface-raised:#E6F7FB
+     ink-primary:   #062A33
+     ink-secondary: #3D6A75
+     accent:        #008C9E
+     accent-soft:   #D4F4F8
+     border:        #B8DCE4
+     pattern-a:     #00D4C8
+     pattern-b:     #0077B6
+     ============================================================ */
+  .v3 .phone { background: #F5FCFF; }
+  .v3 .phone-bar { background: #E6F7FB; color: #062A33; }
+  .v3 .phone-body { background: #F5FCFF; color: #062A33; }
+  .v3 .sub { color: #3D6A75; }
+  .v3 .pattern-strip {
+    background:
+      radial-gradient(ellipse 90% 80% at 15% 90%, #00D4C8 0%, transparent 50%),
+      radial-gradient(ellipse 70% 100% at 85% 10%, #0077B6 0%, transparent 50%),
+      linear-gradient(125deg, #B8F0EC 0%, #7DD3E8 40%, #4BA3C7 100%);
+  }
+  .v3 .char-head { background: #062A33; }
+  .v3 .char-body { background: #008C9E; }
+  .v3 .btn-primary { background: #008C9E; }
+  .v3 .btn-secondary { color: #062A33; border-color: #B8DCE4; background: #E6F7FB; }
+
+  /* ============================================================
+     V4 · INK-POP
+     Register: encre noire + accent magenta électrique (pop graphique)
+     surface-base:  #FFFFFF
+     surface-raised:#F3F3F3
+     ink-primary:   #0A0A0A
+     ink-secondary: #4A4A4A
+     accent:        #E1006A
+     accent-soft:   #FFE0EE
+     border:        #CFCFCF
+     pattern-a:     #FF2D95
+     pattern-b:     #1A1A1A
+     ============================================================ */
+  .v4 .phone { background: #FFFFFF; }
+  .v4 .phone-bar { background: #F3F3F3; color: #0A0A0A; }
+  .v4 .phone-body { background: #FFFFFF; color: #0A0A0A; }
+  .v4 .sub { color: #4A4A4A; }
+  .v4 .pattern-strip {
+    background:
+      radial-gradient(circle at 25% 70%, #FF2D95 0%, transparent 42%),
+      radial-gradient(circle at 75% 25%, #1A1A1A 0%, transparent 38%),
+      linear-gradient(90deg, #FFE0EE 0%, #FFB3D4 35%, #E1006A 70%, #1A1A1A 100%);
+  }
+  .v4 .char-head { background: #0A0A0A; }
+  .v4 .char-body { background: #E1006A; }
+  .v4 .btn-primary { background: #E1006A; }
+  .v4 .btn-secondary { color: #0A0A0A; border-color: #CFCFCF; background: #F3F3F3; }
+
+  /* ============================================================
+     V5 · BERRY
+     Register: baie nocturne — violet profond, rose fruité, blanc
+     surface-base:  #FDFAFF
+     surface-raised:#F5ECFF
+     ink-primary:   #1E0A2E
+     ink-secondary: #6B4A7A
+     accent:        #8B2FC9
+     accent-soft:   #F0D9FF
+     border:        #DCC8EB
+     pattern-a:     #C44DFF
+     pattern-b:     #FF4D8D
+     ============================================================ */
+  .v5 .phone { background: #FDFAFF; }
+  .v5 .phone-bar { background: #F5ECFF; color: #1E0A2E; }
+  .v5 .phone-body { background: #FDFAFF; color: #1E0A2E; }
+  .v5 .sub { color: #6B4A7A; }
+  .v5 .pattern-strip {
+    background:
+      radial-gradient(ellipse 80% 90% at 20% 20%, #C44DFF 0%, transparent 50%),
+      radial-gradient(ellipse 70% 80% at 90% 80%, #FF4D8D 0%, transparent 50%),
+      linear-gradient(135deg, #F0D9FF 0%, #D4A0F0 40%, #9B5DE5 100%);
+  }
+  .v5 .char-head { background: #1E0A2E; }
+  .v5 .char-body { background: #8B2FC9; }
+  .v5 .btn-primary { background: #8B2FC9; }
+  .v5 .btn-secondary { color: #1E0A2E; border-color: #DCC8EB; background: #F5ECFF; }
+
+  /* ============================================================
+     V6 · LIME
+     Register: citron vert acidulé — lime flash + encre froide
+     surface-base:  #FAFFF5
+     surface-raised:#EEFCE0
+     ink-primary:   #0F1A0A
+     ink-secondary: #4A5C3A
+     accent:        #6BCB1F
+     accent-soft:   #E2F9C8
+     border:        #C5DDB0
+     pattern-a:     #B8F000
+     pattern-b:     #00BFA5
+     ============================================================ */
+  .v6 .phone { background: #FAFFF5; }
+  .v6 .phone-bar { background: #EEFCE0; color: #0F1A0A; }
+  .v6 .phone-body { background: #FAFFF5; color: #0F1A0A; }
+  .v6 .sub { color: #4A5C3A; }
+  .v6 .pattern-strip {
+    background:
+      radial-gradient(circle at 15% 40%, #B8F000 0%, transparent 45%),
+      radial-gradient(circle at 85% 70%, #00BFA5 0%, transparent 42%),
+      linear-gradient(110deg, #E2F9C8 0%, #B8F000 55%, #7DDFC0 100%);
+  }
+  .v6 .char-head { background: #0F1A0A; }
+  .v6 .char-body { background: #6BCB1F; }
+  .v6 .btn-primary { background: #0F1A0A; color: #B8F000; }
+  .v6 .btn-secondary { color: #0F1A0A; border-color: #C5DDB0; background: #EEFCE0; }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>Ma table — Thèmes couleur</h1>
+  <p>Résidence Moeris · Ambiance F (frais &amp; contemporain) · Light V1 uniquement · Contraste élevé · Gros boutons</p>
+  <span class="badge">6 variations · registres distincts</span>
+</header>
+
+<div class="grid">
+
+  <!-- V1 Aurora -->
+  <article class="theme v1">
+    <div class="theme-meta">
+      <h2>Aurora</h2>
+      <p class="register">Rubans abstraits — dynamisme joyeux, type Niva</p>
+    </div>
+    <div class="tokens">
+      <span class="chip"><span class="swatch" style="background:#FFFFFF"></span>surface-base #FFFFFF</span>
+      <span class="chip"><span class="swatch" style="background:#F7F8FC"></span>surface-raised #F7F8FC</span>
+      <span class="chip"><span class="swatch" style="background:#12131A"></span>ink-primary #12131A</span>
+      <span class="chip"><span class="swatch" style="background:#5B6178"></span>ink-secondary #5B6178</span>
+      <span class="chip"><span class="swatch" style="background:#5B4CFF"></span>accent #5B4CFF</span>
+      <span class="chip"><span class="swatch" style="background:#EEECFF"></span>accent-soft #EEECFF</span>
+      <span class="chip"><span class="swatch" style="background:#E2E4EF"></span>border #E2E4EF</span>
+      <span class="chip"><span class="swatch" style="background:#FFB020"></span>pattern-a #FFB020</span>
+      <span class="chip"><span class="swatch" style="background:#7B5CFF"></span>pattern-b #7B5CFF</span>
+    </div>
+    <div class="snippet-wrap">
+      <div class="phone">
+        <div class="phone-bar">Accueil · Ma table</div>
+        <div class="phone-body">
+          <div class="brand">Ma table</div>
+          <div class="greeting">Pose-toi</div>
+          <p class="sub">Bienvenue à table. Le chef s’occupe du reste.</p>
+          <div class="pattern-strip" aria-hidden="true">
+            <div class="char">
+              <div class="char-head"></div>
+              <div class="char-body"></div>
+            </div>
+          </div>
+          <div class="cta-stack">
+            <div class="btn btn-primary">Voir le menu</div>
+            <div class="btn btn-secondary">J’ai besoin de quelque chose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- V2 Citrus -->
+  <article class="theme v2">
+    <div class="theme-meta">
+      <h2>Citrus</h2>
+      <p class="register">Zeste électrique — citron vif, énergie solaire</p>
+    </div>
+    <div class="tokens">
+      <span class="chip"><span class="swatch" style="background:#FFFEF8"></span>surface-base #FFFEF8</span>
+      <span class="chip"><span class="swatch" style="background:#FFF8DC"></span>surface-raised #FFF8DC</span>
+      <span class="chip"><span class="swatch" style="background:#1A1A00"></span>ink-primary #1A1A00</span>
+      <span class="chip"><span class="swatch" style="background:#6B6B3A"></span>ink-secondary #6B6B3A</span>
+      <span class="chip"><span class="swatch" style="background:#E8C200"></span>accent #E8C200</span>
+      <span class="chip"><span class="swatch" style="background:#FFF3A8"></span>accent-soft #FFF3A8</span>
+      <span class="chip"><span class="swatch" style="background:#E8E0B8"></span>border #E8E0B8</span>
+      <span class="chip"><span class="swatch" style="background:#FFE500"></span>pattern-a #FFE500</span>
+      <span class="chip"><span class="swatch" style="background:#FF8A00"></span>pattern-b #FF8A00</span>
+    </div>
+    <div class="snippet-wrap">
+      <div class="phone">
+        <div class="phone-bar">Accueil · Ma table</div>
+        <div class="phone-body">
+          <div class="brand">Ma table</div>
+          <div class="greeting">Pose-toi</div>
+          <p class="sub">Bienvenue à table. Le chef s’occupe du reste.</p>
+          <div class="pattern-strip" aria-hidden="true">
+            <div class="char">
+              <div class="char-head"></div>
+              <div class="char-body"></div>
+            </div>
+          </div>
+          <div class="cta-stack">
+            <div class="btn btn-primary">Voir le menu</div>
+            <div class="btn btn-secondary">J’ai besoin de quelque chose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- V3 Lagoon -->
+  <article class="theme v3">
+    <div class="theme-meta">
+      <h2>Lagoon</h2>
+      <p class="register">Lagon clair — cyan profond, fraîcheur aquatique</p>
+    </div>
+    <div class="tokens">
+      <span class="chip"><span class="swatch" style="background:#F5FCFF"></span>surface-base #F5FCFF</span>
+      <span class="chip"><span class="swatch" style="background:#E6F7FB"></span>surface-raised #E6F7FB</span>
+      <span class="chip"><span class="swatch" style="background:#062A33"></span>ink-primary #062A33</span>
+      <span class="chip"><span class="swatch" style="background:#3D6A75"></span>ink-secondary #3D6A75</span>
+      <span class="chip"><span class="swatch" style="background:#008C9E"></span>accent #008C9E</span>
+      <span class="chip"><span class="swatch" style="background:#D4F4F8"></span>accent-soft #D4F4F8</span>
+      <span class="chip"><span class="swatch" style="background:#B8DCE4"></span>border #B8DCE4</span>
+      <span class="chip"><span class="swatch" style="background:#00D4C8"></span>pattern-a #00D4C8</span>
+      <span class="chip"><span class="swatch" style="background:#0077B6"></span>pattern-b #0077B6</span>
+    </div>
+    <div class="snippet-wrap">
+      <div class="phone">
+        <div class="phone-bar">Accueil · Ma table</div>
+        <div class="phone-body">
+          <div class="brand">Ma table</div>
+          <div class="greeting">Pose-toi</div>
+          <p class="sub">Bienvenue à table. Le chef s’occupe du reste.</p>
+          <div class="pattern-strip" aria-hidden="true">
+            <div class="char">
+              <div class="char-head"></div>
+              <div class="char-body"></div>
+            </div>
+          </div>
+          <div class="cta-stack">
+            <div class="btn btn-primary">Voir le menu</div>
+            <div class="btn btn-secondary">J’ai besoin de quelque chose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- V4 Ink-pop -->
+  <article class="theme v4">
+    <div class="theme-meta">
+      <h2>Ink-pop</h2>
+      <p class="register">Encre noire + magenta électrique — pop graphique</p>
+    </div>
+    <div class="tokens">
+      <span class="chip"><span class="swatch" style="background:#FFFFFF"></span>surface-base #FFFFFF</span>
+      <span class="chip"><span class="swatch" style="background:#F3F3F3"></span>surface-raised #F3F3F3</span>
+      <span class="chip"><span class="swatch" style="background:#0A0A0A"></span>ink-primary #0A0A0A</span>
+      <span class="chip"><span class="swatch" style="background:#4A4A4A"></span>ink-secondary #4A4A4A</span>
+      <span class="chip"><span class="swatch" style="background:#E1006A"></span>accent #E1006A</span>
+      <span class="chip"><span class="swatch" style="background:#FFE0EE"></span>accent-soft #FFE0EE</span>
+      <span class="chip"><span class="swatch" style="background:#CFCFCF"></span>border #CFCFCF</span>
+      <span class="chip"><span class="swatch" style="background:#FF2D95"></span>pattern-a #FF2D95</span>
+      <span class="chip"><span class="swatch" style="background:#1A1A1A"></span>pattern-b #1A1A1A</span>
+    </div>
+    <div class="snippet-wrap">
+      <div class="phone">
+        <div class="phone-bar">Accueil · Ma table</div>
+        <div class="phone-body">
+          <div class="brand">Ma table</div>
+          <div class="greeting">Pose-toi</div>
+          <p class="sub">Bienvenue à table. Le chef s’occupe du reste.</p>
+          <div class="pattern-strip" aria-hidden="true">
+            <div class="char">
+              <div class="char-head"></div>
+              <div class="char-body"></div>
+            </div>
+          </div>
+          <div class="cta-stack">
+            <div class="btn btn-primary">Voir le menu</div>
+            <div class="btn btn-secondary">J’ai besoin de quelque chose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- V5 Berry -->
+  <article class="theme v5">
+    <div class="theme-meta">
+      <h2>Berry</h2>
+      <p class="register">Baie nocturne — violet profond, rose fruité</p>
+    </div>
+    <div class="tokens">
+      <span class="chip"><span class="swatch" style="background:#FDFAFF"></span>surface-base #FDFAFF</span>
+      <span class="chip"><span class="swatch" style="background:#F5ECFF"></span>surface-raised #F5ECFF</span>
+      <span class="chip"><span class="swatch" style="background:#1E0A2E"></span>ink-primary #1E0A2E</span>
+      <span class="chip"><span class="swatch" style="background:#6B4A7A"></span>ink-secondary #6B4A7A</span>
+      <span class="chip"><span class="swatch" style="background:#8B2FC9"></span>accent #8B2FC9</span>
+      <span class="chip"><span class="swatch" style="background:#F0D9FF"></span>accent-soft #F0D9FF</span>
+      <span class="chip"><span class="swatch" style="background:#DCC8EB"></span>border #DCC8EB</span>
+      <span class="chip"><span class="swatch" style="background:#C44DFF"></span>pattern-a #C44DFF</span>
+      <span class="chip"><span class="swatch" style="background:#FF4D8D"></span>pattern-b #FF4D8D</span>
+    </div>
+    <div class="snippet-wrap">
+      <div class="phone">
+        <div class="phone-bar">Accueil · Ma table</div>
+        <div class="phone-body">
+          <div class="brand">Ma table</div>
+          <div class="greeting">Pose-toi</div>
+          <p class="sub">Bienvenue à table. Le chef s’occupe du reste.</p>
+          <div class="pattern-strip" aria-hidden="true">
+            <div class="char">
+              <div class="char-head"></div>
+              <div class="char-body"></div>
+            </div>
+          </div>
+          <div class="cta-stack">
+            <div class="btn btn-primary">Voir le menu</div>
+            <div class="btn btn-secondary">J’ai besoin de quelque chose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- V6 Lime -->
+  <article class="theme v6">
+    <div class="theme-meta">
+      <h2>Lime</h2>
+      <p class="register">Citron vert acidulé — lime flash, encre froide</p>
+    </div>
+    <div class="tokens">
+      <span class="chip"><span class="swatch" style="background:#FAFFF5"></span>surface-base #FAFFF5</span>
+      <span class="chip"><span class="swatch" style="background:#EEFCE0"></span>surface-raised #EEFCE0</span>
+      <span class="chip"><span class="swatch" style="background:#0F1A0A"></span>ink-primary #0F1A0A</span>
+      <span class="chip"><span class="swatch" style="background:#4A5C3A"></span>ink-secondary #4A5C3A</span>
+      <span class="chip"><span class="swatch" style="background:#6BCB1F"></span>accent #6BCB1F</span>
+      <span class="chip"><span class="swatch" style="background:#E2F9C8"></span>accent-soft #E2F9C8</span>
+      <span class="chip"><span class="swatch" style="background:#C5DDB0"></span>border #C5DDB0</span>
+      <span class="chip"><span class="swatch" style="background:#B8F000"></span>pattern-a #B8F000</span>
+      <span class="chip"><span class="swatch" style="background:#00BFA5"></span>pattern-b #00BFA5</span>
+    </div>
+    <div class="snippet-wrap">
+      <div class="phone">
+        <div class="phone-bar">Accueil · Ma table</div>
+        <div class="phone-body">
+          <div class="brand">Ma table</div>
+          <div class="greeting">Pose-toi</div>
+          <p class="sub">Bienvenue à table. Le chef s’occupe du reste.</p>
+          <div class="pattern-strip" aria-hidden="true">
+            <div class="char">
+              <div class="char-head"></div>
+              <div class="char-body"></div>
+            </div>
+          </div>
+          <div class="cta-stack">
+            <div class="btn btn-primary">Voir le menu</div>
+            <div class="btn btn-secondary">J’ai besoin de quelque chose</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+</body>
+</html>

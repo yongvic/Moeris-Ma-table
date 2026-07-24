@@ -1,0 +1,4 @@
+# This file should be part of a git repository for migrate deploy history.
+# Do not edit manually unless you know what you are doing.
+provider = "postgresql"
+

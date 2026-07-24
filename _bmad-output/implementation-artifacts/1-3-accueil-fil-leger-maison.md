@@ -1,0 +1,140 @@
+# Story 1.3: Accueil fil léger « maison »
+
+Status: ready-for-dev
+
+<!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
+
+## Story
+
+As a cliente peu à l’aise avec le téléphone (Mame Fatou),
+I want un Accueil simple avec un seul CTA principal et un accès Service discret,
+so that je sais quoi faire en quelques secondes sans me perdre.
+
+## Acceptance Criteria
+
+1. **Given** une Session fraîche après scan  
+   **When** j’arrive sur l’Accueil  
+   **Then** je vois un tutoiement doux (ex. « Pose-toi »), un CTA principal « Voir le menu », et un accès secondaire Service
+
+2. **And** il n’y a pas de hub à 4 tuiles égales, pas de demande d’identité, pas de jargon Login/Submit
+
+3. **And** le slot illustration d’accueil est présent ; layouts phone / tablette / desktop selon EXPERIENCE
+
+4. **And** la navigation fil léger (Menu | Service) est en place (destinations Menu/Service peuvent être stub jusqu’aux epics suivants)
+
+## Tasks / Subtasks
+
+- [ ] T1. Shell Accueil + `card-accueil` (AC: #1, #2)
+  - [ ] Composer `app/(client)/` Accueil comme cible post-scan (route déjà redirigée depuis 1.2)
+  - [ ] Composant `card-accueil` : titre tutoiement (« Pose-toi. »), sous-texte court optionnel type « On s’occupe de toi. »
+  - [ ] `button-primary` : « Voir le menu » → stub Menu (`/(client)/menu` placeholder OK)
+  - [ ] `button-secondary` : accès Service discret (libellé type « J’ai besoin de quelque chose » / Service) → stub Service
+  - [ ] Un seul CTA primaire visible ; secondaire clairement moins fort (DESIGN)
+  - [ ] Interdire : hub 4 tuiles, formulaire identité, Login/Submit/Dashboard
+
+- [ ] T2. `illustration-panel` slot Accueil (AC: #3)
+  - [ ] Slot `illustration-panel` présent (placeholder SVG/asset OK si pas d’illustration finale)
+  - [ ] `alt=""` décoratif — sens porté par le texte
+  - [ ] Touches pattern-a / pattern-b abstraites autorisées autour du personnage (DESIGN)
+
+- [ ] T3. Layouts responsive EXPERIENCE (AC: #3)
+  - [ ] Phone (&lt;640) : une colonne ; marges `margin-mobile` (20)
+  - [ ] Tablette (640–1024) : Accueil split possible (visuel | texte+CTA)
+  - [ ] Desktop (&gt;1024) : coque max-width ~1100–1200px centrée ; composition « landing table » (bloc organique + slot visuel + CTA) — **pas** de nav marketing SaaS
+  - [ ] Tap targets ≥ 44px ; tokens Citrus 1.1 (accent + ink-primary sur primaire)
+
+- [ ] T4. Nav fil léger Menu | Service (AC: #4)
+  - [ ] Barre / rail : destinations **Menu** et **Service** (mêmes destinations tous viewports)
+  - [ ] Phone : barre bas ; desktop : en-tête ou rail discret
+  - [ ] Stubs pages Menu + Service (copy FR courte « Bientôt » OK) — pas d’implémentation catalogue/missions
+  - [ ] **Terminer mon expérience** absent (gate epic 4 / AD-13)
+
+- [ ] T5. Session + step Accueil (AC: #1)
+  - [ ] Accueil exige Session active (cookie 1.2) ; sinon rediriger vers entry QR / message FR
+  - [ ] S’assurer `Session.step = WELCOME` sur session fraîche (aligné 1.2/1.5)
+  - [ ] Pas de bloc Mémoire / « Bon retour » (epic 5)
+
+- [ ] T6. Garde-fous
+  - [ ] Pas bannière reprise (1.4), pas barre progression (1.5), pas print (1.6)
+  - [ ] Pas Auth, Menu métier, Order, ServiceRequest
+
+## Dev Notes
+
+### Contexte epic
+
+Première surface UX « maison » du fil client. Persona Mame Fatou : gros CTA, peu de texte, zéro jargon. Posture anti-dashboard (UX-DR6).
+
+### Dépendance story précédente
+
+- **1.1** : tokens Citrus, polices Fredoka/Nunito Sans, shells.
+- **1.2** : Session + cookie + redirect Accueil fonctionnels. Sans 1.2, l’Accueil ne peut pas être « après scan ».
+
+### Architecture
+
+- Surfaces dans `app/(client)` uniquement ; logique session via `domain/session` (AD-2).
+- Pas de nouvelles tables DB requises.
+- AD-17 : responsive multi-support obligatoire.
+- AD-5/AD-19 : ne pas démarrer Guest / mémoire soft ici.
+
+### UX / DESIGN — composants
+
+| Composant | Règles |
+| --- | --- |
+| `card-accueil` | illustration + display title + primary + secondary |
+| `button-primary` | accent bg, **ink-primary** text, pill, min 44px |
+| `button-secondary` | surface-raised, border, elevation.soft, jamais même poids que primary |
+| `illustration-panel` | moment Accueil ; alt="" |
+
+Voice : tutoiement doux — Do « Pose-toi. » / Don’t « Bienvenue sur notre plateforme ! ».
+
+Réf. composition : `mockups/accueil.html` (spines gagnent en conflit).
+
+### Fichiers à créer / modifier
+
+| Path | Action |
+| --- | --- |
+| `app/(client)/layout.tsx` | UPDATE — shell nav Menu\|Service |
+| `app/(client)/page.tsx` ou `accueil/page.tsx` | UPDATE — Accueil réel |
+| `app/(client)/menu/page.tsx` | NEW stub |
+| `app/(client)/service/page.tsx` | NEW stub |
+| `components/client/card-accueil.tsx` (ou `app/(client)/_components/`) | NEW |
+| `components/client/button-primary.tsx` | NEW (si pas encore) |
+| `components/client/button-secondary.tsx` | NEW |
+| `components/client/illustration-panel.tsx` | NEW |
+| `components/client/client-nav.tsx` | NEW — Menu \| Service |
+| `public/` ou `assets/` placeholder illustration | NEW optionnel |
+
+### Hors scope
+
+- Catalogue menu photo-first (2.3), fiche commande (3.1), catalogue service 4 tuiles métier (3.3)
+- `banniere-reprise`, `barre-progression-sejour`, `bloc-memoire`
+- Copy marketing desktop / multi-CTA
+
+### Testing
+
+- Manuel viewport phone/tablette/desktop : 1 CTA primaire, Service secondaire, illustration slot, nav Menu|Service
+- A11y : focus-ring, contraste accent/ink-primary, cibles 44px
+- `prefers-reduced-motion` : pas d’anim bloquante sur illustration
+- Session absente → pas d’Accueil « fantôme » authentifié
+
+### References
+
+- [Source: `epics.md` — Story 1.3, FR5, UX-DR6/DR7/DR9]
+- [Source: `EXPERIENCE.md` — Foundation nav fil léger, Accueil IA, Responsive, Voice, `card-accueil`]
+- [Source: `DESIGN.md` — Components card-accueil, buttons, illustration-panel]
+- [Source: `mockups/accueil.html`]
+- [Source: stories 1.1, 1.2]
+
+## Dev Agent Record
+
+### Agent Model Used
+
+{{agent_model_name_version}}
+
+### Debug Log References
+
+### Completion Notes List
+
+Ultimate context engine analysis completed - comprehensive developer guide created
+
+### File List

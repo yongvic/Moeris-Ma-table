@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ma table — Merci chef — Phone + Desktop</title>
+<style>
+/*
+  KEY SCREEN — Merci chef (ton "super", après un Avis 5/5) — REGEN anti-fade 2026-07-24
+  Canonical state : transition immédiate depuis l'Avis, note haute, avant l'écran Contact.
+  Deux frames : Phone (~390px) ET Desktop (~1100px, composition split façon Obaa/Medivise).
+
+  Illustrates (EXPERIENCE.md):
+    Component Patterns — card-merci-chef (illustration + message parmi 3 tons, colors.accent
+      porte l'accent de clôture) ; illustration-panel (moment illustration dédié "merci chef" —
+      personnage chef 2D conservé tel quel, mais réinséré dans une pièce maîtresse bien plus
+      affirmée : blob organique plein + plate-photo qui déborde + éclats de fête) ; avis-stars
+      (rappel de la note, étoiles pleines accent, nom accessible "Note : 5 sur 5").
+    State Patterns — "Avis donné" : transition immédiate, jamais d'écran de chargement froid.
+    Voice and Tone — "Merci du fond du cœur !" (ton super) ; aperçu doux "Ensuite" SANS le
+      formulaire Contact complet (Contact ne se demande jamais avant l'émotion du Merci chef).
+    Key Flows — Flow 1 (UJ-1) étape 7, Climax : carte Merci chef aussitôt affichée, ton chaleureux.
+
+  Tokens applied (DESIGN.md) :
+    colors.surface-base (fond), colors.accent (étoiles actives, accent de clôture, éclats),
+    colors.accent-soft (halo, pastille "Ensuite", glass panel desktop), colors.pattern-a/b en
+    blob organique plein (illustration-panel, pas de limite ≤10% hors composant
+    pattern-background), typography.display (message), typography.body (sous-texte),
+    typography.meta (pastille), rounded.full, elevation interdite sur l'illustration
+    (registre plat sur la silhouette du chef — l'ombre reste sur la plate-photo/glass panel).
+
+  Anti-fade craft : blob plein pattern-b + halo accent + plate-photo (assiette du plat terminé)
+  qui déborde derrière le chef, éclats pattern-a façon confettis, glass panel citrus-tinté
+  réservé au bloc message desktop (aucun skin violet), un seul centrepiece par écran.
+
+  Fonts: Fredoka (titres) / 'Nunito Sans' (corps) déclarées en premier ; repli système si non
+  installées localement — mock 100% offline, aucune police/CDN chargée depuis le réseau.
+*/
+
+:root{
+  --surface-base:#FFFEF8;
+  --surface-raised:#F5E9B8;
+  --ink-primary:#1A1A00;
+  --ink-secondary:#6B6B3A;
+  --accent:#E8C200;
+  --accent-soft:#FFF3A8;
+  --border:#E8E0B8;
+  --pattern-a:#FFE500;
+  --pattern-b:#FF8A00;
+  --focus-ring:#1A1A00;
+
+  --font-display: 'Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+
+  --radius-sm:8px;
+  --radius-md:16px;
+  --radius-lg:24px;
+  --radius-full:9999px;
+
+  --shadow-soft: 0 2px 12px rgba(26,26,0,0.10);
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; background:#EDEADB; font-family: var(--font-body); }
+body{
+  display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center;
+  gap:64px; padding:56px 24px 40px; min-height:100vh;
+}
+.frame-col{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+.frame-label{
+  font-family: var(--font-body); font-size:13px; font-weight:800; letter-spacing:0.06em;
+  text-transform:uppercase; color: var(--ink-secondary);
+  background: var(--surface-raised); padding:6px 16px; border-radius: var(--radius-full);
+}
+
+/* ---------- Plate photo (plat terminé, derrière le chef) ---------- */
+.plate-photo{ border-radius:50%; position:relative; box-shadow: 0 18px 36px rgba(26,26,0,0.22), 0 0 0 7px var(--surface-base); }
+.plate-photo.tone-thieb{
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 16%),
+    radial-gradient(circle at 68% 68%, #5C3A22 0%, rgba(92,58,34,0) 36%),
+    radial-gradient(circle at 22% 68%, #3F6B34 0%, rgba(63,107,52,0) 30%),
+    radial-gradient(circle at 76% 26%, #E8A25F 0%, rgba(232,162,95,0) 42%),
+    radial-gradient(circle at 50% 50%, #F0C46B 0%, #D89A45 55%, #B97A2E 100%);
+}
+
+/* ---------- Organic blobs ---------- */
+.blob{ position:absolute; }
+.blob-shape-1{ border-radius: 58% 42% 61% 39% / 41% 55% 45% 59%; }
+.blob-shape-2{ border-radius: 42% 58% 38% 62% / 55% 40% 60% 45%; }
+.blob-solid-b{ background: var(--pattern-b); }
+.blob-glow-accent{ background: var(--accent); opacity:0.20; }
+.spark{ border-radius:50%; background: var(--pattern-a); }
+.spark.is-accent{ background: var(--accent); }
+
+/* Chef 2D — ton "super" (spine illustration-panel, silhouette conservée) */
+.chef{ position:relative; width:150px; height:210px; z-index:3; }
+.chef-toque{ position:absolute; top:0; left:35px; width:80px; height:56px; background:#FFFDF2; border:3px solid var(--ink-primary); border-radius: 40px 40px 8px 8px; }
+.chef-toque::before{ content:""; position:absolute; top:-14px; left:14px; width:52px; height:28px; background:#FFFDF2; border:3px solid var(--ink-primary); border-radius: 26px 26px 0 0; }
+.chef-head{ position:absolute; top:50px; left:45px; width:60px; height:60px; background:#F3C89A; border:3px solid var(--ink-primary); border-radius:50%; }
+.chef-eye{ position:absolute; top:73px; width:5px; height:5px; background:var(--ink-primary); border-radius:50%; }
+.chef-eye.left{ left:58px; } .chef-eye.right{ left:78px; }
+.chef-cheek{ position:absolute; top:82px; width:9px; height:6px; background:var(--accent); opacity:0.55; border-radius:50%; }
+.chef-cheek.left{ left:53px; } .chef-cheek.right{ left:79px; }
+.chef-smile{ position:absolute; top:84px; left:58px; width:24px; height:14px; border:3px solid var(--ink-primary); border-top:none; border-radius: 0 0 24px 24px; }
+.chef-body{ position:absolute; top:108px; left:25px; width:100px; height:100px; background:#FFFEF8; border:3px solid var(--ink-primary); border-radius: 28px 28px 20px 20px; }
+.chef-apron-tie{ position:absolute; top:118px; left:64px; width:22px; height:22px; background: var(--accent); border:3px solid var(--ink-primary); border-radius:50%; }
+.chef-arm{ position:absolute; top:96px; width:16px; height:44px; background:#F3C89A; border:3px solid var(--ink-primary); border-radius:10px; }
+.chef-arm.left{ left:-2px; transform:rotate(50deg); }
+.chef-arm.right{ left:136px; transform:rotate(-50deg); }
+
+/* ======================= PHONE ======================= */
+.phone-frame{ width:390px; height:844px; background:#141400; border-radius:52px; padding:14px; box-shadow: 0 30px 70px rgba(0,0,0,0.30); position:relative; }
+.phone-notch{ position:absolute; top:14px; left:50%; transform:translateX(-50%); width:120px; height:26px; background:#141400; border-radius:0 0 18px 18px; z-index:5; }
+.phone-screen{ width:100%; height:100%; background:var(--surface-base); border-radius:38px; overflow:hidden; position:relative; display:flex; flex-direction:column; }
+.status-bar{ height:44px; flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 28px; font-family: var(--font-body); font-size:13px; font-weight:600; color: var(--ink-primary); }
+.screen-content{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 0 20px; position:relative; }
+
+.hero-visual{ position:relative; width:100%; height:266px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; }
+.hero-visual .blob-solid-b.phone-main{ width:230px; height:210px; top:6px; left:50%; transform:translateX(-50%); }
+.hero-visual .blob-glow-accent.phone-glow{ width:180px; height:180px; bottom:-30px; right:-30px; border-radius:42% 58% 38% 62% / 55% 40% 60% 45%; }
+.hero-visual .plate-photo.phone-plate{ width:120px; height:120px; position:absolute; bottom:8px; left:6px; z-index:2; }
+.hero-visual .spark.s1{ width:12px; height:12px; top:12px; left:32px; }
+.hero-visual .spark.s2.is-accent{ width:9px; height:9px; top:38px; right:36px; }
+.hero-visual .spark.s3{ width:10px; height:10px; bottom:36px; left:56px; }
+.hero-visual .chef{ z-index:3; }
+
+.stars-recap{ display:flex; align-items:center; justify-content:center; gap:4px; margin:6px 0 18px; flex:0 0 auto; }
+.star{ width:22px; height:22px; display:flex; align-items:center; justify-content:center; color: var(--accent); font-size:20px; line-height:1; }
+
+.message-block{ width:100%; text-align:center; flex:0 0 auto; }
+h1.display{ font-family: var(--font-display); font-size:28px; line-height:34px; font-weight:600; color: var(--ink-primary); margin: 0 0 8px; }
+p.subtext{ font-family: var(--font-body); font-size:16px; line-height:24px; color: var(--ink-secondary); margin:0 0 20px; max-width:290px; margin-left:auto; margin-right:auto; }
+
+.next-hint{ flex:0 0 auto; margin: 4px 0 26px; display:inline-flex; align-items:center; gap:8px; background: var(--accent-soft); color: var(--ink-primary); padding:8px 16px; border-radius: var(--radius-full); }
+.next-hint .next-label{ font-family: var(--font-body); font-size:12px; font-weight:600; letter-spacing:0.02em; text-transform:uppercase; color: var(--ink-secondary); }
+.next-hint .next-text{ font-family: var(--font-body); font-size:14px; font-weight:600; color: var(--ink-primary); }
+
+/* ======================= DESKTOP ======================= */
+.browser-frame{ width:1160px; max-width:96vw; background: var(--surface-base); border-radius:20px; box-shadow: 0 30px 70px rgba(0,0,0,0.28); overflow:hidden; }
+.browser-toolbar{ height:44px; display:flex; align-items:center; gap:16px; padding:0 14px; background:#E4E0CB; border-bottom:1px solid #CFCAAE; }
+.traffic-lights{ display:flex; gap:7px; }
+.traffic-lights span{ width:11px; height:11px; border-radius:50%; display:block; }
+.tl-1{ background:#ED6A5E; } .tl-2{ background:#F4BF4F; } .tl-3{ background:#61C554; }
+.addr-bar{ flex:1 1 auto; height:26px; background:#FFFEF8; border:1px solid #CFCAAE; border-radius:7px; display:flex; align-items:center; padding:0 12px; font-family: var(--font-body); font-size:12px; color: var(--ink-secondary); gap:6px; }
+
+.hero-split{ display:flex; align-items:center; padding: 56px 56px 64px; min-height:560px; gap:16px; position:relative; }
+.hero-visual-desktop{ flex: 0 0 46%; position:relative; height:460px; display:flex; align-items:center; justify-content:center; }
+.hero-visual-desktop .blob-glow-accent.d-back{ width:420px; height:420px; top:-10px; left:0; border-radius: 58% 42% 61% 39% / 41% 55% 45% 59%; }
+.hero-visual-desktop .blob-solid-b.d-main{ width:360px; height:360px; top:36px; left:40px; }
+.hero-visual-desktop .plate-photo.d-plate{ width:190px; height:190px; position:absolute; bottom:16px; left:20px; z-index:2; }
+.hero-visual-desktop .chef{ transform:scale(1.35); z-index:3; }
+.hero-visual-desktop .spark.s1{ width:16px; height:16px; top:30px; left:100px; }
+.hero-visual-desktop .spark.s2.is-accent{ width:12px; height:12px; top:70px; right:60px; }
+.hero-visual-desktop .spark.s3{ width:14px; height:14px; bottom:60px; right:30px; }
+
+.hero-copy{ flex:1 1 54%; position:relative; z-index:2; text-align:center; }
+.glass-panel{
+  background: rgba(255,243,168,0.42);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border:1px solid rgba(255,255,255,0.65);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding:48px 52px;
+}
+.glass-panel .stars-recap{ margin:0 0 20px; }
+.glass-panel .star{ width:26px; height:26px; font-size:24px; }
+h1.display-desktop{ font-family: var(--font-display); font-weight:600; color: var(--ink-primary); font-size:38px; line-height:44px; margin:0 0 14px; }
+p.subtext-desktop{ font-family: var(--font-body); font-size:17px; line-height:26px; color: var(--ink-secondary); margin:0 auto 28px; max-width:400px; }
+
+.caption{ width:100%; text-align:center; font-family: var(--font-body); font-size:12px; color:#8a8a5a; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<div class="frame-col">
+  <p class="frame-label">Phone · ~390px</p>
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+
+      <div class="status-bar"><span>9:58</span><span>●●●●</span></div>
+
+      <div class="screen-content">
+        <!-- illustration-panel réinterprété : blob plein + plate-photo + chef + éclats -->
+        <div class="hero-visual" aria-hidden="true">
+          <div class="blob blob-glow-accent phone-glow"></div>
+          <div class="blob blob-solid-b blob-shape-1 phone-main"></div>
+          <div class="plate-photo tone-thieb phone-plate"></div>
+          <div class="spark s1"></div>
+          <div class="spark s2 is-accent"></div>
+          <div class="spark s3"></div>
+          <div class="chef">
+            <div class="chef-arm left"></div>
+            <div class="chef-arm right"></div>
+            <div class="chef-body"></div>
+            <div class="chef-apron-tie"></div>
+            <div class="chef-toque"></div>
+            <div class="chef-head"></div>
+            <div class="chef-eye left"></div>
+            <div class="chef-eye right"></div>
+            <div class="chef-cheek left"></div>
+            <div class="chef-cheek right"></div>
+            <div class="chef-smile"></div>
+          </div>
+        </div>
+
+        <div class="stars-recap" role="img" aria-label="Note : 5 sur 5">
+          <span class="star" aria-hidden="true">★</span>
+          <span class="star" aria-hidden="true">★</span>
+          <span class="star" aria-hidden="true">★</span>
+          <span class="star" aria-hidden="true">★</span>
+          <span class="star" aria-hidden="true">★</span>
+        </div>
+
+        <div class="message-block">
+          <h1 class="display">Merci du fond du cœur !</h1>
+          <p class="subtext">Ta note nous va droit au cœur. Toute l'équipe te dit à très vite à la Résidence Moeris.</p>
+        </div>
+
+        <div class="next-hint">
+          <span class="next-label">Ensuite</span>
+          <span class="next-text">On te prévient des soirées Moeris ?</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="frame-col">
+  <p class="frame-label">Desktop · ~1100px</p>
+  <div class="browser-frame">
+    <div class="browser-toolbar">
+      <div class="traffic-lights"><span class="tl-1"></span><span class="tl-2"></span><span class="tl-3"></span></div>
+      <div class="addr-bar"><span>🔒</span>matable.residence-moeris.local/merci</div>
+    </div>
+
+    <div class="hero-split">
+      <div class="hero-visual-desktop" aria-hidden="true">
+        <div class="blob blob-glow-accent d-back"></div>
+        <div class="blob blob-solid-b blob-shape-2 d-main"></div>
+        <div class="plate-photo tone-thieb d-plate"></div>
+        <div class="spark s1"></div>
+        <div class="spark s2 is-accent"></div>
+        <div class="spark s3"></div>
+        <div class="chef">
+          <div class="chef-arm left"></div>
+          <div class="chef-arm right"></div>
+          <div class="chef-body"></div>
+          <div class="chef-apron-tie"></div>
+          <div class="chef-toque"></div>
+          <div class="chef-head"></div>
+          <div class="chef-eye left"></div>
+          <div class="chef-eye right"></div>
+          <div class="chef-cheek left"></div>
+          <div class="chef-cheek right"></div>
+          <div class="chef-smile"></div>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="glass-panel">
+          <div class="stars-recap" role="img" aria-label="Note : 5 sur 5">
+            <span class="star" aria-hidden="true">★</span>
+            <span class="star" aria-hidden="true">★</span>
+            <span class="star" aria-hidden="true">★</span>
+            <span class="star" aria-hidden="true">★</span>
+            <span class="star" aria-hidden="true">★</span>
+          </div>
+          <h1 class="display-desktop">Merci du fond du cœur !</h1>
+          <p class="subtext-desktop">Ta note nous va droit au cœur. Toute l'équipe te dit à très vite à la Résidence Moeris.</p>
+          <div class="next-hint">
+            <span class="next-label">Ensuite</span>
+            <span class="next-text">On te prévient des soirées Moeris ?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="caption">Ton "super" (note haute) — les tons "correct" et "mitigé" sont d'autres écrans, non montrés ici. Contact (sélecteur téléphone/email) reste l'écran suivant, non montré ici.</p>
+
+</body>
+</html>
