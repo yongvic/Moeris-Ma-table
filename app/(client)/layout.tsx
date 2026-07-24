@@ -9,7 +9,7 @@ import {
 import { sessionHasReceivedOrder } from "@/domain/order/queries";
 
 /**
- * Client shell — nav Menu|Service(+Terminer si gate AD-13) + progress + reprise.
+ * Client shell — fil léger Menu|Service(+Terminer si AD-13) + "le fil" + reprise.
  */
 export default async function ClientLayout({
   children,
@@ -22,7 +22,9 @@ export default async function ClientLayout({
     : false;
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
+      <div className="pattern-wash" aria-hidden />
+
       {session ? <ClientNav canFinish={canFinish} /> : null}
       {session ? <BarreProgressionSejour step={session.step} /> : null}
       {session ? (
@@ -31,9 +33,10 @@ export default async function ClientLayout({
           continueHref={resolveResumeTarget(session.step)}
         />
       ) : null}
+
       <div
-        className={`flex flex-1 flex-col ${
-          session ? "pb-20 sm:pb-0" : ""
+        className={`relative z-[1] flex flex-1 flex-col ${
+          session ? "pb-28 sm:pb-10" : ""
         }`}
       >
         {children}

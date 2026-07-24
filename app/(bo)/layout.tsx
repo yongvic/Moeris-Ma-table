@@ -1,12 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SignOut } from "@phosphor-icons/react/dist/ssr";
 import { auth, signOut } from "@/infra/auth/auth";
-
-const TABS = [
-  { href: "/bo/menu", label: "Menu" },
-  { href: "/bo/commandes", label: "Commandes" },
-  { href: "/bo/service", label: "Service" },
-] as const;
+import { MoerisMark } from "@/components/ui/moeris-mark";
+import { BoTabs } from "@/components/bo/bo-tabs";
 
 export default async function BoLayout({
   children,
@@ -14,20 +10,23 @@ export default async function BoLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  // Connexion page uses its own layout branch via pathname check in page;
-  // gate everything except when no user — pages under /bo/connexion skip via nested layout.
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-surface-base">
       {session?.user ? (
-        <header className="border-b border-border bg-surface-raised/40">
-          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-3 px-margin-mobile py-4 md:px-7">
+        <header className="sticky top-0 z-[var(--z-nav)] border-b border-border/70 bg-surface-base/90 backdrop-blur-md">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-3 px-margin-mobile py-3 md:px-7">
             <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="font-display text-[12px] leading-4 font-semibold tracking-[0.02em] text-ink-secondary uppercase">
-                  Espace équipe
-                </p>
-                <p className="text-sm text-ink-secondary">{session.user.email}</p>
+              <div className="flex items-center gap-3">
+                <MoerisMark href="/bo/menu" compact />
+                <div className="hidden flex-col leading-none sm:flex">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink-secondary">
+                    Espace équipe
+                  </span>
+                  <span className="text-sm font-semibold text-ink-primary">
+                    {session.user.email}
+                  </span>
+                </div>
               </div>
               <form
                 action={async () => {
@@ -37,23 +36,14 @@ export default async function BoLayout({
               >
                 <button
                   type="submit"
-                  className="min-h-tap-min rounded-md border border-border px-4 text-sm font-bold text-ink-primary"
+                  className="inline-flex min-h-tap-min items-center gap-2 rounded-full border border-border bg-surface-raised px-4 text-sm font-bold text-ink-primary shadow-soft transition-colors hover:bg-surface-sunk"
                 >
-                  Se déconnecter
+                  <SignOut size={17} weight="bold" />
+                  <span className="hidden sm:inline">Se déconnecter</span>
                 </button>
               </form>
             </div>
-            <nav className="flex gap-2" aria-label="Zones back-office">
-              {TABS.map((tab) => (
-                <Link
-                  key={tab.href}
-                  href={tab.href}
-                  className="inline-flex min-h-tap-min items-center rounded-md bg-accent-soft px-4 text-base font-bold text-ink-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-                >
-                  {tab.label}
-                </Link>
-              ))}
-            </nav>
+            <BoTabs />
           </div>
         </header>
       ) : null}

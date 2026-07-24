@@ -2,53 +2,60 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  ForkKnife,
+  HandWaving,
+  Confetti,
+} from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react";
+import { MoerisMark } from "@/components/ui/moeris-mark";
 
-const NAV_ITEMS = [
-  { href: "/menu", label: "Menu" },
-  { href: "/service", label: "Service" },
-] as const;
+type NavItem = { href: string; label: string; icon: Icon };
+
+const BASE_ITEMS: NavItem[] = [
+  { href: "/menu", label: "La carte", icon: ForkKnife },
+  { href: "/service", label: "Service", icon: HandWaving },
+];
 
 /**
- * Fil léger Menu | Service + Terminer conditionnel (AD-13).
- * `canFinish` vient du Server Component parent — gate évalué Neon-side.
+ * Fil léger Menu | Service (+ Terminer conditionnel, AD-13).
+ * Desktop: rail supérieur discret. Mobile: île flottante en bas.
  */
 export function ClientNav({ canFinish = false }: { canFinish?: boolean }) {
   const pathname = usePathname();
 
-  const allItems = [
-    ...NAV_ITEMS,
+  const items: NavItem[] = [
+    ...BASE_ITEMS,
     ...(canFinish
-      ? [{ href: "/fin", label: "Terminer" } as const]
+      ? [{ href: "/fin", label: "Terminer", icon: Confetti } as NavItem]
       : []),
   ];
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <>
       {/* Desktop / tablet top rail */}
-      <header className="sticky top-0 z-40 hidden border-b border-border/80 bg-surface-base/95 px-margin-mobile py-3 backdrop-blur-sm sm:block md:px-7">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4">
-          <Link
-            href="/accueil"
-            className="font-display text-[17px] leading-6 font-medium text-ink-primary"
-          >
-            Ma table
-          </Link>
+      <header className="sticky top-0 z-[var(--z-nav)] hidden border-b border-border/70 bg-surface-base/85 backdrop-blur-md sm:block">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-margin-mobile py-3 md:px-7">
+          <MoerisMark />
           <nav aria-label="Fil séjour" className="flex items-center gap-1">
-            {allItems.map((item) => {
-              const active =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
+            {items.map(({ href, label, icon: IconCmp }) => {
+              const active = isActive(href);
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`inline-flex min-h-tap-min min-w-tap-min items-center justify-center rounded-full px-4 text-base font-bold transition-colors ${
+                  key={href}
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={`inline-flex min-h-tap-min items-center gap-2 rounded-full px-4 text-[15px] font-bold transition-colors duration-300 ${
                     active
                       ? "bg-accent-soft text-ink-primary"
-                      : "text-ink-secondary hover:text-ink-primary"
+                      : "text-ink-secondary hover:bg-surface-raised hover:text-ink-primary"
                   }`}
-                  aria-current={active ? "page" : undefined}
                 >
-                  {item.label}
+                  <IconCmp size={19} weight={active ? "fill" : "regular"} />
+                  {label}
                 </Link>
               );
             })}
@@ -56,31 +63,27 @@ export function ClientNav({ canFinish = false }: { canFinish?: boolean }) {
         </div>
       </header>
 
-      {/* Phone bottom bar */}
+      {/* Phone floating island */}
       <nav
         aria-label="Fil séjour"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface-base/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-sm sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-[var(--z-nav)] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:hidden"
       >
-        <ul className="mx-auto flex max-w-lg items-stretch justify-around">
-          {allItems.map((item) => {
-            const active =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
+        <ul className="mx-auto flex max-w-sm items-stretch justify-around gap-1 rounded-full border border-border/70 bg-surface-base/90 p-1.5 shadow-lift backdrop-blur-xl">
+          {items.map(({ href, label, icon: IconCmp }) => {
+            const active = isActive(href);
             return (
-              <li key={item.href} className="flex-1">
+              <li key={href} className="flex-1">
                 <Link
-                  href={item.href}
-                  className={`flex min-h-tap-min flex-col items-center justify-center gap-0.5 rounded-md text-sm font-bold ${
-                    active ? "text-ink-primary" : "text-ink-secondary"
-                  }`}
+                  href={href}
                   aria-current={active ? "page" : undefined}
+                  className={`flex min-h-tap-min flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[11px] font-bold transition-colors duration-300 ${
+                    active
+                      ? "bg-accent text-ink-onaccent"
+                      : "text-ink-secondary"
+                  }`}
                 >
-                  <span
-                    className={`h-1 w-8 rounded-full ${
-                      active ? "bg-accent" : "bg-transparent"
-                    }`}
-                    aria-hidden
-                  />
-                  {item.label}
+                  <IconCmp size={22} weight={active ? "fill" : "regular"} />
+                  {label}
                 </Link>
               </li>
             );

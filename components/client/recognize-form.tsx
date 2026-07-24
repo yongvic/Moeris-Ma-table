@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { recognizeByContactAction } from "@/domain/guest/memory-actions";
 import Link from "next/link";
+import { Phone, EnvelopeSimple, ForkKnife, CheckCircle, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
+import { recognizeByContactAction } from "@/domain/guest/memory-actions";
+import { Segmented, Field, inputClass } from "@/components/ui/form";
 
 type Channel = "phone" | "email";
 
-export function RecognizeForm({ sessionId: _sessionId }: { sessionId: string }) {
+export function RecognizeForm() {
   const [channel, setChannel] = useState<Channel>("phone");
   const [value, setValue] = useState("");
   const [pending, startTransition] = useTransition();
@@ -19,7 +21,10 @@ export function RecognizeForm({ sessionId: _sessionId }: { sessionId: string }) 
   if (result) {
     return (
       <div className="flex flex-col gap-4" aria-live="polite">
-        <p className="font-semibold text-ink-primary">✓ Retrouvé !</p>
+        <p className="flex items-center gap-2 font-display text-[18px] font-semibold text-ink-primary">
+          <CheckCircle size={22} weight="fill" className="text-sage-deep" />
+          On t&apos;a retrouvé·e.
+        </p>
         {result.preferences.length > 0 ? (
           <div className="flex flex-col gap-2">
             <p className="text-sm text-ink-secondary">Tes préférés :</p>
@@ -28,8 +33,9 @@ export function RecognizeForm({ sessionId: _sessionId }: { sessionId: string }) 
                 <li key={p.menuItemId}>
                   <Link
                     href={`/menu/${p.menuItemId}`}
-                    className="inline-flex min-h-tap-min items-center rounded-full bg-accent-soft px-4 text-sm font-semibold text-ink-primary"
+                    className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-surface-base px-4 text-sm font-bold text-ink-primary shadow-soft"
                   >
+                    <ForkKnife size={15} weight="fill" className="text-accent-deep" />
                     {p.label}
                   </Link>
                 </li>
@@ -64,44 +70,40 @@ export function RecognizeForm({ sessionId: _sessionId }: { sessionId: string }) 
         });
       }}
     >
-      <div className="flex gap-2" role="radiogroup" aria-label="Canal">
-        {(["phone", "email"] as const).map((c) => (
-          <button
-            key={c}
-            type="button"
-            aria-pressed={channel === c}
-            onClick={() => { setChannel(c); setValue(""); }}
-            className={`min-h-tap-min rounded-full px-4 text-sm font-semibold ${
-              channel === c
-                ? "bg-accent text-ink-primary"
-                : "bg-surface-raised/50 text-ink-secondary"
-            }`}
-          >
-            {c === "phone" ? "Téléphone" : "Email"}
-          </button>
-        ))}
-      </div>
-      <label className="flex flex-col gap-1 text-sm font-semibold text-ink-primary">
-        {channel === "phone" ? "Numéro" : "Email"}
+      <Segmented
+        ariaLabel="Canal de reconnaissance"
+        value={channel}
+        onChange={(c) => {
+          setChannel(c);
+          setValue("");
+        }}
+        options={[
+          { value: "phone", label: "Téléphone", icon: <Phone size={16} weight="fill" /> },
+          { value: "email", label: "Email", icon: <EnvelopeSimple size={16} weight="fill" /> },
+        ]}
+      />
+      <Field label={channel === "phone" ? "Ton numéro" : "Ton email"}>
         <input
           type={channel === "phone" ? "tel" : "email"}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           required
+          autoComplete={channel === "phone" ? "tel" : "email"}
           placeholder={channel === "phone" ? "+221 7X XXX XX XX" : "toi@exemple.com"}
-          className="min-h-tap-min rounded-md border border-border bg-surface-base px-3 text-base font-normal text-ink-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          className={inputClass}
         />
-      </label>
+      </Field>
       {error ? (
-        <p className="text-sm text-ink-secondary" role="alert">
+        <p className="text-sm font-semibold text-ember" role="alert">
           {error}
         </p>
       ) : null}
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-tap-min items-center justify-center rounded-md bg-accent px-5 text-base font-bold text-ink-primary disabled:opacity-60"
+        className="inline-flex min-h-tap-min items-center justify-center gap-2 rounded-full bg-accent px-6 text-[16px] font-bold text-ink-onaccent shadow-glow transition-[transform,background-color] duration-300 hover:bg-accent-deep active:scale-[0.98] disabled:opacity-60"
       >
+        <MagnifyingGlass size={17} weight="bold" />
         {pending ? "Recherche…" : "Me retrouver"}
       </button>
     </form>

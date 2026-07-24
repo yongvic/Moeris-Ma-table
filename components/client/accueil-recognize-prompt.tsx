@@ -1,45 +1,55 @@
 "use client";
 
 import { useState } from "react";
+import { UserCircle, X } from "@phosphor-icons/react/dist/ssr";
 import { RecognizeForm } from "@/components/client/recognize-form";
 
-/** Accueil — entry 5.2 when soft cookie absent. */
-export function AccueilRecognizePrompt({ sessionId }: { sessionId: string }) {
+/** Accueil — ressaisie de contact quand le cookie soft est absent. */
+export function AccueilRecognizePrompt() {
   const [open, setOpen] = useState(false);
 
   if (!open) {
     return (
-      <p className="text-sm text-ink-secondary">
+      <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[14px] text-ink-secondary sm:justify-start sm:text-left">
+        <span className="inline-flex items-center gap-1.5">
+          <UserCircle size={18} weight="fill" className="text-accent-deep" />
+          Déjà venu·e ?
+        </span>
         <button
           type="button"
-          className="font-semibold text-ink-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          className="font-bold text-ink-primary underline underline-offset-4 decoration-accent transition-colors hover:text-accent-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
           onClick={() => setOpen(true)}
         >
-          Déjà venu·e ?
-        </button>{" "}
-        Retrouve tes préférés avec ton téléphone ou email.
-      </p>
+          Retrouve tes préférés
+        </button>
+      </div>
     );
   }
 
   return (
     <section
-      className="flex flex-col gap-3 rounded-md border border-border bg-surface-raised/30 p-4"
+      className="rounded-[var(--radius-lg)] border border-border bg-surface-raised/50 p-5 shadow-soft sm:p-6"
       aria-label="Ressaisie de contact"
     >
-      <div className="flex items-start justify-between gap-2">
-        <h2 className="font-display text-lg font-semibold text-ink-primary">
-          Retrouve-toi
-        </h2>
+      <div className="mb-4 flex items-start justify-between gap-2">
+        <div>
+          <h2 className="font-display text-[20px] font-semibold text-ink-primary">
+            Retrouve-toi
+          </h2>
+          <p className="text-sm text-ink-secondary">
+            Ton téléphone ou ton email suffit — pas de mot de passe.
+          </p>
+        </div>
         <button
           type="button"
-          className="min-h-tap-min text-sm text-ink-secondary underline"
+          aria-label="Fermer"
+          className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-surface-base hover:text-ink-primary"
           onClick={() => setOpen(false)}
         >
-          Fermer
+          <X size={18} weight="bold" />
         </button>
       </div>
-      <RecognizeForm sessionId={sessionId} />
+      <RecognizeForm />
     </section>
   );
 }

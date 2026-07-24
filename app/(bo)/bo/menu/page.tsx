@@ -1,10 +1,8 @@
 import { redirect } from "next/navigation";
+import { ForkKnife } from "@phosphor-icons/react/dist/ssr";
 import { auth } from "@/infra/auth/auth";
 import { listMenuForBo } from "@/domain/menu/queries";
-import {
-  CreateMenuItemForm,
-  LigneMenuBo,
-} from "@/components/bo/ligne-menu-bo";
+import { CreateMenuItemForm, LigneMenuBo } from "@/components/bo/ligne-menu-bo";
 
 export const dynamic = "force-dynamic";
 
@@ -16,20 +14,25 @@ export default async function BoMenuPage() {
 
   return (
     <main className="flex flex-1 flex-col gap-6 px-margin-mobile py-7 md:px-7">
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-[22px] leading-7 font-semibold text-ink-primary">
-          Menu
-        </h1>
-        <p className="max-w-lg text-base text-ink-secondary">
-          Crée, modifie et active les plats servis aux clients.
-        </p>
+      <header className="flex items-start gap-3">
+        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft text-accent-deep">
+          <ForkKnife size={22} weight="fill" />
+        </span>
+        <div className="flex flex-col gap-1">
+          <h1 className="font-display text-[26px] font-semibold leading-8 text-ink-primary">
+            Menu
+          </h1>
+          <p className="max-w-lg text-[15px] text-ink-secondary">
+            Crée, modifie et active les plats servis aux clients.
+          </p>
+        </div>
       </header>
 
       <CreateMenuItemForm />
 
       {items.length === 0 ? (
-        <p className="rounded-md border border-border bg-surface-base p-6 text-ink-secondary">
-          Aucun plat pour l’instant — crée le premier ci-dessus.
+        <p className="rounded-[var(--radius-lg)] border border-dashed border-border-strong bg-surface-raised/40 p-8 text-center text-ink-secondary">
+          Aucun plat pour l&apos;instant — crée le premier ci-dessus.
         </p>
       ) : (
         <ul className="flex flex-col gap-3">

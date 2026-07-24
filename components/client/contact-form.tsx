@@ -2,7 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Phone,
+  EnvelopeSimple,
+  CheckCircle,
+  BellRinging,
+} from "@phosphor-icons/react/dist/ssr";
 import { submitContactAction } from "@/domain/guest/contact-action";
+import { Segmented, Field, inputClass } from "@/components/ui/form";
 
 type Channel = "phone" | "email";
 
@@ -16,19 +23,23 @@ export function ContactForm() {
 
   if (done) {
     return (
-      <div className="flex flex-col gap-4" aria-live="polite">
-        <p className="text-base font-semibold text-ink-primary">
-          ✓ Merci, c'est noté !
+      <div
+        className="flex flex-col items-start gap-4 rounded-[var(--radius-lg)] border border-sage/40 bg-sage/5 p-6"
+        aria-live="polite"
+      >
+        <p className="flex items-center gap-2 font-display text-[20px] font-semibold text-ink-primary">
+          <CheckCircle size={24} weight="fill" className="text-sage-deep" />
+          C&apos;est noté&nbsp;!
         </p>
-        <p className="text-sm text-ink-secondary">
-          On te garde au courant des prochaines soirées Moeris.
+        <p className="text-[15px] text-ink-secondary">
+          On te préviendra pour les prochaines soirées Moeris. À très vite.
         </p>
         <button
           type="button"
-          className="inline-flex min-h-tap-min items-center rounded-md border border-border px-4 text-base font-bold text-ink-primary"
+          className="inline-flex min-h-tap-min items-center rounded-full border border-border bg-surface-base px-5 text-[16px] font-bold text-ink-primary shadow-soft transition-transform active:scale-[0.98]"
           onClick={() => router.push("/accueil")}
         >
-          Retour à l'accueil
+          Retour à l&apos;accueil
         </button>
       </div>
     );
@@ -36,7 +47,7 @@ export function ContactForm() {
 
   return (
     <form
-      className="flex flex-col gap-4"
+      className="flex max-w-md flex-col gap-4"
       onSubmit={(e) => {
         e.preventDefault();
         setError(null);
@@ -50,33 +61,22 @@ export function ContactForm() {
         });
       }}
     >
-      <p className="text-sm font-semibold text-ink-primary">
-        Canal{" "}
-        <span className="font-normal text-ink-secondary">
-          — téléphone ou email (un seul)
-        </span>
-      </p>
+      <Segmented
+        ariaLabel="Canal de contact"
+        value={channel}
+        onChange={(c) => {
+          setChannel(c);
+          setValue("");
+        }}
+        options={[
+          { value: "phone", label: "Téléphone", icon: <Phone size={16} weight="fill" /> },
+          { value: "email", label: "Email", icon: <EnvelopeSimple size={16} weight="fill" /> },
+        ]}
+      />
 
-      <div className="flex gap-2" role="radiogroup" aria-label="Canal de contact">
-        {(["phone", "email"] as const).map((c) => (
-          <button
-            key={c}
-            type="button"
-            aria-pressed={channel === c}
-            onClick={() => { setChannel(c); setValue(""); }}
-            className={`min-h-tap-min rounded-full px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
-              channel === c
-                ? "bg-accent text-ink-primary"
-                : "bg-surface-raised/50 text-ink-secondary"
-            }`}
-          >
-            {c === "phone" ? "Téléphone" : "Email"}
-          </button>
-        ))}
-      </div>
-
-      <label className="flex flex-col gap-1 text-sm font-semibold text-ink-primary">
-        {channel === "phone" ? "Numéro de téléphone" : "Adresse email"}
+      <Field
+        label={channel === "phone" ? "Numéro de téléphone" : "Adresse email"}
+      >
         <input
           name="contact-value"
           type={channel === "phone" ? "tel" : "email"}
@@ -85,17 +85,17 @@ export function ContactForm() {
           autoComplete={channel === "phone" ? "tel" : "email"}
           placeholder={channel === "phone" ? "+221 7X XXX XX XX" : "toi@exemple.com"}
           required
-          className="min-h-tap-min rounded-md border border-border bg-surface-base px-3 text-base font-normal text-ink-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          className={inputClass}
         />
-      </label>
+      </Field>
 
-      <p className="text-xs text-ink-secondary">
-        Finalité : soirées Moeris / Résidence. Données Neon staff-only.
-        Pas de revente, pas de spam.
+      <p className="text-xs leading-5 text-ink-secondary">
+        Uniquement pour les soirées Moeris / Résidence. Données réservées à
+        l&apos;équipe. Pas de revente, pas de spam.
       </p>
 
       {error ? (
-        <p className="text-sm text-ink-secondary" role="alert">
+        <p className="text-sm font-semibold text-ember" role="alert">
           {error}
         </p>
       ) : null}
@@ -103,14 +103,15 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-tap-min items-center justify-center rounded-md bg-accent px-5 text-base font-bold text-ink-primary disabled:opacity-60"
+        className="inline-flex min-h-tap-min items-center justify-center gap-2 rounded-full bg-accent px-6 text-[16px] font-bold text-ink-onaccent shadow-glow transition-[transform,background-color] duration-300 hover:bg-accent-deep active:scale-[0.98] disabled:opacity-60"
       >
+        <BellRinging size={18} weight="fill" />
         {pending ? "Enregistrement…" : "Rester en contact"}
       </button>
 
       <button
         type="button"
-        className="text-sm text-ink-secondary underline underline-offset-2"
+        className="text-sm font-semibold text-ink-secondary underline underline-offset-4 transition-colors hover:text-ink-primary"
         onClick={() => router.push("/accueil")}
       >
         Non merci

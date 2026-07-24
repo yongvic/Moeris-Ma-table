@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import { Warning, SignIn } from "@phosphor-icons/react/dist/ssr";
 import { staffLoginAction } from "@/domain/staff/login-action";
+import { Field, inputClass } from "@/components/ui/form";
 
 export function ConnexionForm({ showError }: { showError: boolean }) {
   const [state, formAction, pending] = useActionState(staffLoginAction, {
@@ -9,37 +11,42 @@ export function ConnexionForm({ showError }: { showError: boolean }) {
   });
 
   return (
-    <form action={formAction} className="flex max-w-md flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm font-semibold text-ink-primary">
-        Email
+    <form action={formAction} className="flex flex-col gap-4">
+      <Field label="Email">
         <input
           name="email"
           type="email"
           required
           autoComplete="username"
-          className="min-h-tap-min rounded-md border border-border bg-surface-base px-3 text-base font-normal text-ink-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          placeholder="salle@moeris.local"
+          className={inputClass}
         />
-      </label>
-      <label className="flex flex-col gap-1 text-sm font-semibold text-ink-primary">
-        Mot de passe
+      </Field>
+      <Field label="Mot de passe">
         <input
           name="password"
           type="password"
           required
           autoComplete="current-password"
-          className="min-h-tap-min rounded-md border border-border bg-surface-base px-3 text-base font-normal text-ink-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          placeholder="••••••••"
+          className={inputClass}
         />
-      </label>
+      </Field>
       {state.error ? (
-        <p className="text-sm text-ink-secondary" role="alert">
+        <p
+          className="flex items-center gap-2 rounded-[var(--radius-md)] border border-ember/40 bg-ember/5 px-3 py-2 text-sm font-semibold text-ember"
+          role="alert"
+        >
+          <Warning size={17} weight="fill" />
           Email ou mot de passe incorrect.
         </p>
       ) : null}
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-tap-min items-center justify-center rounded-md bg-accent px-5 text-base font-bold text-ink-primary disabled:opacity-60"
+        className="mt-1 inline-flex min-h-tap-min items-center justify-center gap-2 rounded-full bg-accent px-6 text-[16px] font-bold text-ink-onaccent shadow-glow transition-[transform,background-color] duration-300 hover:bg-accent-deep active:scale-[0.98] disabled:opacity-60"
       >
+        <SignIn size={18} weight="bold" />
         {pending ? "Connexion…" : "Se connecter"}
       </button>
     </form>

@@ -1,10 +1,10 @@
 export const dynamic = "force-dynamic";
 
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getActiveSession } from "@/domain/session/get-current";
 import { canFinishExperience, getSessionReview } from "@/domain/review/actions";
 import { ContactForm } from "@/components/client/contact-form";
+import { Reveal } from "@/components/ui/reveal";
 
 export default async function ContactPage() {
   const session = await getActiveSession();
@@ -17,26 +17,22 @@ export default async function ContactPage() {
   if (!review) redirect("/fin/avis");
 
   return (
-    <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-section-gap px-margin-mobile py-7 md:px-7">
-      <header className="flex flex-col gap-2">
-        <p className="font-display text-[12px] leading-4 font-semibold tracking-[0.02em] text-ink-secondary uppercase">
+    <main className="mx-auto flex w-full max-w-[560px] flex-1 flex-col gap-6 px-margin-mobile py-8 md:px-7">
+      <Reveal className="flex flex-col gap-2">
+        <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-ink-secondary">
           Ensuite
-        </p>
-        <h1 className="font-display text-[22px] leading-7 font-semibold text-ink-primary">
-          Rester en contact ?
+        </span>
+        <h1 className="font-display text-[32px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink-primary sm:text-[38px]">
+          On se revoit&nbsp;?
         </h1>
-        <p className="max-w-md text-base text-ink-secondary">
-          On t&apos;avertit des prochaines soirées Moeris — téléphone ou email,
-          un seul canal.
+        <p className="max-w-md text-[16px] text-ink-secondary">
+          On t&apos;avertit des prochaines soirées Moeris. Un seul canal, quand
+          tu veux — libre à toi.
         </p>
-      </header>
-      <ContactForm />
-      <Link
-        href="/accueil"
-        className="text-sm text-ink-secondary underline underline-offset-2"
-      >
-        Retour à l&apos;accueil
-      </Link>
+      </Reveal>
+      <Reveal index={1}>
+        <ContactForm />
+      </Reveal>
     </main>
   );
 }

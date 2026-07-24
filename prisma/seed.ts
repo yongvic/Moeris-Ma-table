@@ -21,21 +21,21 @@ const menuSeed = [
     priceCents: 4500,
     available: true,
     sortOrder: 1,
-    photoUrl: null as string | null,
+    photoUrl: "/menu/thieboudienne.png" as string | null,
   },
   {
     name: "Yassa poulet",
     priceCents: 4000,
     available: true,
     sortOrder: 2,
-    photoUrl: null,
+    photoUrl: "/menu/yassa-poulet.png",
   },
   {
     name: "Pastels (indispo)",
     priceCents: 1500,
     available: false,
     sortOrder: 3,
-    photoUrl: null,
+    photoUrl: "/menu/pastels.png",
   },
 ];
 

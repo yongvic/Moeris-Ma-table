@@ -1,44 +1,50 @@
 import { ButtonPrimary } from "./button-primary";
 import { ButtonSecondary } from "./button-secondary";
-import { IllustrationPanel } from "./illustration-panel";
+import { Illustration } from "@/components/ui/illustration";
+import { Reveal } from "@/components/ui/reveal";
+import { HandWaving } from "@phosphor-icons/react/dist/ssr";
 
 /**
- * card-accueil — illustration + display title + primary + secondary.
- * One primary CTA only ; no hub tiles / identity form.
+ * card-accueil — golden-hour split hero. One primary CTA + one secondary.
+ * No hub tiles, no identity form (PRD anti-dashboard).
  */
 export function CardAccueil() {
   return (
     <section
-      className="grid w-full grid-cols-1 items-center gap-section-gap sm:grid-cols-2 sm:gap-7 lg:gap-7"
+      className="grid w-full grid-cols-1 items-center gap-6 sm:grid-cols-[1fr_1.05fr] sm:gap-8 lg:gap-12"
       aria-labelledby="accueil-title"
     >
-      <div className="order-1 flex justify-center sm:order-2 lg:order-2">
-        <IllustrationPanel />
-      </div>
-
-      <div className="order-2 flex flex-col gap-5 sm:order-1 lg:order-1">
-        <div className="flex flex-col gap-3">
-          <p className="font-display text-[12px] leading-4 font-semibold tracking-[0.02em] text-ink-secondary uppercase">
+      <div className="order-2 flex flex-col gap-6 sm:order-1">
+        <Reveal className="flex flex-col gap-3" index={0}>
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface-base/70 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink-secondary">
             Ma table
-          </p>
+          </span>
           <h1
             id="accueil-title"
-            className="font-display text-[28px] leading-[34px] font-semibold text-ink-primary lg:text-[40px] lg:leading-[46px]"
+            className="font-display text-[40px] font-semibold leading-[1.05] tracking-[-0.02em] text-ink-primary sm:text-[46px] lg:text-[58px]"
           >
             Pose-toi.
           </h1>
-          <p className="max-w-md text-base leading-6 text-ink-secondary">
-            On s’occupe de toi.
+          <p className="max-w-md text-[17px] leading-7 text-ink-secondary">
+            Bienvenue à la maison. On s&apos;occupe de toi, à ton rythme, sans
+            compte ni prise de tête.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="flex flex-col gap-3 sm:items-start">
-          <ButtonPrimary href="/menu">Voir le menu</ButtonPrimary>
-          <ButtonSecondary href="/service">
-            J’ai besoin de quelque chose
+        <Reveal className="flex flex-col gap-3 sm:max-w-sm" index={1}>
+          <ButtonPrimary href="/menu">Voir la carte</ButtonPrimary>
+          <ButtonSecondary
+            href="/service"
+            icon={<HandWaving size={18} weight="fill" />}
+          >
+            J&apos;ai besoin de quelque chose
           </ButtonSecondary>
-        </div>
+        </Reveal>
       </div>
+
+      <Reveal className="order-1 sm:order-2" index={0} y={24}>
+        <Illustration variant="accueil" priority className="max-w-[420px]" />
+      </Reveal>
     </section>
   );
 }

@@ -1,28 +1,39 @@
 import Link from "next/link";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 type ButtonSecondaryProps = {
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
+  icon?: ReactNode;
+  full?: boolean;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">;
 
 /**
- * Secondary CTA — surface-raised, border, soft elevation ; never equal weight to primary.
+ * Secondary CTA — raised surface, hairline, soft depth. Never equal weight to primary.
  */
 export function ButtonSecondary({
   href,
   children,
   className = "",
+  icon,
+  full = false,
   ...rest
 }: ButtonSecondaryProps) {
   return (
     <Link
       href={href}
-      className={`inline-flex min-h-tap-min w-full items-center justify-center rounded-full border border-border bg-surface-raised px-6 text-base leading-5 font-bold text-ink-primary shadow-soft transition-[transform,opacity] duration-200 hover:opacity-95 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring sm:w-auto sm:min-w-[200px] ${className}`}
+      className={`group inline-flex min-h-tap-min items-center justify-center gap-2.5 rounded-full border border-border bg-surface-raised px-6 text-[16px] font-bold leading-5 text-ink-primary shadow-soft transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border-strong hover:bg-surface-sunk active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
+        full ? "w-full" : "w-full sm:w-auto"
+      } ${className}`}
       {...rest}
     >
-      {children}
+      {icon ? (
+        <span aria-hidden className="text-ink-secondary">
+          {icon}
+        </span>
+      ) : null}
+      <span>{children}</span>
     </Link>
   );
 }

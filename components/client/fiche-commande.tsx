@@ -2,9 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  Check,
+  ArrowClockwise,
+  PaperPlaneTilt,
+  Sparkle,
+} from "@phosphor-icons/react/dist/ssr";
 import { placeOrderAction } from "@/domain/order/place-order";
 import { TASTE_CHIPS, tasteLabel } from "@/domain/order/tastes";
 import { reapplyRememberedTastesAction } from "@/domain/guest/memory-actions";
+import { Illustration } from "@/components/ui/illustration";
 
 export function FicheCommande({
   item,
@@ -16,6 +24,7 @@ export function FicheCommande({
   rememberedTastes?: string[];
 }) {
   const router = useRouter();
+  const reduce = useReducedMotion();
   const [tastes, setTastes] = useState<Set<string>>(new Set(initialTastes));
   const [pending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
@@ -25,42 +34,53 @@ export function FicheCommande({
   function toggle(key: string) {
     setTastes((prev) => {
       const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }
 
   if (success) {
     return (
-      <div
-        className="flex flex-1 flex-col items-center justify-center gap-6 px-margin-mobile py-10"
+      <motion.div
+        className="flex flex-1 flex-col items-center justify-center gap-6 py-10 text-center"
         aria-live="polite"
+        initial={reduce ? false : { opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
-        <span className="text-6xl" aria-hidden>
-          🥘
-        </span>
-        <div className="flex flex-col items-center gap-2 text-center">
-          <p className="font-display text-[22px] font-semibold text-ink-primary">
-            C'est parti !
-          </p>
-          <p className="max-w-sm text-base text-ink-secondary">
-            Ta commande est enregistrée — on s'en occupe.
+        <Illustration variant="commande" className="max-w-[260px]" priority />
+        <div className="flex flex-col items-center gap-2">
+          <h2 className="font-display text-[26px] font-semibold text-ink-primary">
+            C&apos;est parti.
+          </h2>
+          <p className="max-w-sm text-[16px] text-ink-secondary">
+            Ta commande est en cuisine. On s&apos;occupe de tout, détends-toi.
           </p>
         </div>
-        <button
-          type="button"
-          className="inline-flex min-h-tap-min items-center justify-center rounded-md border border-border px-5 text-base font-bold text-ink-primary"
-          onClick={() => router.push("/menu")}
-        >
-          Retour à la carte
-        </button>
-      </div>
+        <div className="flex flex-col gap-2.5 sm:flex-row">
+          <button
+            type="button"
+            onClick={() => router.push("/menu")}
+            className="inline-flex min-h-tap-min items-center justify-center rounded-full border border-border bg-surface-raised px-6 text-[16px] font-bold text-ink-primary shadow-soft transition-transform active:scale-[0.98]"
+          >
+            Retour à la carte
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/commande")}
+            className="inline-flex min-h-tap-min items-center justify-center rounded-full bg-accent px-6 text-[16px] font-bold text-ink-onaccent shadow-glow transition-transform hover:bg-accent-deep active:scale-[0.98]"
+          >
+            Voir ma commande
+          </button>
+        </div>
+      </motion.div>
     );
   }
 
   return (
     <form
-      className="flex flex-1 flex-col gap-6 px-margin-mobile py-7 md:px-7"
+      className="flex flex-1 flex-col gap-7 pt-7"
       onSubmit={(e) => {
         e.preventDefault();
         setError(null);
@@ -78,28 +98,21 @@ export function FicheCommande({
         });
       }}
     >
-      <div className="flex flex-col gap-2">
-        <p className="font-display text-[12px] leading-4 font-semibold tracking-[0.02em] text-ink-secondary uppercase">
-          Ma commande
-        </p>
-        <h1 className="font-display text-[22px] leading-7 font-semibold text-ink-primary">
-          {item.name}
-        </h1>
-      </div>
+      <section aria-labelledby="tastes-label" className="flex flex-col gap-3">
+        <div>
+          <p id="tastes-label" className="font-display text-[18px] font-semibold text-ink-primary">
+            Un goût particulier ?
+          </p>
+          <p className="text-sm text-ink-secondary">
+            Optionnel — dis-nous comment tu l&apos;aimes.
+          </p>
+        </div>
 
-      <section aria-labelledby="tastes-label">
-        <p
-          id="tastes-label"
-          className="mb-3 text-sm font-semibold text-ink-primary"
-        >
-          Goûts cuisine{" "}
-          <span className="font-normal text-ink-secondary">(optionnel)</span>
-        </p>
         {rememberedTastes.length > 0 && !reapplied ? (
           <button
             type="button"
             disabled={pending}
-            className="mb-3 inline-flex min-h-tap-min items-center rounded-md border border-border bg-accent-soft px-4 text-sm font-bold text-ink-primary disabled:opacity-60"
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-accent bg-accent-soft/60 px-4 py-2 text-sm font-bold text-ink-primary transition-colors hover:bg-accent-soft disabled:opacity-60"
             onClick={() => {
               startTransition(async () => {
                 const res = await reapplyRememberedTastesAction();
@@ -112,11 +125,16 @@ export function FicheCommande({
               });
             }}
           >
-            Réappliquer mes goûts (
-            {rememberedTastes.map(tasteLabel).join(", ")})
+            <Sparkle size={16} weight="fill" className="text-accent-deep" />
+            Réappliquer mes goûts ({rememberedTastes.map(tasteLabel).join(", ")})
           </button>
         ) : null}
-        <div className="flex flex-wrap gap-2" role="group" aria-labelledby="tastes-label">
+
+        <div
+          className="flex flex-wrap gap-2.5"
+          role="group"
+          aria-labelledby="tastes-label"
+        >
           {TASTE_CHIPS.map((chip) => {
             const selected = tastes.has(chip.key);
             return (
@@ -125,12 +143,15 @@ export function FicheCommande({
                 type="button"
                 aria-pressed={selected}
                 onClick={() => toggle(chip.key)}
-                className={`inline-flex min-h-tap-min items-center rounded-full px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
+                className={`inline-flex min-h-tap-min items-center gap-2 rounded-full px-4 text-[15px] font-bold transition-[background-color,color,border-color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
                   selected
-                    ? "bg-accent text-ink-primary"
-                    : "bg-surface-raised/50 text-ink-secondary"
+                    ? "bg-accent text-ink-onaccent shadow-soft"
+                    : "border border-border bg-surface-base text-ink-secondary hover:border-border-strong hover:text-ink-primary"
                 }`}
               >
+                {selected ? (
+                  <Check size={16} weight="bold" />
+                ) : null}
                 {chip.label}
               </button>
             );
@@ -139,13 +160,14 @@ export function FicheCommande({
       </section>
 
       {error ? (
-        <div className="flex flex-col gap-2" aria-live="polite">
-          <p className="text-sm text-ink-secondary">{error}</p>
+        <div className="flex flex-col gap-3 rounded-[var(--radius-md)] border border-ember/40 bg-ember/5 p-4" aria-live="polite">
+          <p className="text-sm font-semibold text-ember">{error}</p>
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex min-h-tap-min items-center justify-center rounded-md bg-accent px-5 text-base font-bold text-ink-primary disabled:opacity-60"
+            className="inline-flex w-fit min-h-tap-min items-center gap-2 rounded-full bg-accent px-5 text-[16px] font-bold text-ink-onaccent disabled:opacity-60"
           >
+            <ArrowClockwise size={17} weight="bold" />
             Réessayer
           </button>
         </div>
@@ -153,9 +175,14 @@ export function FicheCommande({
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex min-h-tap-min items-center justify-center rounded-md bg-accent px-5 text-base font-bold text-ink-primary disabled:opacity-60"
+          className="group inline-flex min-h-[54px] w-full items-center justify-center gap-3 rounded-full bg-accent px-6 text-[17px] font-bold text-ink-onaccent shadow-glow transition-[transform,background-color] duration-300 hover:bg-accent-deep active:scale-[0.99] disabled:opacity-60 sm:w-auto sm:self-start"
         >
-          {pending ? "Envoi…" : "Commander"}
+          <PaperPlaneTilt
+            size={19}
+            weight="fill"
+            className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
+          {pending ? "Envoi…" : "Envoyer ma commande"}
         </button>
       )}
     </form>
