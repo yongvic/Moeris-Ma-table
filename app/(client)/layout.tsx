@@ -1,4 +1,5 @@
 import { BanniereReprise } from "@/components/client/banniere-reprise";
+import { BarreProgressionSejour } from "@/components/client/barre-progression-sejour";
 import { ClientNav } from "@/components/client/client-nav";
 import { getActiveSession } from "@/domain/session/get-current";
 import {
@@ -7,7 +8,8 @@ import {
 } from "@/domain/session/steps";
 
 /**
- * Client shell — fil léger Menu | Service + soft resume banner host (1.4).
+ * Client shell — nav Menu|Service + progress bar + soft resume banner.
+ * Progress reads Neon Session.step; Service visits do not change step.
  */
 export default async function ClientLayout({
   children,
@@ -19,6 +21,7 @@ export default async function ClientLayout({
   return (
     <div className="flex min-h-full flex-1 flex-col">
       {session ? <ClientNav /> : null}
+      {session ? <BarreProgressionSejour step={session.step} /> : null}
       {session ? (
         <BanniereReprise
           stepLabel={getStepLabelFr(session.step)}

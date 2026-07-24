@@ -15,7 +15,7 @@ const ALLOWED = new Set<SessionStep>([
 
 /**
  * Persist séjour step on Session (Neon). Used by stubs / future epics.
- * Does not advance Service (lateral path).
+ * Does not advance Service (lateral path — never call this from /service).
  */
 export async function updateSessionStepAction(input: {
   step: SessionStep;

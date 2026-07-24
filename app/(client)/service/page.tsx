@@ -1,13 +1,14 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { getCurrentSession } from "@/domain/session/get-current";
+import { getActiveSession } from "@/domain/session/get-current";
 
 /**
  * Service stub — micro-missions arrive in story 3.3.
+ * Lateral path: does NOT call updateSessionStep (barre stays on current step).
  */
 export default async function ServicePage() {
-  const session = await getCurrentSession();
+  const session = await getActiveSession();
 
   if (!session) {
     return (

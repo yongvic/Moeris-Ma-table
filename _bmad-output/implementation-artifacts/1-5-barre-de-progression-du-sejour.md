@@ -1,6 +1,10 @@
+---
+baseline_commit: NO_VCS
+---
+
 # Story 1.5: Barre de progression du séjour
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -26,35 +30,35 @@ so that je comprends l’avancement sans naviguer comme dans un dashboard.
 
 ## Tasks / Subtasks
 
-- [ ] T1. Composant `barre-progression-sejour` (AC: #1, #2, #4, #5)
-  - [ ] 4 segments : Accueil | Menu | Commande | Fin (labels FR)
-  - [ ] Remplissage dérivé de `Session.step` (WELCOME=1 … END=4) — source Neon via domain, pas state UI seul
-  - [ ] Segment courant + complétés : `{colors.accent}` ; segments futurs : neutre (border / surface-raised) — **pas** couleur seule pour l’état : combiner forme/remplissage + texte/aria
-  - [ ] **Non interactif** pour skip : pas de `href` / `onClick` de navigation sur les segments (role presentation ou progressbar / list non-nav)
-  - [ ] `aria` : nom du type « Étape N sur 4 : Menu » (UX-DR15 / FR21)
-  - [ ] Texte sur accent = ink-primary si labels sur fond accent
+- [x] T1. Composant `barre-progression-sejour` (AC: #1, #2, #4, #5)
+  - [x] 4 segments : Accueil | Menu | Commande | Fin (labels FR)
+  - [x] Remplissage dérivé de `Session.step` (WELCOME=1 … END=4) — source Neon via domain, pas state UI seul
+  - [x] Segment courant + complétés : `{colors.accent}` ; segments futurs : neutre (border / surface-raised) — **pas** couleur seule pour l’état : combiner forme/remplissage + texte/aria
+  - [x] **Non interactif** pour skip : pas de `href` / `onClick` de navigation sur les segments (role presentation ou progressbar / list non-nav)
+  - [x] `aria` : nom du type « Étape N sur 4 : Menu » (UX-DR15 / FR21)
+  - [x] Texte sur accent = ink-primary si labels sur fond accent
 
-- [ ] T2. Intégration shell client (AC: #1, #3)
-  - [ ] Monter la barre dans le layout `(client)` sur surfaces fil séjour (Accueil, Menu stub, Commande stub, Fin stub)
-  - [ ] Surface **Service** : barre visible OK mais `step` **inchangé** à l’entrée Service (voie latérale)
-  - [ ] Ne pas traiter Service comme 5ᵉ étape
-  - [ ] Absente du `(bo)` entièrement
+- [x] T2. Intégration shell client (AC: #1, #3)
+  - [x] Monter la barre dans le layout `(client)` sur surfaces fil séjour (Accueil, Menu stub, Commande stub, Fin stub)
+  - [x] Surface **Service** : barre visible OK mais `step` **inchangé** à l’entrée Service (voie latérale)
+  - [x] Ne pas traiter Service comme 5ᵉ étape
+  - [x] Absente du `(bo)` entièrement
 
-- [ ] T3. Règles d’avancement (AC: #1, #3)
-  - [ ] Documenter / implémenter mapping minimal epic 1 :
+- [x] T3. Règles d’avancement (AC: #1, #3)
+  - [x] Documenter / implémenter mapping minimal epic 1 :
     - Accueil → step WELCOME
     - Navigation / CTA « Voir le menu » → update step MENU (via Server Action domain)
     - ORDER / END : setters stubs ou no-op jusqu’aux epics 3–4, mais barre doit **afficher** correctement si step forcé en test
-  - [ ] Visite Service : **aucun** `updateStep`
-  - [ ] Ne pas rendre la barre un hub cliquable multi-parcours
+  - [x] Visite Service : **aucun** `updateStep`
+  - [x] Ne pas rendre la barre un hub cliquable multi-parcours
 
-- [ ] T4. États futurs (note d’implémentation, soft)
-  - [ ] Prévoir (commentaire / prop) : Contact après Merci chef → barre absente ou figée 100 % (UX-DR15) — pas bloquant si Contact n’existe pas encore
-  - [ ] `prefers-reduced-motion` : pas d’anim obligatoire ; si fill animé, respecter reduce
+- [x] T4. États futurs (note d’implémentation, soft)
+  - [x] Prévoir (commentaire / prop) : Contact après Merci chef → barre absente ou figée 100 % (UX-DR15) — pas bloquant si Contact n’existe pas encore
+  - [x] `prefers-reduced-motion` : pas d’anim obligatoire ; si fill animé, respecter reduce
 
-- [ ] T5. Garde-fous
-  - [ ] Pas de stepper MUI/dashboard ; pas de deep-link skip
-  - [ ] Pas logique Order/Terminer réelle (epics 3–4)
+- [x] T5. Garde-fous
+  - [x] Pas de stepper MUI/dashboard ; pas de deep-link skip
+  - [x] Pas logique Order/Terminer réelle (epics 3–4)
 
 ## Dev Notes
 
@@ -124,12 +128,31 @@ FR21 (epics) + UX-DR15 — exigence UX actée ; pas encore FR numérotée PRD (r
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Composer (Cursor Agent)
 
 ### Debug Log References
 
+- Tests 8/8 ; `npm run build` OK
+- Barre montée dans `app/(client)/layout.tsx` ; absente du BO
+
 ### Completion Notes List
 
-Ultimate context engine analysis completed - comprehensive developer guide created
+- `barre-progression-sejour` : 4 segments non cliquables, accent sur actif/complétés, aria « Étape N sur 4 : … »
+- Source = `Session.step` Neon via `getActiveSession`
+- Service = voie latérale (pas d’updateStep) ; prop `mode` pour futur Contact frozen/hidden
+- CTA Menu / stubs Commande-Fin avancent déjà le step (1.4)
+
+### Change Log
+
+- 2026-07-24 — Story 1.5 barre progression séjour → status `review`
 
 ### File List
+
+- components/client/barre-progression-sejour.tsx
+- domain/session/steps.ts
+- domain/session/steps.test.ts
+- domain/session/update-step.ts
+- app/(client)/layout.tsx
+- app/(client)/service/page.tsx
+- _bmad-output/implementation-artifacts/1-5-barre-de-progression-du-sejour.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
