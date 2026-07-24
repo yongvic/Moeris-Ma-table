@@ -1,76 +1,75 @@
 # Story 3.3: Micro-missions Service client + file BO
 
-Status: review
-
+Status: done
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
 ## Story
 
 As a client,
 I want demander serveur / eau / addition / autre en un tap,
-so that j’obtiens de l’aide sans chat ni long formulaire.
+so that jâ€™obtiens de lâ€™aide sans chat ni long formulaire.
 
 ## Acceptance Criteria
 
 1. **Given** une Session active  
-   **When** j’ouvre Service et je tape une des 4 tuiles (serveur / eau / addition / autre)  
-   **Then** une ServiceRequest `open` est créée (type fermé, sans note libre) et confirmée côté client  
-   **And** chaque tuile a icône + libellé texte  
-   **And** la barre de progression principale n’avance pas
+   **When** jâ€™ouvre Service et je tape une des 4 tuiles (serveur / eau / addition / autre)  
+   **Then** une ServiceRequest `open` est crÃ©Ã©e (type fermÃ©, sans note libre) et confirmÃ©e cÃ´tÃ© client  
+   **And** chaque tuile a icÃ´ne + libellÃ© texte  
+   **And** la barre de progression principale nâ€™avance pas
 
-2. **Given** une demande créée  
+2. **Given** une demande crÃ©Ã©e  
    **When** le staff ouvre BO Service  
-   **Then** la demande apparaît dans la file (Pusher + filet poll) et peut passer `open` → `done`  
-   **And** l’état vide de la file est explicite
+   **Then** la demande apparaÃ®t dans la file (Pusher + filet poll) et peut passer `open` â†’ `done`  
+   **And** lâ€™Ã©tat vide de la file est explicite
 
 ## Tasks / Subtasks
 
-- [ ] T1. Schéma ServiceRequest (AC: #1, #2)
+- [ ] T1. SchÃ©ma ServiceRequest (AC: #1, #2)
   - [ ] Model : `id`, `sessionId`, `tableId`, `type` enum **`waiter|water|bill|other`**, `status` enum **`open|done`**, `createdAt`, `updatedAt`
-  - [ ] **AD-14** : pas de champ note / free text ; pas d’autres types V1
-  - [ ] Création client only → status initial `open` ; transition `open→done` **BO only**
+  - [ ] **AD-14** : pas de champ note / free text ; pas dâ€™autres types V1
+  - [ ] CrÃ©ation client only â†’ status initial `open` ; transition `openâ†’done` **BO only**
 
 - [ ] T2. Domain actions (AC: #1, #2)
-  - [ ] `domain/service/create-request.ts` : Session valide → INSERT + publish Pusher `{ kind:"service", id, tableId, status, at }` post-commit (AD-7)
-  - [ ] `domain/service/complete-request.ts` : staff auth → `open→done` + publish
+  - [ ] `domain/service/create-request.ts` : Session valide â†’ INSERT + publish Pusher `{ kind:"service", id, tableId, status, at }` post-commit (AD-7)
+  - [ ] `domain/service/complete-request.ts` : staff auth â†’ `openâ†’done` + publish
   - [ ] Erreurs `{ ok:false, code, message }` ; anti double-tap pending
-  - [ ] Liste BO : open first, puis récentes done (ou filtre open-only V1 — documenter ; file active = `open`)
+  - [ ] Liste BO : open first, puis rÃ©centes done (ou filtre open-only V1 â€” documenter ; file active = `open`)
 
 - [ ] T3. UI client `catalogue-service` (AC: #1)
   - [ ] Route Service depuis barre Menu|Service / Accueil secondaire
   - [ ] 4 tuiles fixes : mapping
-    - `waiter` → « Serveur »
-    - `water` → « Eau »
-    - `bill` → « Addition »
-    - `other` → « Autre »
-  - [ ] Chaque tuile : **icône + libellé** (jamais icône seule) ; tap target ≥44px ; `surface-raised` / `rounded.md`
-  - [ ] Un tap = envoi ; confirmation courte FR (« C’est noté. » / « On arrive. ») — geste sec, **pas** d’illustration dédiée
-  - [ ] **Interdit** : chat, textarea, modale de précision
-  - [ ] Mettre à jour étape session **sans** avancer la barre (Service = voie latérale) — barre reste sur Accueil/Menu/Commande/Fin courant (FR21 / UX-DR15)
+    - `waiter` â†’ Â« Serveur Â»
+    - `water` â†’ Â« Eau Â»
+    - `bill` â†’ Â« Addition Â»
+    - `other` â†’ Â« Autre Â»
+  - [ ] Chaque tuile : **icÃ´ne + libellÃ©** (jamais icÃ´ne seule) ; tap target â‰¥44px ; `surface-raised` / `rounded.md`
+  - [ ] Un tap = envoi ; confirmation courte FR (Â« Câ€™est notÃ©. Â» / Â« On arrive. Â») â€” geste sec, **pas** dâ€™illustration dÃ©diÃ©e
+  - [ ] **Interdit** : chat, textarea, modale de prÃ©cision
+  - [ ] Mettre Ã  jour Ã©tape session **sans** avancer la barre (Service = voie latÃ©rale) â€” barre reste sur Accueil/Menu/Commande/Fin courant (FR21 / UX-DR15)
 
 - [ ] T4. UI BO Service file (AC: #2)
   - [ ] Remplacer stub onglet Service : `item-file-service-bo`
-  - [ ] Afficher type (label FR), table/session, horodatage ; action « Fait » / « Traité » → `done`
-  - [ ] Pusher `bo-floor` kind service + **poll soft** (réutiliser helper 3.2 si possible)
-  - [ ] État vide explicite : « Aucune demande en attente »
+  - [ ] Afficher type (label FR), table/session, horodatage ; action Â« Fait Â» / Â« TraitÃ© Â» â†’ `done`
+  - [ ] Pusher `bo-floor` kind service + **poll soft** (rÃ©utiliser helper 3.2 si possible)
+  - [ ] Ã‰tat vide explicite : Â« Aucune demande en attente Â»
   - [ ] Auth gate 2.1
 
 - [ ] T5. Garde-fous anti-scope
   - [ ] Pas de free-text ; pas de types custom
-  - [ ] Pas d’impact sur barre progression séjour
-  - [ ] Pas de paiement addition ; « Addition » = appel staff seulement
+  - [ ] Pas dâ€™impact sur barre progression sÃ©jour
+  - [ ] Pas de paiement addition ; Â« Addition Â» = appel staff seulement
 
 ## Dev Notes
 
-### Dépendances
+### DÃ©pendances
 
 - **Bloquantes :** Epic 1 Session ; **2.1** pour BO file.
-- **Fortement recommandée :** **3.2** infra Pusher + `use-bo-floor` poll — réutiliser canal `bo-floor`.
+- **Fortement recommandÃ©e :** **3.2** infra Pusher + `use-bo-floor` poll â€” rÃ©utiliser canal `bo-floor`.
 - Menu (2.x) non requis pour Service pur, mais parcours Accueil/nav Epic 1 oui.
 
-### Architecture — AD obligatoires
+### Architecture â€” AD obligatoires
 
-- **AD-14** : type ∈ `{waiter,water,bill,other}` ; `open→done` BO only ; pas de note libre.
+- **AD-14** : type âˆˆ `{waiter,water,bill,other}` ; `openâ†’done` BO only ; pas de note libre.
 - **AD-7** : publish Pusher post-commit ; poll filet.
 - **AD-4 / AD-5 / AD-9** : Server Actions ; Session + tableId sur la demande.
 - **AD-17** : onglet Service du shell unique.
@@ -86,7 +85,7 @@ so that j’obtiens de l’aide sans chat ni long formulaire.
 ### Chemins cibles
 
 ```text
-prisma/schema.prisma                      # ServiceRequest — UPDATE
+prisma/schema.prisma                      # ServiceRequest â€” UPDATE
 domain/service/create-request.ts          # NEW
 domain/service/complete-request.ts        # NEW
 domain/service/list-open.ts               # NEW
@@ -98,17 +97,17 @@ components/bo/item-file-service-bo.tsx    # NEW
 
 ### UX / a11y
 
-- EXPERIENCE : Service = micro-mission 10–30 s ; voie latérale
+- EXPERIENCE : Service = micro-mission 10â€“30 s ; voie latÃ©rale
 - DESIGN : `catalogue-service`, `item-file-service-bo`
-- Accessible name par tuile (libellé visible)
+- Accessible name par tuile (libellÃ© visible)
 - `pattern-background` OK sur Service
 - Copy FR courte ; pas Login/Submit
 
-### Barre de progression — règle dure
+### Barre de progression â€” rÃ¨gle dure
 
-- Créer une ServiceRequest **ne change pas** l’étape Accueil|Menu|Commande|Fin
-- Tests : avant/après demande, segments barre identiques
-- Nom accessible barre inchangé (« Étape N sur 4 : … »)
+- CrÃ©er une ServiceRequest **ne change pas** lâ€™Ã©tape Accueil|Menu|Commande|Fin
+- Tests : avant/aprÃ¨s demande, segments barre identiques
+- Nom accessible barre inchangÃ© (Â« Ã‰tape N sur 4 : â€¦ Â»)
 
 ### Hors scope strict
 
@@ -119,35 +118,35 @@ components/bo/item-file-service-bo.tsx    # NEW
 
 ### Testing
 
-- 4 tuiles → 4 types enum corrects ; refus type invalide server-side
+- 4 tuiles â†’ 4 types enum corrects ; refus type invalide server-side
 - Confirmation client + row `open` Neon + event Pusher kind service
-- BO voit item ; complete → `done` ; disparaît de file active / marquage traité
-- Poll soft sans Pusher → item apparaît quand même
-- Barre progression **inchangée** après envoi Service
+- BO voit item ; complete â†’ `done` ; disparaÃ®t de file active / marquage traitÃ©
+- Poll soft sans Pusher â†’ item apparaÃ®t quand mÃªme
+- Barre progression **inchangÃ©e** aprÃ¨s envoi Service
 - Pas de champ texte dans le DOM Service
-- Non-auth BO → redirect Connexion
-- État vide file nommé
+- Non-auth BO â†’ redirect Connexion
+- Ã‰tat vide file nommÃ©
 
 ### NFR soft
 
-- NFR3 : gros targets, icône+texte
-- NFR1 : page Service légère
-- SM opérationnel : file visible pour ne rater aucune mission
+- NFR3 : gros targets, icÃ´ne+texte
+- NFR1 : page Service lÃ©gÃ¨re
+- SM opÃ©rationnel : file visible pour ne rater aucune mission
 
 ### Previous story intelligence (3.2)
 
-- Réutiliser `bo-floor` + poll — **même** hook / payload `kind`
+- RÃ©utiliser `bo-floor` + poll â€” **mÃªme** hook / payload `kind`
 - `status-pill` optionnel pour open/done si utile ; sinon bouton + label suffit
 - Ne pas casser liste Commandes en branchant subscribe multi-kind
 
 ### References
 
-- [Source: `epics.md` — Story 3.3, FR11]
-- [Source: `ARCHITECTURE-SPINE.md` — AD-14, AD-7]
-- [Source: `DESIGN.md` — `catalogue-service`, `item-file-service-bo`]
-- [Source: `EXPERIENCE.md` — Service, barre latérale, BO Service, UJ-1/UJ-3]
-- [Source: `SPEC.md` — CAP-7, CAP-11]
-- [Source: `glossary.md` — Service (micro-mission)]
+- [Source: `epics.md` â€” Story 3.3, FR11]
+- [Source: `ARCHITECTURE-SPINE.md` â€” AD-14, AD-7]
+- [Source: `DESIGN.md` â€” `catalogue-service`, `item-file-service-bo`]
+- [Source: `EXPERIENCE.md` â€” Service, barre latÃ©rale, BO Service, UJ-1/UJ-3]
+- [Source: `SPEC.md` â€” CAP-7, CAP-11]
+- [Source: `glossary.md` â€” Service (micro-mission)]
 
 ## Dev Agent Record
 

@@ -1,7 +1,6 @@
 # Story 2.3: Consulter le Menu client photo-first
 
-Status: review
-
+Status: done
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
 ## Story
@@ -12,62 +11,62 @@ so that je choisis un plat facilement (persona Mame Fatou).
 
 ## Acceptance Criteria
 
-1. **Given** une Session client active et un catalogue publié  
-   **When** j’ouvre le Menu depuis l’Accueil ou la nav  
+1. **Given** une Session client active et un catalogue publiÃ©  
+   **When** jâ€™ouvre le Menu depuis lâ€™Accueil ou la nav  
    **Then** je vois les plats disponibles (photo, nom, prix) via `card-menu-item` sans login  
-   **And** le contenu correspond au catalogue BO publié  
-   **And** la grille s’adapte (1 col phone / 2 tablette / 3 desktop)  
-   **And** un plat indisponible est visible comme tel et non sélectionnable (pas d’erreur bloquante)  
-   **And** la barre de progression indique l’étape Menu
+   **And** le contenu correspond au catalogue BO publiÃ©  
+   **And** la grille sâ€™adapte (1 col phone / 2 tablette / 3 desktop)  
+   **And** un plat indisponible est visible comme tel et non sÃ©lectionnable (pas dâ€™erreur bloquante)  
+   **And** la barre de progression indique lâ€™Ã©tape Menu
 
-2. **Given** un échec réseau au chargement  
+2. **Given** un Ã©chec rÃ©seau au chargement  
    **When** le Menu ne charge pas  
-   **Then** un message clair + retry s’affiche (distinct de « plat indisponible »)
+   **Then** un message clair + retry sâ€™affiche (distinct de Â« plat indisponible Â»)
 
 ## Tasks / Subtasks
 
 - [ ] T1. Lecture catalogue domain (AC: #1)
-  - [ ] Réutiliser / compléter `domain/menu/queries` : liste publiée alignée Neon (même source que BO)
-  - [ ] Cache Next : `unstable_cache` / `fetch` tags `'menu'` cohérents avec revalidate 2.2 (AD-16)
+  - [ ] RÃ©utiliser / complÃ©ter `domain/menu/queries` : liste publiÃ©e alignÃ©e Neon (mÃªme source que BO)
+  - [ ] Cache Next : `unstable_cache` / `fetch` tags `'menu'` cohÃ©rents avec revalidate 2.2 (AD-16)
   - [ ] **Aucune** Server Action write menu depuis `(client)`
 
 - [ ] T2. Route + UI Menu client (AC: #1)
-  - [ ] `app/(client)/menu/page.tsx` (ou segment session) — accessible depuis Accueil « Voir le menu » + barre Menu|Service
+  - [ ] `app/(client)/menu/page.tsx` (ou segment session) â€” accessible depuis Accueil Â« Voir le menu Â» + barre Menu|Service
   - [ ] Composant `card-menu-item` : photo (`next/image`) + nom + prix ; `elevation.soft` + `rounded.md` + `surface-raised` (DESIGN)
-  - [ ] Grille responsive : **1** col &lt;640 · **2** cols 640–1024 · **3** cols &gt;1024 ; coque desktop ~1100–1200px
-  - [ ] `pattern-background` discret OK (opacité ≤10 %) — pas d’illustration dédiée Menu
-  - [ ] Plat `available=false` : badge/état « Indisponible », **non cliquable** / pas d’ouverture fiche (3.1) — pas d’erreur globale
-  - [ ] Anonyme : zéro login, zéro jargon
+  - [ ] Grille responsive : **1** col &lt;640 Â· **2** cols 640â€“1024 Â· **3** cols &gt;1024 ; coque desktop ~1100â€“1200px
+  - [ ] `pattern-background` discret OK (opacitÃ© â‰¤10 %) â€” pas dâ€™illustration dÃ©diÃ©e Menu
+  - [ ] Plat `available=false` : badge/Ã©tat Â« Indisponible Â», **non cliquable** / pas dâ€™ouverture fiche (3.1) â€” pas dâ€™erreur globale
+  - [ ] Anonyme : zÃ©ro login, zÃ©ro jargon
 
-- [ ] T3. Progression séjour (AC: #1)
-  - [ ] Sur ouverture Menu : étape session = **Menu** ; `barre-progression-sejour` segment Menu actif (Story 1.5)
-  - [ ] Barre non cliquable pour skip ; Service n’avance pas (rappel)
+- [ ] T3. Progression sÃ©jour (AC: #1)
+  - [ ] Sur ouverture Menu : Ã©tape session = **Menu** ; `barre-progression-sejour` segment Menu actif (Story 1.5)
+  - [ ] Barre non cliquable pour skip ; Service nâ€™avance pas (rappel)
 
-- [ ] T4. États réseau (AC: #2)
-  - [ ] Échec chargement → message FR + bouton « Réessayer » (distinct copy « Plat indisponible »)
-  - [ ] Chargement bref acceptable (skeleton léger OK) — pas de spinner cold interminable
+- [ ] T4. Ã‰tats rÃ©seau (AC: #2)
+  - [ ] Ã‰chec chargement â†’ message FR + bouton Â« RÃ©essayer Â» (distinct copy Â« Plat indisponible Â»)
+  - [ ] Chargement bref acceptable (skeleton lÃ©ger OK) â€” pas de spinner cold interminable
 
-- [ ] T5. Navigation fiche (prépare 3.1)
-  - [ ] Tap plat **disponible** → navigation vers fiche plat / commande (route stub OK si 3.1 pas merge, mais lien stable `menuItemId`)
+- [ ] T5. Navigation fiche (prÃ©pare 3.1)
+  - [ ] Tap plat **disponible** â†’ navigation vers fiche plat / commande (route stub OK si 3.1 pas merge, mais lien stable `menuItemId`)
   - [ ] Pas de carousel obligatoire pour parcourir le menu
 
 - [ ] T6. Garde-fous anti-scope
-  - [ ] Pas de `placeOrder` / chips goûts (→ 3.1)
-  - [ ] Pas d’édition menu côté client
-  - [ ] Pas de BO changes sauf smoke dépendance 2.2
+  - [ ] Pas de `placeOrder` / chips goÃ»ts (â†’ 3.1)
+  - [ ] Pas dâ€™Ã©dition menu cÃ´tÃ© client
+  - [ ] Pas de BO changes sauf smoke dÃ©pendance 2.2
 
 ## Dev Notes
 
-### Dépendances
+### DÃ©pendances
 
 - **Bloquante :** **2.2** (MenuItem + photos + revalidate).
-- **Bloquante produit :** Epic 1 Session active (1.2+) + Accueil/nav (1.3) + barre progression (1.5) — sinon stub session minimale documentée pour dev isolé.
+- **Bloquante produit :** Epic 1 Session active (1.2+) + Accueil/nav (1.3) + barre progression (1.5) â€” sinon stub session minimale documentÃ©e pour dev isolÃ©.
 - **Suites :** 3.1 ouvre fiche depuis `card-menu-item`.
 
-### Architecture — AD obligatoires
+### Architecture â€” AD obligatoires
 
 - **AD-3** : lecture seule client.
-- **AD-16** : catalogue frais post-mutation BO (&lt; 1 min) — vérifier tag/revalidate bout-en-bout.
+- **AD-16** : catalogue frais post-mutation BO (&lt; 1 min) â€” vÃ©rifier tag/revalidate bout-en-bout.
 - **AD-10** : `next/image` sur `photoUrl` Blob.
 - **AD-5 / AD-9** : Menu dans une Session table ; pas de choix de table in-app.
 - **AD-2** : imports uniquement `domain` read, jamais `(bo)`.
@@ -76,7 +75,7 @@ so that je choisis un plat facilement (persona Mame Fatou).
 
 | Concern | Pin |
 | --- | --- |
-| Images | `next/image` + URLs Vercel Blob (2.6.1 côté upload déjà fait) |
+| Images | `next/image` + URLs Vercel Blob (2.6.1 cÃ´tÃ© upload dÃ©jÃ  fait) |
 | Data | Prisma 7.9 / Neon |
 | Auth client | **aucune** |
 
@@ -93,33 +92,33 @@ domain/menu/queries.ts                  # UPDATE (published list)
 ### UX / copy FR
 
 - Voix tutoiement : titres courts ; prix lisibles
-- Indisponible : « Indisponible » (état métier)
-- Réseau : « Impossible de charger le menu. » + « Réessayer »
-- Interdit : Login, Submit, Dashboard, feed « pour toi »
+- Indisponible : Â« Indisponible Â» (Ã©tat mÃ©tier)
+- RÃ©seau : Â« Impossible de charger le menu. Â» + Â« RÃ©essayer Â»
+- Interdit : Login, Submit, Dashboard, feed Â« pour toi Â»
 
-### Accessibilité
+### AccessibilitÃ©
 
-- Tap target ≥44px sur cartes
+- Tap target â‰¥44px sur cartes
 - Contraste ink sur surfaces Citrus
 - Focus-ring visible
-- Photo : `alt` = nom du plat (contenu informatif, pas décoratif)
+- Photo : `alt` = nom du plat (contenu informatif, pas dÃ©coratif)
 - `prefers-reduced-motion` si animations grille
 
 ### Hors scope strict
 
-- Fiche plat + goûts + `placeOrder` (3.1)
+- Fiche plat + goÃ»ts + `placeOrder` (3.1)
 - Mutations BO (2.2)
-- Mémoire / préférés (Epic 5)
+- MÃ©moire / prÃ©fÃ©rÃ©s (Epic 5)
 
 ### Testing
 
-- Session active + plats BO → Menu affiche photo/nom/prix alignés
-- Resize phone/tablette/desktop → 1/2/3 colonnes
-- Plat indisponible visible, non sélectionnable ; pas d’écran erreur
-- Couper réseau / mock fail query → message + retry (≠ indisponible)
-- Barre progression = étape Menu
-- Après désactivation BO + attente/revalidate → client à jour &lt; 1 min
-- Aucune UI édition
+- Session active + plats BO â†’ Menu affiche photo/nom/prix alignÃ©s
+- Resize phone/tablette/desktop â†’ 1/2/3 colonnes
+- Plat indisponible visible, non sÃ©lectionnable ; pas dâ€™Ã©cran erreur
+- Couper rÃ©seau / mock fail query â†’ message + retry (â‰  indisponible)
+- Barre progression = Ã©tape Menu
+- AprÃ¨s dÃ©sactivation BO + attente/revalidate â†’ client Ã  jour &lt; 1 min
+- Aucune UI Ã©dition
 
 ### NFR soft
 
@@ -128,18 +127,18 @@ domain/menu/queries.ts                  # UPDATE (published list)
 
 ### Previous story intelligence (2.2)
 
-- Tag cache `'menu'` / `revalidateTag` — **même clé** côté client
-- Convention prix (cents vs Decimal) — **réutiliser** formatage BO
-- `photoUrl` peut être null → placeholder soft FR, pas crash
+- Tag cache `'menu'` / `revalidateTag` â€” **mÃªme clÃ©** cÃ´tÃ© client
+- Convention prix (cents vs Decimal) â€” **rÃ©utiliser** formatage BO
+- `photoUrl` peut Ãªtre null â†’ placeholder soft FR, pas crash
 
 ### References
 
-- [Source: `epics.md` — Story 2.3, FR6]
-- [Source: `ARCHITECTURE-SPINE.md` — AD-3, AD-10, AD-16]
-- [Source: `DESIGN.md` — `card-menu-item`, elevation, grid]
-- [Source: `EXPERIENCE.md` — Menu, responsive, états réseau/indispo, mockups/menu.html]
-- [Source: `SPEC.md` — CAP-3]
-- [Source: `glossary.md` — Menu, Client anonyme]
+- [Source: `epics.md` â€” Story 2.3, FR6]
+- [Source: `ARCHITECTURE-SPINE.md` â€” AD-3, AD-10, AD-16]
+- [Source: `DESIGN.md` â€” `card-menu-item`, elevation, grid]
+- [Source: `EXPERIENCE.md` â€” Menu, responsive, Ã©tats rÃ©seau/indispo, mockups/menu.html]
+- [Source: `SPEC.md` â€” CAP-3]
+- [Source: `glossary.md` â€” Menu, Client anonyme]
 
 ## Dev Agent Record
 
