@@ -2,13 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ForkKnife, CookingPot, HandWaving } from "@phosphor-icons/react/dist/ssr";
+import {
+  ForkKnife,
+  CookingPot,
+  HandWaving,
+  AddressBook,
+} from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 
 const TABS: { href: string; label: string; icon: Icon }[] = [
   { href: "/bo/menu", label: "Menu", icon: ForkKnife },
   { href: "/bo/commandes", label: "Commandes", icon: CookingPot },
   { href: "/bo/service", label: "Service", icon: HandWaving },
+  { href: "/bo/contacts", label: "Contacts", icon: AddressBook },
 ];
 
 export function BoTabs() {
