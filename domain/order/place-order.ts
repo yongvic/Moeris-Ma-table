@@ -22,6 +22,7 @@ export type PlaceOrderResult =
 export async function placeOrderAction(input: {
   menuItemId: string;
   tastes: string[];
+  note?: string;
   qty?: number;
 }): Promise<PlaceOrderResult> {
   const session = await getActiveSession();
@@ -38,6 +39,10 @@ export async function placeOrderAction(input: {
   const tastes = Array.isArray(input.tastes)
     ? input.tastes.filter((t) => typeof t === "string").slice(0, 8)
     : [];
+  const note =
+    typeof input.note === "string" && input.note.trim()
+      ? input.note.trim().slice(0, 280)
+      : null;
 
   if (!menuItemId) {
     return { ok: false, code: "VALIDATION", message: "Plat manquant." };
@@ -71,6 +76,7 @@ export async function placeOrderAction(input: {
           tableId: session.tableId,
           status: OrderStatus.RECEIVED,
           tastesJson: tastes,
+          note,
           lines: {
             create: [
               {

@@ -79,7 +79,12 @@ export default async function AccueilPage({ searchParams }: PageProps) {
     );
   }
 
-  if (session.step !== SessionStep.WELCOME) {
+  // Resume mid-séjour (MENU/ORDER). WELCOME shows accueil; END is terminal —
+  // never bounce a finished séjour back to /fin (that felt like a dead-end loop).
+  if (
+    session.step === SessionStep.MENU ||
+    session.step === SessionStep.ORDER
+  ) {
     redirect(`${resolveResumeTarget(session.step)}?reprise=1`);
   }
 
@@ -97,7 +102,7 @@ export default async function AccueilPage({ searchParams }: PageProps) {
       )}
 
       <section className="relative overflow-hidden rounded-[var(--radius-xl)] border border-border/70 bg-gradient-to-b from-surface-raised/80 to-surface-base p-6 shadow-card sm:p-10 lg:p-12">
-        <div className="pattern-wash opacity-40" aria-hidden />
+        <div className="pattern-wash opacity-[0.22]" aria-hidden />
         <div
           className="sun-glow -right-16 -top-16 size-64 motion-safe:animate-sun"
           aria-hidden

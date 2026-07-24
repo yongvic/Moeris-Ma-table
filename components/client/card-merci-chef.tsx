@@ -16,19 +16,45 @@ const SPARKS = [
   { top: "80%", left: "80%", size: 22, delay: 0.3 },
 ];
 
+function StarLine({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className="text-[14px] font-bold text-ink-primary">{label}</span>
+      <span
+        className="flex gap-0.5"
+        role="img"
+        aria-label={`${label} : ${value} sur 5`}
+      >
+        {[1, 2, 3, 4, 5].map((n) => (
+          <Star
+            key={n}
+            size={20}
+            weight={n <= value ? "fill" : "regular"}
+            className={n <= value ? "text-accent" : "text-border-strong"}
+          />
+        ))}
+      </span>
+    </div>
+  );
+}
+
 export function CardMerciChef({
   copy,
   stars,
+  starsService,
+  starsPlace,
 }: {
   copy: MerciCopy;
   stars: number;
+  starsService?: number | null;
+  starsPlace?: number | null;
 }) {
   const reduce = useReducedMotion();
   const celebrate = copy.tone === "super";
 
   return (
     <article className="relative flex flex-col items-center gap-6 overflow-hidden rounded-[var(--radius-xl)] border border-accent-soft bg-gradient-to-b from-accent-soft/60 to-surface-base px-6 py-10 text-center shadow-card sm:py-14">
-      <div className="pattern-wash opacity-40" aria-hidden />
+      <div className="pattern-wash opacity-[0.22]" aria-hidden />
 
       {celebrate && !reduce
         ? SPARKS.map((s, i) => (
@@ -81,19 +107,14 @@ export function CardMerciChef({
           {copy.body}
         </p>
 
-        <div
-          className="mt-1 flex gap-1"
-          role="img"
-          aria-label={`Note : ${stars} sur 5`}
-        >
-          {[1, 2, 3, 4, 5].map((n) => (
-            <Star
-              key={n}
-              size={26}
-              weight={n <= stars ? "fill" : "regular"}
-              className={n <= stars ? "text-accent" : "text-border-strong"}
-            />
-          ))}
+        <div className="mt-2 flex w-full max-w-[280px] flex-col gap-2.5 rounded-[var(--radius-lg)] border border-accent-soft bg-surface-base/70 p-4">
+          <StarLine label="Le repas" value={stars} />
+          {typeof starsService === "number" ? (
+            <StarLine label="Le service" value={starsService} />
+          ) : null}
+          {typeof starsPlace === "number" ? (
+            <StarLine label="Le restaurant" value={starsPlace} />
+          ) : null}
         </div>
       </motion.div>
     </article>

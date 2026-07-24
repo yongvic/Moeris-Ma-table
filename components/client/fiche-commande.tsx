@@ -26,6 +26,7 @@ export function FicheCommande({
   const router = useRouter();
   const reduce = useReducedMotion();
   const [tastes, setTastes] = useState<Set<string>>(new Set(initialTastes));
+  const [note, setNote] = useState("");
   const [pending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +89,7 @@ export function FicheCommande({
           const res = await placeOrderAction({
             menuItemId: item.id,
             tastes: [...tastes],
+            note,
           });
           if (!res.ok) {
             setError(res.message);
@@ -157,6 +159,32 @@ export function FicheCommande({
             );
           })}
         </div>
+      </section>
+
+      <section aria-labelledby="note-label" className="flex flex-col gap-2">
+        <label
+          id="note-label"
+          htmlFor="order-note"
+          className="font-display text-[18px] font-semibold text-ink-primary"
+        >
+          Une particularité&nbsp;?
+        </label>
+        <p className="-mt-1 text-sm text-ink-secondary">
+          Allergie, cuisson, ou une envie qui n&apos;est pas dans la liste —
+          dis-le en quelques mots.
+        </p>
+        <textarea
+          id="order-note"
+          value={note}
+          onChange={(e) => setNote(e.target.value.slice(0, 280))}
+          rows={3}
+          maxLength={280}
+          placeholder="Ex : sans arachide, bien épicé, sauce à part…"
+          className="w-full resize-none rounded-[var(--radius-md)] border border-border-strong bg-surface-base px-4 py-3 text-[16px] leading-6 text-ink-primary placeholder:text-ink-secondary/60 transition-colors focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        />
+        <span className="self-end text-xs text-ink-secondary">
+          {note.length}/280
+        </span>
       </section>
 
       {error ? (

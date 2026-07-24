@@ -23,8 +23,6 @@ export default async function ClientLayout({
 
   return (
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
-      <div className="pattern-wash" aria-hidden />
-
       {session ? <ClientNav canFinish={canFinish} /> : null}
       {session ? <BarreProgressionSejour step={session.step} /> : null}
       {session ? (

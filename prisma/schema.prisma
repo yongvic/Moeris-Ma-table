@@ -80,6 +80,7 @@ model Order {
   table       Table       @relation(fields: [tableId], references: [id])
   status      OrderStatus @default(RECEIVED)
   tastesJson  Json        @default("[]")
+  note        String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   lines       OrderLine[]
@@ -133,14 +134,18 @@ enum ServiceStatus {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  sessionId String   @unique
-  session   Session  @relation(fields: [sessionId], references: [id])
-  orderId   String?  @unique
-  order     Order?   @relation(fields: [orderId], references: [id])
-  stars     Int
-  dishEmoji String?
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  sessionId    String   @unique
+  session      Session  @relation(fields: [sessionId], references: [id])
+  orderId      String?  @unique
+  order        Order?   @relation(fields: [orderId], references: [id])
+  stars        Int // note du repas (1..5) — sert aussi au ton du "Merci chef"
+  starsService Int? // note du service (1..5)
+  starsPlace   Int? // note du restaurant (1..5)
+  comment      String? // mini commentaire libre (optionnel)
+  highlights   Json     @default("[]") // coups de cœur multiples
+  dishEmoji    String? // legacy (non utilisé) — conservé pour compat
+  createdAt    DateTime @default(now())
 }
 
 model Guest {

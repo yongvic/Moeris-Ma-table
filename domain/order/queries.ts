@@ -9,6 +9,7 @@ export type OrderBoView = {
   createdAt: string;
   tastes: string[];
   tasteLabels: string[];
+  note: string | null;
   lines: { name: string; qty: number; priceCents: number }[];
 };
 
@@ -64,6 +65,7 @@ function toView(row: {
   status: OrderStatus;
   createdAt: Date;
   tastesJson: unknown;
+  note?: string | null;
   lines: { nameSnapshot: string; qty: number; priceCents: number }[];
 }): OrderBoView {
   const tastes = Array.isArray(row.tastesJson)
@@ -76,6 +78,7 @@ function toView(row: {
     createdAt: row.createdAt.toISOString(),
     tastes,
     tasteLabels: tastes.map(tasteLabel),
+    note: row.note ?? null,
     lines: row.lines.map((l) => ({
       name: l.nameSnapshot,
       qty: l.qty,

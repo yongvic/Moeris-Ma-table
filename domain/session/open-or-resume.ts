@@ -69,7 +69,8 @@ export async function openOrResumeSession(
         });
 
         if (byCookie && byCookie.tableId === tableId) {
-          if (isActiveUsable(byCookie, now)) {
+          // A finished séjour (END) is terminal — a rescan opens a fresh one.
+          if (isActiveUsable(byCookie, now) && byCookie.step !== SessionStep.END) {
             await expireOtherActives(tx, tableId, byCookie.id, now);
             return {
               ok: true as const,
@@ -94,12 +95,13 @@ export async function openOrResumeSession(
         }
       }
 
-      // 2) Rescan même table : Session ACTIVE non expirée → lier le cookie à cette session
+      // 2) Rescan même table : Session ACTIVE non expirée et non terminée (END exclu)
       const existingActive = await tx.session.findFirst({
         where: {
           tableId,
           status: SessionStatus.ACTIVE,
           expiresAt: { gt: now },
+          NOT: { step: SessionStep.END },
         },
         orderBy: { createdAt: "asc" },
       });

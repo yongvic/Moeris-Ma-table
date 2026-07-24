@@ -122,6 +122,13 @@ export default async function CommandePage() {
               </span>
             </p>
           ) : null}
+
+          {order.note ? (
+            <p className="rounded-[var(--radius-md)] bg-surface-sunk px-3 py-2 text-sm text-ink-secondary">
+              Ta note :{" "}
+              <span className="font-semibold text-ink-primary">{order.note}</span>
+            </p>
+          ) : null}
         </section>
       </Reveal>
 

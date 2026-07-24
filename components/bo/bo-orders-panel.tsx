@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { OrderStatus } from "@prisma/client";
-import { CookingPot, ArrowRight, Check } from "@phosphor-icons/react/dist/ssr";
+import { CookingPot, ArrowRight, Check, Note } from "@phosphor-icons/react/dist/ssr";
 import { advanceOrderStatusAction } from "@/domain/order/actions";
 import { orderStatusLabelFr, type OrderBoView } from "@/domain/order/queries";
 
@@ -122,6 +122,12 @@ export function BoOrdersPanel({
                     </span>
                   ))}
                 </div>
+              ) : null}
+              {order.note ? (
+                <p className="flex items-start gap-1.5 rounded-[var(--radius-md)] border border-ember/30 bg-ember/5 px-3 py-2 text-sm text-ink-primary">
+                  <Note size={16} weight="fill" className="mt-0.5 shrink-0 text-ember" />
+                  <span>{order.note}</span>
+                </p>
               ) : null}
               <button
                 type="button"

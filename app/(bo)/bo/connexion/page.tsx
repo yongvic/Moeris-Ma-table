@@ -18,7 +18,7 @@ export default async function BoConnexionPage({
 
   return (
     <main className="relative flex flex-1 items-center justify-center overflow-hidden px-margin-mobile py-12">
-      <div className="pattern-wash opacity-40" aria-hidden />
+      <div className="pattern-wash opacity-[0.22]" aria-hidden />
       <div
         className="sun-glow -top-24 right-0 size-72 motion-safe:animate-sun"
         aria-hidden

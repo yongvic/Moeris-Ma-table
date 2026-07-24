@@ -5,7 +5,7 @@ import { MoerisMark } from "@/components/ui/moeris-mark";
 export default function NotFound() {
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden px-margin-mobile py-16 text-center">
-      <div className="pattern-wash opacity-40" aria-hidden />
+      <div className="pattern-wash opacity-[0.22]" aria-hidden />
       <div className="sun-glow -top-16 size-64 motion-safe:animate-sun" aria-hidden />
       <div className="relative z-[1] flex flex-col items-center gap-6">
         <MoerisMark href="/accueil" />

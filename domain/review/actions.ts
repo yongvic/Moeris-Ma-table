@@ -16,8 +16,16 @@ export async function canFinishExperience(
 }
 
 export async function submitReviewAction(input: {
-  stars: number;
-  dishEmoji?: string;
+  /** Note du repas (1..5) — obligatoire, sert au ton du "Merci chef". */
+  starsMeal: number;
+  /** Note du service (1..5). */
+  starsService: number;
+  /** Note du restaurant (1..5). */
+  starsPlace: number;
+  /** Mini commentaire libre (optionnel). */
+  comment?: string;
+  /** Coups de cœur multiples (tokens). */
+  highlights?: string[];
 }): Promise<ReviewResult> {
   const session = await getActiveSession();
   if (!session) {
@@ -37,10 +45,32 @@ export async function submitReviewAction(input: {
     };
   }
 
-  const stars = Math.floor(input.stars);
-  if (stars < 1 || stars > 5) {
-    return { ok: false, code: "VALIDATION", message: "Choisis 1 à 5 étoiles." };
+  const inRange = (n: unknown): n is number =>
+    typeof n === "number" && Number.isFinite(n) && n >= 1 && n <= 5;
+
+  const stars = Math.floor(input.starsMeal);
+  const starsService = Math.floor(input.starsService);
+  const starsPlace = Math.floor(input.starsPlace);
+
+  if (!inRange(stars) || !inRange(starsService) || !inRange(starsPlace)) {
+    return {
+      ok: false,
+      code: "VALIDATION",
+      message: "Note le repas, le service et le restaurant (1 à 5 étoiles).",
+    };
   }
+
+  const comment =
+    typeof input.comment === "string" && input.comment.trim()
+      ? input.comment.trim().slice(0, 500)
+      : null;
+
+  const highlights = Array.isArray(input.highlights)
+    ? input.highlights
+        .filter((h): h is string => typeof h === "string" && h.length > 0)
+        .map((h) => h.slice(0, 40))
+        .slice(0, 8)
+    : [];
 
   const lastOrder = await prisma.order.findFirst({
     where: { sessionId: session.sessionId },
@@ -53,11 +83,17 @@ export async function submitReviewAction(input: {
       sessionId: session.sessionId,
       orderId: lastOrder?.id ?? null,
       stars,
-      dishEmoji: input.dishEmoji?.slice(0, 8) || null,
+      starsService,
+      starsPlace,
+      comment,
+      highlights,
     },
     update: {
       stars,
-      dishEmoji: input.dishEmoji?.slice(0, 8) || null,
+      starsService,
+      starsPlace,
+      comment,
+      highlights,
       orderId: lastOrder?.id ?? null,
     },
   });

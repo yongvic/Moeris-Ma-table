@@ -9,6 +9,7 @@ import {
   HandHeart,
   Sparkle,
   Crown,
+  Storefront,
   PaperPlaneTilt,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
@@ -19,35 +20,105 @@ const HIGHLIGHTS: { token: string; label: string; icon: Icon }[] = [
   { token: "accueil", label: "L'accueil", icon: HandHeart },
   { token: "ambiance", label: "L'ambiance", icon: Sparkle },
   { token: "chef", label: "Le chef", icon: Crown },
+  { token: "cadre", label: "Le cadre", icon: Storefront },
 ];
 
 const STAR_HINTS = ["", "Bof", "Moyen", "Bien", "Très bien", "Parfait"];
 
+function RatingRow({
+  label,
+  icon: IconCmp,
+  value,
+  onChange,
+}: {
+  label: string;
+  icon: Icon;
+  value: number;
+  onChange: (n: number) => void;
+}) {
+  const reduce = useReducedMotion();
+  const [hovered, setHovered] = useState(0);
+  const displayed = hovered || value;
+
+  return (
+    <div className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-border/70 bg-surface-base p-4">
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 text-[15px] font-bold text-ink-primary">
+          <IconCmp size={18} weight="fill" className="text-accent-deep" />
+          {label}
+        </span>
+        <span className="h-4 text-xs font-bold text-accent-deep">
+          {STAR_HINTS[displayed] ?? ""}
+        </span>
+      </div>
+      <div
+        className="flex gap-1"
+        role="radiogroup"
+        aria-label={`${label} : note sur 5 étoiles`}
+        onMouseLeave={() => setHovered(0)}
+      >
+        {[1, 2, 3, 4, 5].map((n) => {
+          const on = n <= displayed;
+          return (
+            <motion.button
+              key={n}
+              type="button"
+              aria-label={`${label} : ${n} étoile${n > 1 ? "s" : ""}`}
+              aria-pressed={value === n}
+              onMouseEnter={() => setHovered(n)}
+              onClick={() => onChange(n)}
+              whileTap={reduce ? undefined : { scale: 0.85 }}
+              className="rounded-full p-0.5 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+            >
+              <Star
+                size={32}
+                weight={on ? "fill" : "regular"}
+                className={on ? "text-accent" : "text-border-strong"}
+              />
+            </motion.button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function AvisForm() {
   const router = useRouter();
-  const reduce = useReducedMotion();
-  const [stars, setStars] = useState(0);
-  const [hoveredStar, setHoveredStar] = useState(0);
-  const [highlight, setHighlight] = useState<string | null>(null);
+  const [starsMeal, setStarsMeal] = useState(0);
+  const [starsService, setStarsService] = useState(0);
+  const [starsPlace, setStarsPlace] = useState(0);
+  const [comment, setComment] = useState("");
+  const [highlights, setHighlights] = useState<Set<string>>(new Set());
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const displayed = hoveredStar || stars;
+  function toggleHighlight(token: string) {
+    setHighlights((prev) => {
+      const next = new Set(prev);
+      if (next.has(token)) next.delete(token);
+      else next.add(token);
+      return next;
+    });
+  }
 
   return (
     <form
       className="flex flex-col gap-7"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!stars) {
-          setError("Choisis une note avant d'envoyer.");
+        if (!starsMeal || !starsService || !starsPlace) {
+          setError("Note le repas, le service et le restaurant avant d'envoyer.");
           return;
         }
         setError(null);
         startTransition(async () => {
           const res = await submitReviewAction({
-            stars,
-            dishEmoji: highlight ?? undefined,
+            starsMeal,
+            starsService,
+            starsPlace,
+            comment,
+            highlights: [...highlights],
           });
           if (!res.ok) {
             setError(res.message);
@@ -57,68 +128,48 @@ export function AvisForm() {
         });
       }}
     >
-      <section
-        aria-label="Note"
-        className="flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-border/70 bg-surface-base p-6 text-center shadow-card"
-      >
+      <section aria-label="Notes" className="flex flex-col gap-3">
         <p className="font-display text-[20px] font-semibold text-ink-primary">
-          Comment était ton repas&nbsp;?
+          Comment était ta soirée&nbsp;?
         </p>
-        <div
-          className="flex gap-1.5"
-          role="radiogroup"
-          aria-label="Note sur 5 étoiles"
-          onMouseLeave={() => setHoveredStar(0)}
-        >
-          {[1, 2, 3, 4, 5].map((n) => {
-            const on = n <= displayed;
-            return (
-              <motion.button
-                key={n}
-                type="button"
-                aria-label={`${n} étoile${n > 1 ? "s" : ""}`}
-                aria-pressed={stars === n}
-                onMouseEnter={() => setHoveredStar(n)}
-                onClick={() => setStars(n)}
-                whileTap={reduce ? undefined : { scale: 0.85 }}
-                animate={
-                  reduce
-                    ? undefined
-                    : { scale: on && stars === n ? [1, 1.25, 1] : 1 }
-                }
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="rounded-full p-1 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-              >
-                <Star
-                  size={40}
-                  weight={on ? "fill" : "regular"}
-                  className={on ? "text-accent" : "text-border-strong"}
-                />
-              </motion.button>
-            );
-          })}
+        <div className="flex flex-col gap-3">
+          <RatingRow
+            label="Le repas"
+            icon={ForkKnife}
+            value={starsMeal}
+            onChange={setStarsMeal}
+          />
+          <RatingRow
+            label="Le service"
+            icon={HandHeart}
+            value={starsService}
+            onChange={setStarsService}
+          />
+          <RatingRow
+            label="Le restaurant"
+            icon={Storefront}
+            value={starsPlace}
+            onChange={setStarsPlace}
+          />
         </div>
-        <p className="h-5 text-sm font-bold text-accent-deep" aria-live="polite">
-          {STAR_HINTS[displayed] ?? ""}
-        </p>
       </section>
 
-      <section aria-label="Coup de cœur" className="flex flex-col gap-3">
+      <section aria-label="Coups de cœur" className="flex flex-col gap-3">
         <p className="text-[15px] font-bold text-ink-primary">
-          Un coup de cœur&nbsp;?{" "}
-          <span className="font-normal text-ink-secondary">(optionnel)</span>
+          Tes coups de cœur&nbsp;?{" "}
+          <span className="font-normal text-ink-secondary">
+            (plusieurs possibles)
+          </span>
         </p>
         <div className="flex flex-wrap gap-2.5" role="group">
           {HIGHLIGHTS.map(({ token, label, icon: IconCmp }) => {
-            const active = highlight === token;
+            const active = highlights.has(token);
             return (
               <button
                 key={token}
                 type="button"
                 aria-pressed={active}
-                onClick={() =>
-                  setHighlight((prev) => (prev === token ? null : token))
-                }
+                onClick={() => toggleHighlight(token)}
                 className={`inline-flex min-h-tap-min items-center gap-2 rounded-full px-4 text-[15px] font-bold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring ${
                   active
                     ? "bg-accent text-ink-onaccent shadow-soft"
@@ -131,6 +182,29 @@ export function AvisForm() {
             );
           })}
         </div>
+      </section>
+
+      <section aria-labelledby="comment-label" className="flex flex-col gap-2">
+        <label
+          id="comment-label"
+          htmlFor="review-comment"
+          className="text-[15px] font-bold text-ink-primary"
+        >
+          Un mot pour l&apos;équipe&nbsp;?{" "}
+          <span className="font-normal text-ink-secondary">(optionnel)</span>
+        </label>
+        <textarea
+          id="review-comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value.slice(0, 500))}
+          rows={3}
+          maxLength={500}
+          placeholder="Ce qui t'a plu, ce qu'on peut améliorer…"
+          className="w-full resize-none rounded-[var(--radius-md)] border border-border-strong bg-surface-base px-4 py-3 text-[16px] leading-6 text-ink-primary placeholder:text-ink-secondary/60 transition-colors focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        />
+        <span className="self-end text-xs text-ink-secondary">
+          {comment.length}/500
+        </span>
       </section>
 
       {error ? (
