@@ -1,9 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import Image from "next/image";
 import Link from "next/link";
+import { SessionStep } from "@prisma/client";
 import { getActiveSession } from "@/domain/session/get-current";
 import { listPublishedMenu, formatPriceFr } from "@/domain/menu/queries";
-
-export const dynamic = "force-dynamic";
+import { updateSessionStepAction } from "@/domain/session/update-step";
 
 export default async function MenuPage() {
   const session = await getActiveSession();
@@ -25,6 +27,10 @@ export default async function MenuPage() {
     );
   }
 
+  if (session.step === SessionStep.WELCOME) {
+    await updateSessionStepAction({ step: SessionStep.MENU });
+  }
+
   return (
     <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-section-gap px-margin-mobile py-7 md:px-7">
       <header className="flex flex-col gap-2">
@@ -38,7 +44,7 @@ export default async function MenuPage() {
 
       {items.length === 0 ? (
         <p className="rounded-md border border-border bg-surface-raised/30 p-6 text-ink-secondary">
-          La carte est vide pour l'instant — reviens bientôt.
+          La carte est vide pour l&apos;instant — reviens bientôt.
         </p>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">

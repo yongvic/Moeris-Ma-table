@@ -46,6 +46,18 @@ export async function sessionHasReceivedOrder(
   return count > 0;
 }
 
+/** Latest order for a client session (post-commande surface). */
+export async function getLatestSessionOrder(
+  sessionId: string,
+): Promise<OrderBoView | null> {
+  const row = await prisma.order.findFirst({
+    where: { sessionId },
+    include: { lines: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return row ? toView(row) : null;
+}
+
 function toView(row: {
   id: string;
   tableId: string;

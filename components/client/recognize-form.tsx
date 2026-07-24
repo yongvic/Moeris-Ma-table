@@ -6,7 +6,7 @@ import Link from "next/link";
 
 type Channel = "phone" | "email";
 
-export function RecognizeForm({ sessionId }: { sessionId: string }) {
+export function RecognizeForm({ sessionId: _sessionId }: { sessionId: string }) {
   const [channel, setChannel] = useState<Channel>("phone");
   const [value, setValue] = useState("");
   const [pending, startTransition] = useTransition();
@@ -104,7 +104,6 @@ export function RecognizeForm({ sessionId }: { sessionId: string }) {
       >
         {pending ? "Recherche…" : "Me retrouver"}
       </button>
-      <input type="hidden" name="sessionId" value={sessionId} />
     </form>
   );
 }

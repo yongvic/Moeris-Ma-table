@@ -104,14 +104,6 @@ export function AvisForm() {
       >
         {pending ? "Envoi…" : "Envoyer mon avis"}
       </button>
-
-      <button
-        type="button"
-        className="text-sm text-ink-secondary underline underline-offset-2"
-        onClick={() => router.push("/fin/merci")}
-      >
-        Passer
-      </button>
     </form>
   );
 }

@@ -2,18 +2,22 @@
 
 import { getActiveSession } from "@/domain/session/get-current";
 import {
+  findGuestByContact,
   linkSessionToGuest,
   resolveGuestFromSoftDevice,
-  upsertGuestContact,
 } from "@/domain/guest/upsert";
+import { writeSoftDeviceKey } from "@/domain/guest/soft-device";
 import { listPreferencesForGuest } from "@/domain/guest/preferences";
 import { prisma } from "@/infra/prisma/client";
 import { parseCart } from "@/domain/session/cart";
 
 export async function dismissMemoryAction(): Promise<void> {
-  // No-op persistence: UI hides via cookie/query; soft link remains for later.
+  // Client-only dismiss; soft cookie kept for later soirées.
 }
 
+/**
+ * 5.2 — find-only. Never creates Guest (use opt-in upsert for 4.4).
+ */
 export async function recognizeByContactAction(input: {
   channel: "phone" | "email";
   value: string;
@@ -35,24 +39,36 @@ export async function recognizeByContactAction(input: {
     };
   }
 
-  const result = await upsertGuestContact({
+  const found = await findGuestByContact({
     phone: input.channel === "phone" ? input.value : undefined,
     email: input.channel === "email" ? input.value : undefined,
-    sessionId: session.sessionId,
   });
-  if (!result.ok) return result;
+  if (!found.ok) return found;
 
-  const preferences = await listPreferencesForGuest(result.guestId);
+  await linkSessionToGuest(session.sessionId, found.guestId);
+
   const guest = await prisma.guest.findUnique({
-    where: { id: result.guestId },
+    where: { id: found.guestId },
   });
+  if (guest?.softDeviceKey) {
+    await writeSoftDeviceKey(guest.softDeviceKey);
+  } else if (guest) {
+    const key = crypto.randomUUID();
+    await prisma.guest.update({
+      where: { id: guest.id },
+      data: { softDeviceKey: key, lastInteractionAt: new Date() },
+    });
+    await writeSoftDeviceKey(key);
+  }
+
+  const preferences = await listPreferencesForGuest(found.guestId);
   const rememberedTastes = Array.isArray(guest?.rememberedTastes)
     ? guest!.rememberedTastes.filter((t): t is string => typeof t === "string")
     : [];
 
   return {
     ok: true,
-    guestId: result.guestId,
+    guestId: found.guestId,
     preferences,
     rememberedTastes,
   };

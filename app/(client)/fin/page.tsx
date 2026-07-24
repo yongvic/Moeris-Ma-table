@@ -16,7 +16,7 @@ export default async function FinPage() {
           Fin
         </h1>
         <p className="text-ink-secondary">
-          Scanne le QR Ma table d'abord.{" "}
+          Scanne le QR Ma table d&apos;abord.{" "}
           <Link href="/t/t-1" className="underline text-ink-primary">
             /t/t-1
           </Link>
@@ -35,7 +35,7 @@ export default async function FinPage() {
             Terminer mon expérience
           </h1>
           <p className="max-w-md text-base text-ink-secondary">
-            Envoie d'abord une commande — le bouton s'activera ensuite.
+            Envoie d&apos;abord une commande — le bouton s&apos;activera ensuite.
           </p>
         </header>
         <Link
@@ -62,7 +62,7 @@ export default async function FinPage() {
           Terminer mon expérience
         </h1>
         <p className="max-w-md text-base leading-6 text-ink-secondary">
-          Laisse un avis rapide — ça aide l'équipe Moeris à s'améliorer.
+          Laisse un avis rapide — ça aide l&apos;équipe Moeris à s&apos;améliorer.
         </p>
       </header>
       <Link
@@ -70,12 +70,6 @@ export default async function FinPage() {
         className="inline-flex min-h-tap-min items-center justify-center rounded-md bg-accent px-5 text-base font-bold text-ink-primary"
       >
         Donner mon avis
-      </Link>
-      <Link
-        href="/fin/merci"
-        className="inline-flex min-h-tap-min items-center justify-center rounded-md border border-border px-5 text-base font-bold text-ink-primary"
-      >
-        Passer directement
       </Link>
     </main>
   );
