@@ -5,17 +5,15 @@ import { SessionStep } from "@prisma/client";
 import { getActiveSession } from "@/domain/session/get-current";
 import { updateSessionStepAction } from "@/domain/session/update-step";
 
-/**
- * Menu stub — advances Session.step to MENU for resume tests (1.4).
- */
-export default async function MenuPage() {
+/** Fin stub — sets step END for resume (epic 4 later). */
+export default async function FinPage() {
   const session = await getActiveSession();
 
   if (!session) {
     return (
       <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-4 px-margin-mobile py-7 md:px-7">
         <h1 className="font-display text-[22px] leading-7 font-semibold text-ink-primary">
-          Menu
+          Fin
         </h1>
         <p className="text-ink-secondary">
           Scanne le QR Ma table pour ouvrir ta session.{" "}
@@ -27,26 +25,24 @@ export default async function MenuPage() {
     );
   }
 
-  if (session.step !== SessionStep.MENU) {
-    await updateSessionStepAction({ step: SessionStep.MENU });
+  if (session.step !== SessionStep.END) {
+    await updateSessionStepAction({ step: SessionStep.END });
   }
 
   return (
     <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-4 px-margin-mobile py-7 md:px-7">
       <h1 className="font-display text-[22px] leading-7 font-semibold text-ink-primary">
-        Menu
+        Fin
       </h1>
       <p className="max-w-md text-base leading-6 text-ink-secondary">
-        Bientôt — les plats arriveront ici, en photos.
+        Bientôt — avis, merci chef et contact arriveront ici.
       </p>
-      <div className="flex flex-col gap-2 text-base font-bold text-ink-primary">
-        <Link href="/accueil" className="underline underline-offset-2">
-          Retour à l’accueil
-        </Link>
-        <Link href="/commande" className="underline underline-offset-2">
-          Continuer vers la commande (stub)
-        </Link>
-      </div>
+      <Link
+        href="/accueil"
+        className="text-base font-bold text-ink-primary underline underline-offset-2"
+      >
+        Retour à l’accueil
+      </Link>
     </main>
   );
 }

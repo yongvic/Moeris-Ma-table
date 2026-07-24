@@ -1,8 +1,11 @@
 import { SessionStatus, type Session, type SessionStep } from "@prisma/client";
 import { prisma } from "@/infra/prisma/client";
-import { readSessionOpaqueKey } from "./cookie";
+import {
+  clearSessionOpaqueKey,
+  readSessionOpaqueKey,
+} from "./cookie";
 
-export type CurrentSessionView = {
+export type ActiveSessionView = {
   sessionId: string;
   tableId: string;
   step: SessionStep;
@@ -10,9 +13,10 @@ export type CurrentSessionView = {
 };
 
 /**
- * Resolve current séjour session from opaque cookie (no mutation).
+ * Active séjour session from opaque cookie (AD-5).
+ * Expired rows are marked EXPIRED and cookie cleared — no silent ghost session.
  */
-export async function getCurrentSession(): Promise<CurrentSessionView | null> {
+export async function getActiveSession(): Promise<ActiveSessionView | null> {
   const opaqueKey = await readSessionOpaqueKey();
   if (!opaqueKey) return null;
 
@@ -20,7 +24,21 @@ export async function getCurrentSession(): Promise<CurrentSessionView | null> {
     where: { opaqueKey },
   });
 
-  if (!session || !isUsable(session)) return null;
+  if (!session) return null;
+
+  if (isExpired(session)) {
+    await prisma.session.update({
+      where: { id: session.id },
+      data: { status: SessionStatus.EXPIRED },
+    });
+    await clearSessionOpaqueKey();
+    return null;
+  }
+
+  if (session.status !== SessionStatus.ACTIVE) {
+    await clearSessionOpaqueKey();
+    return null;
+  }
 
   return {
     sessionId: session.id,
@@ -30,9 +48,11 @@ export async function getCurrentSession(): Promise<CurrentSessionView | null> {
   };
 }
 
-function isUsable(session: Session): boolean {
-  return (
-    session.status === SessionStatus.ACTIVE &&
-    session.expiresAt.getTime() > Date.now()
-  );
+/** @deprecated Prefer getActiveSession — kept as alias for 1.2/1.3 call sites. */
+export async function getCurrentSession(): Promise<ActiveSessionView | null> {
+  return getActiveSession();
+}
+
+function isExpired(session: Session): boolean {
+  return session.expiresAt.getTime() <= Date.now();
 }

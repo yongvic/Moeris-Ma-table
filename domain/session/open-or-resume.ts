@@ -62,25 +62,35 @@ export async function openOrResumeSession(
 
   try {
     return await prisma.$transaction(async (tx) => {
-      // 1) Cookie opaque valide → reprendre cette session si active + non expirée + même table
+      // 1) Cookie opaque → resume if ACTIVE + non-expired + same table
       if (opaqueFromCookie) {
         const byCookie = await tx.session.findUnique({
           where: { opaqueKey: opaqueFromCookie },
         });
-        if (
-          byCookie &&
-          byCookie.tableId === tableId &&
-          isActiveUsable(byCookie, now)
-        ) {
-          await expireOtherActives(tx, tableId, byCookie.id, now);
-          return {
-            ok: true as const,
-            sessionId: byCookie.id,
-            tableId,
-            opaqueKey: byCookie.opaqueKey,
-            step: byCookie.step,
-            resumed: true,
-          };
+
+        if (byCookie && byCookie.tableId === tableId) {
+          if (isActiveUsable(byCookie, now)) {
+            await expireOtherActives(tx, tableId, byCookie.id, now);
+            return {
+              ok: true as const,
+              sessionId: byCookie.id,
+              tableId,
+              opaqueKey: byCookie.opaqueKey,
+              step: byCookie.step,
+              resumed: true,
+            };
+          }
+
+          // Cookie points at expired/closed séjour — mark EXPIRED, do not resume step
+          if (
+            byCookie.status === SessionStatus.ACTIVE &&
+            byCookie.expiresAt.getTime() <= now.getTime()
+          ) {
+            await tx.session.update({
+              where: { id: byCookie.id },
+              data: { status: SessionStatus.EXPIRED, updatedAt: now },
+            });
+          }
         }
       }
 
@@ -106,7 +116,7 @@ export async function openOrResumeSession(
         };
       }
 
-      // 3) Créer une Session anonyme (Accueil / WELCOME)
+      // 3) Créer une Session anonyme (Accueil / WELCOME) — includes post-TTL path
       await expireAllActives(tx, tableId, now);
 
       const opaqueKey = randomUUID();

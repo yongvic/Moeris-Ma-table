@@ -76,6 +76,19 @@ function createMemoryPrisma(store: Store): PrismaClient {
         store.sessions.set(session.id, session);
         return session;
       },
+      update: async ({
+        where: { id },
+        data,
+      }: {
+        where: { id: string };
+        data: { status: SessionStatus; updatedAt: Date };
+      }) => {
+        const session = store.sessions.get(id);
+        if (!session) throw new Error("not found");
+        session.status = data.status;
+        session.updatedAt = data.updatedAt;
+        return session;
+      },
       updateMany: async ({
         where,
         data,
@@ -190,5 +203,7 @@ describe("openOrResumeSession", () => {
     if (!second.ok) return;
     assert.equal(second.resumed, false);
     assert.notEqual(second.sessionId, first.sessionId);
+    assert.equal(session.status, SessionStatus.EXPIRED);
+    assert.equal(second.step, SessionStep.WELCOME);
   });
 });

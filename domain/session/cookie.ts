@@ -4,6 +4,10 @@ import {
   SESSION_COOKIE_NAME,
 } from "./constants";
 
+function cookieSecure(): boolean {
+  return process.env.VERCEL === "1" || process.env.COOKIE_SECURE === "true";
+}
+
 export async function readSessionOpaqueKey(): Promise<string | undefined> {
   const jar = await cookies();
   const value = jar.get(SESSION_COOKIE_NAME)?.value?.trim();
@@ -12,13 +16,9 @@ export async function readSessionOpaqueKey(): Promise<string | undefined> {
 
 export async function writeSessionOpaqueKey(opaqueKey: string): Promise<void> {
   const jar = await cookies();
-  // Secure only on real HTTPS deploy (Vercel) — local `next start` is HTTP
-  const secure =
-    process.env.VERCEL === "1" || process.env.COOKIE_SECURE === "true";
-
   jar.set(SESSION_COOKIE_NAME, opaqueKey, {
     httpOnly: true,
-    secure,
+    secure: cookieSecure(),
     sameSite: "lax",
     path: "/",
     maxAge: SESSION_COOKIE_MAX_AGE_SEC,

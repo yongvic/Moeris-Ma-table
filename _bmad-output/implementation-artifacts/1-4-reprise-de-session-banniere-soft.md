@@ -1,6 +1,10 @@
+---
+baseline_commit: NO_VCS
+---
+
 # Story 1.4: Reprise de session + bannière soft
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -24,33 +28,33 @@ so that je ne recommence pas à zéro la même soirée.
 
 ## Tasks / Subtasks
 
-- [ ] T1. Persistance d’étape + restore route (AC: #1)
-  - [ ] Utiliser `Session.step` (WELCOME | MENU | ORDER | END) comme source de vérité Neon (AD-5)
-  - [ ] Au chargement shell client : si cookie opaque → Session `ACTIVE` + non expirée → router vers la surface de l’étape (Accueil / stub Menu / stubs futurs)
-  - [ ] Refresh (F5) sur une surface : rester / revenir à l’étape en cours, **pas** ré-onboarding Accueil forcé si step &gt; WELCOME
-  - [ ] Helper domain `getActiveSession()` / `resolveResumeTarget(session)` — pas de logique Prisma dans les composants
+- [x] T1. Persistance d’étape + restore route (AC: #1)
+  - [x] Utiliser `Session.step` (WELCOME | MENU | ORDER | END) comme source de vérité Neon (AD-5)
+  - [x] Au chargement shell client : si cookie opaque → Session `ACTIVE` + non expirée → router vers la surface de l’étape (Accueil / stub Menu / stubs futurs)
+  - [x] Refresh (F5) sur une surface : rester / revenir à l’étape en cours, **pas** ré-onboarding Accueil forcé si step &gt; WELCOME
+  - [x] Helper domain `getActiveSession()` / `resolveResumeTarget(session)` — pas de logique Prisma dans les composants
 
-- [ ] T2. Composant `banniere-reprise` (AC: #2)
-  - [ ] Afficher sur reprise (refresh / reopen / rescan avec session active) : copy « Tu en étais à… » + libellé d’étape FR (Accueil / Menu / Commande / Fin)
-  - [ ] CTA continuer (tap) → focus / navigation vers l’étape ; bannière dismissible soft (non-bloquante)
-  - [ ] Tokens DESIGN : fond `accent-soft`, texte `ink-primary`, radius md, typo body-sm
-  - [ ] Jamais formulaire de relance ; jamais silence total sans feedback (EXPERIENCE R2)
-  - [ ] Ne pas confondre avec Mémoire 2ᵉ visite (« Bon retour » / `bloc-memoire`) — **hors scope**
+- [x] T2. Composant `banniere-reprise` (AC: #2)
+  - [x] Afficher sur reprise (refresh / reopen / rescan avec session active) : copy « Tu en étais à… » + libellé d’étape FR (Accueil / Menu / Commande / Fin)
+  - [x] CTA continuer (tap) → focus / navigation vers l’étape ; bannière dismissible soft (non-bloquante)
+  - [x] Tokens DESIGN : fond `accent-soft`, texte `ink-primary`, radius md, typo body-sm
+  - [x] Jamais formulaire de relance ; jamais silence total sans feedback (EXPERIENCE R2)
+  - [x] Ne pas confondre avec Mémoire 2ᵉ visite (« Bon retour » / `bloc-memoire`) — **hors scope**
 
-- [ ] T3. Expiration TTL (AC: #3)
-  - [ ] Si `expiresAt <= now` : marquer Session `EXPIRED` (ou équivalent), invalider cookie, **créer** nouvelle Session anonyme au rescan
-  - [ ] Aucune reprise d’étape d’un séjour clos
-  - [ ] Aligner TTL cookie `maxAge` avec `expiresAt` (~6 h) — constante partagée avec 1.2
+- [x] T3. Expiration TTL (AC: #3)
+  - [x] Si `expiresAt <= now` : marquer Session `EXPIRED` (ou équivalent), invalider cookie, **créer** nouvelle Session anonyme au rescan
+  - [x] Aucune reprise d’étape d’un séjour clos
+  - [x] Aligner TTL cookie `maxAge` avec `expiresAt` (~6 h) — constante partagée avec 1.2
 
-- [ ] T4. Intégration open/resume 1.2 (AC: #1, #3)
-  - [ ] Étendre `openOrResumeSession` : branche expired → create ; active → resume + flag `resumed: true` pour UI bannière
-  - [ ] Erreurs : `{ ok: false, code, message }`
-  - [ ] Préfixe cookie séjour toujours distinct Auth.js
+- [x] T4. Intégration open/resume 1.2 (AC: #1, #3)
+  - [x] Étendre `openOrResumeSession` : branche expired → create ; active → resume + flag `resumed: true` pour UI bannière
+  - [x] Erreurs : `{ ok: false, code, message }`
+  - [x] Préfixe cookie séjour toujours distinct Auth.js
 
-- [ ] T5. Garde-fous
-  - [ ] Pas Guest / soft device memory / prefs (epic 5)
-  - [ ] Pas avance réelle Menu/Commande métier — stubs OK ; pouvoir **setter** step en dev/test pour valider restore
-  - [ ] Barre progression (1.5) peut consommer le même `step` mais n’est pas requise ici
+- [x] T5. Garde-fous
+  - [x] Pas Guest / soft device memory / prefs (epic 5)
+  - [x] Pas avance réelle Menu/Commande métier — stubs OK ; pouvoir **setter** step en dev/test pour valider restore
+  - [x] Barre progression (1.5) peut consommer le même `step` mais n’est pas requise ici
 
 ## Dev Notes
 
@@ -119,12 +123,41 @@ Service **n’est pas** une étape de cette map (voie latérale — aligné 1.5)
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Composer (Cursor Agent)
 
 ### Debug Log References
 
+- Tests 7/7 (`openOrResume` + `resolveResumeTarget`) ; `npm run build` OK
+- Routes : `/accueil`, `/menu`, `/commande`, `/fin` + QR restore `?reprise=1`
+
 ### Completion Notes List
 
-Ultimate context engine analysis completed - comprehensive developer guide created
+- `getActiveSession` expire + clear cookie si TTL dépassé
+- `openOrResumeSession` : expired → EXPIRED + nouvelle session ; active → `resumed: true`
+- QR et Accueil restaurent la route d’étape ; bannière soft « Tu en étais à… » via `?reprise=1`
+- Stubs Menu/Commande/Fin avancent `Session.step` pour tests de reprise
+- Pas de bloc-memoire / Guest
+
+### Change Log
+
+- 2026-07-24 — Story 1.4 reprise + bannière soft → status `review`
 
 ### File List
+
+- domain/session/steps.ts
+- domain/session/steps.test.ts
+- domain/session/update-step.ts
+- domain/session/get-current.ts
+- domain/session/open-or-resume.ts
+- domain/session/open-or-resume.test.ts
+- domain/session/cookie.ts
+- domain/session/constants.ts
+- components/client/banniere-reprise.tsx
+- app/(client)/layout.tsx
+- app/(client)/accueil/page.tsx
+- app/(client)/menu/page.tsx
+- app/(client)/commande/page.tsx
+- app/(client)/fin/page.tsx
+- app/(client)/t/[tableId]/route.ts
+- _bmad-output/implementation-artifacts/1-4-reprise-de-session-banniere-soft.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml

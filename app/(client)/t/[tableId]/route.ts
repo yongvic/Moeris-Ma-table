@@ -4,6 +4,7 @@ import {
   SESSION_COOKIE_NAME,
 } from "@/domain/session/constants";
 import { openOrResumeSession } from "@/domain/session/open-or-resume";
+import { resolveResumeTarget } from "@/domain/session/steps";
 import { prisma } from "@/infra/prisma/client";
 
 export const runtime = "nodejs";
@@ -15,9 +16,7 @@ type RouteContext = {
 
 /**
  * QR Ma table entry — URL: /t/<tableId>
- *
- * GET opens/resumes Session (domain use-case) and sets httpOnly `mt_session`.
- * Wi‑Fi QR stays out of product software (AC #4): no captive portal / WIFI: here.
+ * Opens/resumes Session and restores step route; `?reprise=1` when resumed.
  */
 export async function GET(request: NextRequest, context: RouteContext) {
   const { tableId } = await context.params;
@@ -35,9 +34,15 @@ export async function GET(request: NextRequest, context: RouteContext) {
     return NextResponse.redirect(errorUrl);
   }
 
-  const response = NextResponse.redirect(new URL("/accueil", request.url));
+  const target = new URL(resolveResumeTarget(result.step), request.url);
+  if (result.resumed) {
+    target.searchParams.set("reprise", "1");
+  }
+
+  const response = NextResponse.redirect(target);
   const secure =
     process.env.VERCEL === "1" || process.env.COOKIE_SECURE === "true";
+
   response.cookies.set(SESSION_COOKIE_NAME, result.opaqueKey, {
     httpOnly: true,
     secure,
@@ -45,5 +50,6 @@ export async function GET(request: NextRequest, context: RouteContext) {
     path: "/",
     maxAge: SESSION_COOKIE_MAX_AGE_SEC,
   });
+
   return response;
 }
