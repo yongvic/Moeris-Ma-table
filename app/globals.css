@@ -129,3 +129,13 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(6px, -8px) rotate(4deg);
+  }
+}
