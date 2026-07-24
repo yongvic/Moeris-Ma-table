@@ -1,6 +1,6 @@
 # Story 2.3: Consulter le Menu client photo-first
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

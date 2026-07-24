@@ -9,11 +9,18 @@ const NAV_ITEMS = [
 ] as const;
 
 /**
- * Fil léger Menu | Service — phone: bottom bar ; desktop: top rail.
- * Same destinations all viewports. No "Terminer mon expérience" (epic 4).
+ * Fil léger Menu | Service + Terminer conditionnel (AD-13).
+ * `canFinish` vient du Server Component parent — gate évalué Neon-side.
  */
-export function ClientNav() {
+export function ClientNav({ canFinish = false }: { canFinish?: boolean }) {
   const pathname = usePathname();
+
+  const allItems = [
+    ...NAV_ITEMS,
+    ...(canFinish
+      ? [{ href: "/fin", label: "Terminer" } as const]
+      : []),
+  ];
 
   return (
     <>
@@ -27,7 +34,7 @@ export function ClientNav() {
             Ma table
           </Link>
           <nav aria-label="Fil séjour" className="flex items-center gap-1">
-            {NAV_ITEMS.map((item) => {
+            {allItems.map((item) => {
               const active =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
@@ -55,7 +62,7 @@ export function ClientNav() {
         className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface-base/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-sm sm:hidden"
       >
         <ul className="mx-auto flex max-w-lg items-stretch justify-around">
-          {NAV_ITEMS.map((item) => {
+          {allItems.map((item) => {
             const active =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (

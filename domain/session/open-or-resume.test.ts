@@ -16,7 +16,8 @@ type Store = {
 };
 
 function createMemoryPrisma(store: Store): PrismaClient {
-  const api = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const api: any = {
     table: {
       findUnique: async ({ where: { id } }: { where: { id: string } }) =>
         store.tables.get(id) ?? null,
@@ -72,6 +73,7 @@ function createMemoryPrisma(store: Store): PrismaClient {
           expiresAt: data.expiresAt,
           createdAt: now,
           updatedAt: now,
+          guestId: null,
         };
         store.sessions.set(session.id, session);
         return session;

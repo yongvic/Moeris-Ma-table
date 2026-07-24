@@ -1,4 +1,4 @@
-// prisma/schema.prisma — Table + Session only (story 1.2)
+// prisma/schema.prisma — Ma table V1 MVP
 // URL lives in prisma.config.ts (Prisma 7)
 
 generator client {
@@ -10,25 +10,33 @@ datasource db {
 }
 
 model Table {
-  id        String    @id // tableId QR stable (ex. "t-1")
-  label     String?
-  sessions  Session[]
-  createdAt DateTime  @default(now())
+  id               String           @id
+  label            String?
+  sessions         Session[]
+  orders           Order[]
+  serviceRequests  ServiceRequest[]
+  createdAt        DateTime         @default(now())
 }
 
 model Session {
-  id        String        @id @default(cuid())
-  tableId   String
-  table     Table         @relation(fields: [tableId], references: [id])
-  opaqueKey String        @unique // cookie opaque value
-  status    SessionStatus @default(ACTIVE)
-  step      SessionStep   @default(WELCOME)
-  cartJson  Json          @default("{}") // AD-18 — empty in 1.2
-  expiresAt DateTime
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id              String           @id @default(cuid())
+  tableId         String
+  table           Table            @relation(fields: [tableId], references: [id])
+  opaqueKey       String           @unique
+  status          SessionStatus    @default(ACTIVE)
+  step            SessionStep      @default(WELCOME)
+  cartJson        Json             @default("{}")
+  expiresAt       DateTime
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  orders          Order[]
+  serviceRequests ServiceRequest[]
+  review          Review?
+  guestId         String?
+  guest           Guest?           @relation(fields: [guestId], references: [id])
 
   @@index([tableId, status])
+  @@index([guestId])
 }
 
 enum SessionStatus {
@@ -42,4 +50,121 @@ enum SessionStep {
   MENU
   ORDER
   END
+}
+
+model Staff {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("salle")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MenuItem {
+  id         String   @id @default(cuid())
+  name       String
+  priceCents Int
+  available  Boolean  @default(true)
+  photoUrl   String?
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  sessionId   String
+  session     Session     @relation(fields: [sessionId], references: [id])
+  tableId     String
+  table       Table       @relation(fields: [tableId], references: [id])
+  status      OrderStatus @default(RECEIVED)
+  tastesJson  Json        @default("[]")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  lines       OrderLine[]
+  review      Review?
+
+  @@index([tableId, status])
+  @@index([sessionId])
+}
+
+model OrderLine {
+  id            String @id @default(cuid())
+  orderId       String
+  order         Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId    String
+  nameSnapshot  String
+  priceCents    Int
+  qty           Int    @default(1)
+}
+
+enum OrderStatus {
+  RECEIVED
+  PREPARING
+  SERVED
+}
+
+model ServiceRequest {
+  id        String             @id @default(cuid())
+  sessionId String
+  session   Session            @relation(fields: [sessionId], references: [id])
+  tableId   String
+  table     Table              @relation(fields: [tableId], references: [id])
+  type      ServiceRequestType
+  status    ServiceStatus      @default(OPEN)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([status, createdAt])
+  @@index([tableId])
+}
+
+enum ServiceRequestType {
+  WAITER
+  WATER
+  BILL
+  OTHER
+}
+
+enum ServiceStatus {
+  OPEN
+  DONE
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  sessionId String   @unique
+  session   Session  @relation(fields: [sessionId], references: [id])
+  orderId   String?  @unique
+  order     Order?   @relation(fields: [orderId], references: [id])
+  stars     Int
+  dishEmoji String?
+  createdAt DateTime @default(now())
+}
+
+model Guest {
+  id                 String        @id @default(cuid())
+  phoneE164          String?       @unique
+  emailLower         String?       @unique
+  softDeviceKey      String?       @unique
+  rememberedTastes   Json          @default("[]")
+  lastInteractionAt  DateTime      @default(now())
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  sessions           Session[]
+  preferences        Preference[]
+}
+
+model Preference {
+  id         String   @id @default(cuid())
+  guestId    String
+  guest      Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  menuItemId String
+  label      String
+  rank       Int
+  createdAt  DateTime @default(now())
+
+  @@unique([guestId, menuItemId])
+  @@index([guestId, rank])
 }

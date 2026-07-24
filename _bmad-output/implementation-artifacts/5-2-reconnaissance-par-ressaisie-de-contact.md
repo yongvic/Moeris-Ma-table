@@ -1,6 +1,6 @@
 # Story 5.2: Reconnaissance par ressaisie de contact
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

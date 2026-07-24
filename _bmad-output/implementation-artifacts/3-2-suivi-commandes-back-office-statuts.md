@@ -1,6 +1,6 @@
 # Story 3.2: Suivi Commandes Back-office + statuts
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

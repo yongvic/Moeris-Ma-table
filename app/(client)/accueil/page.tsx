@@ -4,15 +4,17 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SessionStep } from "@prisma/client";
 import { CardAccueil } from "@/components/client/card-accueil";
+import { BlocMemoire } from "@/components/client/bloc-memoire";
 import { getActiveSession } from "@/domain/session/get-current";
 import { resolveResumeTarget } from "@/domain/session/steps";
+import { attachSoftGuestToSessionAction } from "@/domain/guest/memory-actions";
 
 type PageProps = {
   searchParams: Promise<{ error?: string; message?: string }>;
 };
 
 /**
- * Accueil — post-scan. Restores to Neon step if past WELCOME (1.4).
+ * Accueil — post-scan. Reprise R2 (1.4) + bloc mémoire retour (5.1).
  */
 export default async function AccueilPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -25,7 +27,7 @@ export default async function AccueilPage({ searchParams }: PageProps) {
         </h1>
         <p className="max-w-md text-base leading-6 text-ink-secondary">
           {params.message ??
-            "Cette table n’est pas reconnue. Vérifie le QR Ma table."}
+            "Cette table n'est pas reconnue. Vérifie le QR Ma table."}
         </p>
       </main>
     );
@@ -57,8 +59,17 @@ export default async function AccueilPage({ searchParams }: PageProps) {
     redirect(`${resolveResumeTarget(session.step)}?reprise=1`);
   }
 
+  // Soft recognition — attach Guest from device cookie if present (AD-5/Epic 5)
+  const memory = await attachSoftGuestToSessionAction();
+
   return (
-    <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col justify-center px-margin-mobile py-7 md:px-7 lg:py-10">
+    <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-section-gap justify-center px-margin-mobile py-7 md:px-7 lg:py-10">
+      {memory.guestId ? (
+        <BlocMemoire
+          preferences={memory.preferences}
+          rememberedTastes={memory.rememberedTastes}
+        />
+      ) : null}
       <div className="relative overflow-hidden rounded-lg bg-accent-soft/40 p-5 sm:p-7 lg:p-10">
         <div
           className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-[60%_40%_50%_50%] bg-pattern-a/30"

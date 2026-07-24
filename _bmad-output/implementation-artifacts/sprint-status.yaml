@@ -1,5 +1,5 @@
 # generated: 2026-07-24T10:29:02
-# last_updated: 2026-07-24T14:05:00
+# last_updated: 2026-07-24T14:35:00
 # project: Moeris
 # project_key: NOKEY
 # tracking_system: file-system
@@ -43,7 +43,7 @@
 #   in-progress because story contexts exist. Implement sequentially starting at 1.1.
 
 generated: 2026-07-24T10:29:02
-last_updated: 2026-07-24T14:05:00
+last_updated: 2026-07-24T14:35:00
 project: Moeris
 project_key: NOKEY
 tracking_system: file-system
@@ -60,26 +60,26 @@ development_status:
   epic-1-retrospective: optional
 
   epic-2: in-progress
-  2-1-authentification-staff-back-office: ready-for-dev
-  2-2-gerer-le-menu-en-back-office: ready-for-dev
-  2-3-consulter-le-menu-client-photo-first: ready-for-dev
+  2-1-authentification-staff-back-office: review
+  2-2-gerer-le-menu-en-back-office: review
+  2-3-consulter-le-menu-client-photo-first: review
   epic-2-retrospective: optional
 
   epic-3: in-progress
-  3-1-fiche-plat-gouts-cuisine-envoi-commande: ready-for-dev
-  3-2-suivi-commandes-back-office-statuts: ready-for-dev
-  3-3-micro-missions-service-client-file-bo: ready-for-dev
+  3-1-fiche-plat-gouts-cuisine-envoi-commande: review
+  3-2-suivi-commandes-back-office-statuts: review
+  3-3-micro-missions-service-client-file-bo: review
   epic-3-retrospective: optional
 
   epic-4: in-progress
-  4-1-gate-terminer-mon-experience: ready-for-dev
-  4-2-avis-court-etoiles-emoji: ready-for-dev
-  4-3-merci-chef-3-tons: ready-for-dev
-  4-4-contact-opt-in-tel-xor-email: ready-for-dev
+  4-1-gate-terminer-mon-experience: review
+  4-2-avis-court-etoiles-emoji: review
+  4-3-merci-chef-3-tons: review
+  4-4-contact-opt-in-tel-xor-email: review
   epic-4-retrospective: optional
 
   epic-5: in-progress
-  5-1-reconnaissance-soft-bloc-memoire: ready-for-dev
-  5-2-reconnaissance-par-ressaisie-de-contact: ready-for-dev
-  5-3-reappliquer-les-gouts-cuisine-en-1-tap: ready-for-dev
+  5-1-reconnaissance-soft-bloc-memoire: review
+  5-2-reconnaissance-par-ressaisie-de-contact: review
+  5-3-reappliquer-les-gouts-cuisine-en-1-tap: review
   epic-5-retrospective: optional

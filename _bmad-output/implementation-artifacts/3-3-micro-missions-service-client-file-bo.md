@@ -1,6 +1,6 @@
 # Story 3.3: Micro-missions Service client + file BO
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

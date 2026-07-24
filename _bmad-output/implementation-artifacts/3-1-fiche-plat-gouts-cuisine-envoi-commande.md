@@ -1,6 +1,6 @@
 # Story 3.1: Fiche plat — Goûts cuisine + envoi Commande
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

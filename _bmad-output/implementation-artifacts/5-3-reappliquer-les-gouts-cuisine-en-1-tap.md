@@ -1,6 +1,6 @@
 # Story 5.3: Réappliquer les Goûts cuisine en 1 tap
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
