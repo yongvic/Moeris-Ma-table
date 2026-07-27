@@ -67,6 +67,15 @@ async function main() {
     const existingMenu = await prisma.menuItem.count();
     if (existingMenu === 0) {
       await prisma.menuItem.createMany({ data: menuSeed });
+    } else {
+      // Resync photo paths for seed plats (seed initial ne met pas à jour les lignes existantes).
+      for (const item of menuSeed) {
+        if (!item.photoUrl) continue;
+        await prisma.menuItem.updateMany({
+          where: { name: item.name },
+          data: { photoUrl: item.photoUrl },
+        });
+      }
     }
 
     console.log(`Seeded tables ${tables.map((t) => t.id).join(", ")}`);

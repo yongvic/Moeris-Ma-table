@@ -13,6 +13,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
+    "menu:fix-photos": "tsx prisma/fix-menu-photos.ts",
     "print:qr": "node docs/print/generate-qr.mjs",
     "postinstall": "prisma generate"
   },
