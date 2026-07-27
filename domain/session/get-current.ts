@@ -24,7 +24,11 @@ export async function getActiveSession(): Promise<ActiveSessionView | null> {
     where: { opaqueKey },
   });
 
-  if (!session) return null;
+  if (!session) {
+    // Cookie fantôme (ex. Chrome garde un vieux mt_session) — on nettoie.
+    await clearSessionOpaqueKey();
+    return null;
+  }
 
   if (isExpired(session)) {
     await prisma.session.update({
