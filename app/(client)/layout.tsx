@@ -1,6 +1,7 @@
 import { BanniereReprise } from "@/components/client/banniere-reprise";
 import { BarreProgressionSejour } from "@/components/client/barre-progression-sejour";
 import { ClientNav } from "@/components/client/client-nav";
+import { CookieHygiene } from "@/components/client/cookie-hygiene";
 import { getActiveSession } from "@/domain/session/get-current";
 import {
   getStepLabelFr,
@@ -23,6 +24,7 @@ export default async function ClientLayout({
 
   return (
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
+      <CookieHygiene />
       {session ? <ClientNav canFinish={canFinish} /> : null}
       {session ? <BarreProgressionSejour step={session.step} /> : null}
       {session ? (

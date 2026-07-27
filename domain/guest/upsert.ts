@@ -3,7 +3,6 @@
 import { prisma } from "@/infra/prisma/client";
 import { mirrorGuestToSheet } from "@/infra/sheets/mirror";
 import {
-  clearSoftDeviceKey,
   readSoftDeviceKey,
   writeSoftDeviceKey,
 } from "./soft-device";
@@ -158,10 +157,7 @@ export async function resolveGuestFromSoftDevice(): Promise<{
   const guest = await prisma.guest.findUnique({
     where: { softDeviceKey: key },
   });
-  if (!guest) {
-    await clearSoftDeviceKey();
-    return null;
-  }
+  if (!guest) return null;
 
   const tastes = Array.isArray(guest.rememberedTastes)
     ? guest.rememberedTastes.filter((t): t is string => typeof t === "string")

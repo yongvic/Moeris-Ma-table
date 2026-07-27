@@ -1,9 +1,6 @@
 import { SessionStatus, type Session, type SessionStep } from "@prisma/client";
 import { prisma } from "@/infra/prisma/client";
-import {
-  clearSessionOpaqueKey,
-  readSessionOpaqueKey,
-} from "./cookie";
+import { readSessionOpaqueKey } from "./cookie";
 
 export type ActiveSessionView = {
   sessionId: string;
@@ -14,7 +11,7 @@ export type ActiveSessionView = {
 
 /**
  * Active séjour session from opaque cookie (AD-5).
- * Expired rows are marked EXPIRED and cookie cleared — no silent ghost session.
+ * Lecture seule — le nettoyage cookie se fait via cleanupStaleClientCookiesAction.
  */
 export async function getActiveSession(): Promise<ActiveSessionView | null> {
   const opaqueKey = await readSessionOpaqueKey();
@@ -24,25 +21,9 @@ export async function getActiveSession(): Promise<ActiveSessionView | null> {
     where: { opaqueKey },
   });
 
-  if (!session) {
-    // Cookie fantôme (ex. Chrome garde un vieux mt_session) — on nettoie.
-    await clearSessionOpaqueKey();
-    return null;
-  }
-
-  if (isExpired(session)) {
-    await prisma.session.update({
-      where: { id: session.id },
-      data: { status: SessionStatus.EXPIRED },
-    });
-    await clearSessionOpaqueKey();
-    return null;
-  }
-
-  if (session.status !== SessionStatus.ACTIVE) {
-    await clearSessionOpaqueKey();
-    return null;
-  }
+  if (!session) return null;
+  if (isExpired(session)) return null;
+  if (session.status !== SessionStatus.ACTIVE) return null;
 
   return {
     sessionId: session.id,
