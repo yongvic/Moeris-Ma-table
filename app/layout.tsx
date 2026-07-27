@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Nunito_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -56,6 +57,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-surface-base text-ink-primary font-sans">
         {children}
         <div className="grain-overlay" aria-hidden />
+        <Analytics />
       </body>
     </html>
   );
