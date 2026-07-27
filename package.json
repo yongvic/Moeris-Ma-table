@@ -25,6 +25,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.6.1",
     "bcryptjs": "^2.4.3",
+    "libphonenumber-js": "^1.13.9",
     "motion": "^12.42.2",
     "next": "16.2.11",
     "next-auth": "^5.0.0-beta.32",
@@ -33,6 +34,7 @@
     "pusher-js": "^8.6.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-phone-number-input": "^3.4.17",
     "ws": "8.18.3",
     "xlsx": "^0.18.5"
   },

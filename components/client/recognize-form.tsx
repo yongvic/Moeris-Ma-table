@@ -5,11 +5,15 @@ import Link from "next/link";
 import { Phone, EnvelopeSimple, ForkKnife, CheckCircle, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import { recognizeByContactAction } from "@/domain/guest/memory-actions";
 import { Segmented, Field, inputClass } from "@/components/ui/form";
+import { MoerisPhoneInput } from "@/components/ui/phone-input";
+import type { Value } from "react-phone-number-input";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 type Channel = "phone" | "email";
 
 export function RecognizeForm() {
   const [channel, setChannel] = useState<Channel>("phone");
+  const [phone, setPhone] = useState<Value>();
   const [value, setValue] = useState("");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +62,16 @@ export function RecognizeForm() {
         e.preventDefault();
         setError(null);
         startTransition(async () => {
-          const res = await recognizeByContactAction({ channel, value });
+          if (channel === "phone") {
+            if (!phone || !isValidPhoneNumber(phone)) {
+              setError("Numéro de téléphone invalide.");
+              return;
+            }
+          }
+          const res = await recognizeByContactAction({
+            channel,
+            value: channel === "phone" ? phone! : value,
+          });
           if (!res.ok) {
             setError(res.message);
             return;
@@ -76,6 +89,7 @@ export function RecognizeForm() {
         onChange={(c) => {
           setChannel(c);
           setValue("");
+          setPhone(undefined);
         }}
         options={[
           { value: "phone", label: "Téléphone", icon: <Phone size={16} weight="fill" /> },
@@ -83,15 +97,19 @@ export function RecognizeForm() {
         ]}
       />
       <Field label={channel === "phone" ? "Ton numéro" : "Ton email"}>
-        <input
-          type={channel === "phone" ? "tel" : "email"}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          required
-          autoComplete={channel === "phone" ? "tel" : "email"}
-          placeholder={channel === "phone" ? "+221 7X XXX XX XX" : "toi@exemple.com"}
-          className={inputClass}
-        />
+        {channel === "phone" ? (
+          <MoerisPhoneInput value={phone} onChange={setPhone} required />
+        ) : (
+          <input
+            type="email"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            required
+            autoComplete="email"
+            placeholder="toi@exemple.com"
+            className={inputClass}
+          />
+        )}
       </Field>
       {error ? (
         <p className="text-sm font-semibold text-ember" role="alert">
