@@ -3,6 +3,7 @@ import { ForkKnife } from "@phosphor-icons/react/dist/ssr";
 import { auth } from "@/infra/auth/auth";
 import { listMenuForBo } from "@/domain/menu/queries";
 import { CreateMenuItemForm, LigneMenuBo } from "@/components/bo/ligne-menu-bo";
+import { ImportMenuForm } from "@/components/bo/import-menu-form";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export default async function BoMenuPage() {
       </header>
 
       <CreateMenuItemForm />
+      <ImportMenuForm />
 
       {items.length === 0 ? (
         <p className="rounded-[var(--radius-lg)] border border-dashed border-border-strong bg-surface-raised/40 p-8 text-center text-ink-secondary">

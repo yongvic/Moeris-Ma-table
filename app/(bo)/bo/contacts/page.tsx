@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import {
   AddressBook,
-  DownloadSimple,
   Phone,
   EnvelopeSimple,
 } from "@phosphor-icons/react/dist/ssr";
 import { auth } from "@/infra/auth/auth";
 import { listGuestsForAdmin } from "@/domain/guest/admin";
+import { ExportContactsButton } from "@/components/bo/export-contacts-button";
 
 export const dynamic = "force-dynamic";
 
@@ -43,16 +43,7 @@ export default async function BoContactsPage() {
           </div>
         </div>
 
-        {guests.length > 0 ? (
-          <a
-            href="/bo/contacts/export"
-            download
-            className="inline-flex min-h-tap-min items-center gap-2 rounded-full bg-accent px-5 text-[15px] font-bold text-ink-onaccent shadow-glow transition-[transform,background-color] duration-300 hover:bg-accent-deep active:scale-[0.98]"
-          >
-            <DownloadSimple size={18} weight="bold" />
-            Exporter (CSV / Excel)
-          </a>
-        ) : null}
+        {guests.length > 0 ? <ExportContactsButton /> : null}
       </header>
 
       {guests.length === 0 ? (

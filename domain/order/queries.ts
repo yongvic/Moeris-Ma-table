@@ -2,14 +2,22 @@ import { OrderStatus } from "@prisma/client";
 import { prisma } from "@/infra/prisma/client";
 import { tasteLabel } from "./tastes";
 
+export type OrderGuestView = {
+  id: string;
+  phone: string | null;
+  email: string | null;
+};
+
 export type OrderBoView = {
   id: string;
+  sessionId: string;
   tableId: string;
   status: OrderStatus;
   createdAt: string;
   tastes: string[];
   tasteLabels: string[];
   note: string | null;
+  guest: OrderGuestView | null;
   lines: { name: string; qty: number; priceCents: number }[];
 };
 
@@ -24,11 +32,20 @@ export async function listOpenOrders(): Promise<OrderBoView[]> {
   return rows.map(toView);
 }
 
-export async function listRecentOrders(): Promise<OrderBoView[]> {
+export async function listRecentOrders(limit = 80): Promise<OrderBoView[]> {
   const rows = await prisma.order.findMany({
-    include: { lines: true },
+    include: {
+      lines: true,
+      session: {
+        include: {
+          guest: {
+            select: { id: true, phoneE164: true, emailLower: true },
+          },
+        },
+      },
+    },
     orderBy: { createdAt: "desc" },
-    take: 40,
+    take: limit,
   });
   return rows.map(toView);
 }
@@ -61,24 +78,41 @@ export async function getLatestSessionOrder(
 
 function toView(row: {
   id: string;
+  sessionId: string;
   tableId: string;
   status: OrderStatus;
   createdAt: Date;
   tastesJson: unknown;
   note?: string | null;
   lines: { nameSnapshot: string; qty: number; priceCents: number }[];
+  session?: {
+    guest: {
+      id: string;
+      phoneE164: string | null;
+      emailLower: string | null;
+    } | null;
+  } | null;
 }): OrderBoView {
   const tastes = Array.isArray(row.tastesJson)
     ? row.tastesJson.filter((t): t is string => typeof t === "string")
     : [];
+  const guest = row.session?.guest;
   return {
     id: row.id,
+    sessionId: row.sessionId,
     tableId: row.tableId,
     status: row.status,
     createdAt: row.createdAt.toISOString(),
     tastes,
     tasteLabels: tastes.map(tasteLabel),
     note: row.note ?? null,
+    guest: guest
+      ? {
+          id: guest.id,
+          phone: guest.phoneE164,
+          email: guest.emailLower,
+        }
+      : null,
     lines: row.lines.map((l) => ({
       name: l.nameSnapshot,
       qty: l.qty,

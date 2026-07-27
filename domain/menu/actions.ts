@@ -5,6 +5,7 @@ import { requireStaff } from "@/infra/auth/require-staff";
 import { uploadMenuPhoto } from "@/infra/blob/upload";
 import { prisma } from "@/infra/prisma/client";
 import { MENU_CACHE_TAG } from "./constants";
+import { parseMenuSpreadsheet } from "./import";
 
 export type ActionResult =
   | { ok: true; id?: string }
@@ -116,4 +117,75 @@ function revalidateMenu() {
   (revalidateTag as unknown as (tag: string, ...args: any[]) => void)(MENU_CACHE_TAG);
   revalidatePath("/menu", "layout");
   revalidatePath("/bo/menu", "layout");
+}
+
+export async function importMenuFromSpreadsheet(
+  formData: FormData,
+): Promise<
+  ActionResult & { imported?: number; skipped?: number; warnings?: string[] }
+> {
+  const gate = await requireStaff();
+  if (!gate.ok) return gate;
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return {
+      ok: false,
+      code: "VALIDATION",
+      message: "Choisis un fichier Excel (.xlsx) ou CSV.",
+    };
+  }
+
+  const name = file.name.toLowerCase();
+  if (
+    !name.endsWith(".xlsx") &&
+    !name.endsWith(".xls") &&
+    !name.endsWith(".csv")
+  ) {
+    return {
+      ok: false,
+      code: "VALIDATION",
+      message: "Format accepté : .xlsx, .xls ou .csv.",
+    };
+  }
+
+  const buffer = await file.arrayBuffer();
+  const parsed = parseMenuSpreadsheet(buffer);
+  if (!parsed.ok) return parsed;
+
+  const maxSort = await prisma.menuItem.aggregate({ _max: { sortOrder: true } });
+  let sortOrder = (maxSort._max.sortOrder ?? 0) + 1;
+  let imported = 0;
+
+  for (const row of parsed.rows) {
+    const existing = await prisma.menuItem.findFirst({
+      where: { name: { equals: row.name, mode: "insensitive" } },
+    });
+
+    if (existing) {
+      await prisma.menuItem.update({
+        where: { id: existing.id },
+        data: {
+          priceCents: row.priceCents,
+          available: row.available,
+          ...(row.photoUrl ? { photoUrl: row.photoUrl } : {}),
+        },
+      });
+    } else {
+      await prisma.menuItem.create({
+        data: {
+          name: row.name,
+          priceCents: row.priceCents,
+          available: row.available,
+          photoUrl: row.photoUrl,
+          sortOrder,
+        },
+      });
+      sortOrder += 1;
+    }
+    imported += 1;
+  }
+
+  revalidateMenu();
+  return { ok: true, imported };
 }

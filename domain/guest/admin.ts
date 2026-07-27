@@ -1,5 +1,6 @@
 import { prisma } from "@/infra/prisma/client";
 import { tasteLabel } from "@/domain/order/tastes";
+import * as XLSX from "xlsx";
 
 export type GuestAdminView = {
   id: string;
@@ -81,4 +82,36 @@ export function guestsToCsv(rows: GuestAdminView[]): string {
 
   // BOM pour que Excel lise l'UTF-8 (accents) correctement.
   return `\uFEFF${lines.join("\r\n")}\r\n`;
+}
+
+const EXPORT_HEADERS = [
+  "Contact",
+  "Type",
+  "Gouts memorises",
+  "Visites",
+  "Premiere visite",
+  "Derniere interaction",
+];
+
+function guestRowForExport(row: GuestAdminView): string[] {
+  const contact = row.phone ?? row.email ?? "";
+  const type = row.phone ? "Telephone" : row.email ? "Email" : "";
+  return [
+    contact,
+    type,
+    row.tastes.join(", "),
+    String(row.visits),
+    frDateTime(row.createdAt),
+    frDateTime(row.lastInteractionAt),
+  ];
+}
+
+/** Export .xlsx natif (feuille unique). */
+export function guestsToXlsxBuffer(rows: GuestAdminView[]): Buffer {
+  const data = [EXPORT_HEADERS, ...rows.map(guestRowForExport)];
+  const sheet = XLSX.utils.aoa_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, sheet, "Contacts");
+  const out = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+  return Buffer.from(out);
 }
