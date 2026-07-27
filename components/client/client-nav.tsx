@@ -6,6 +6,7 @@ import {
   ForkKnife,
   HandWaving,
   Confetti,
+  Receipt,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 import { MoerisMark } from "@/components/ui/moeris-mark";
@@ -14,6 +15,7 @@ type NavItem = { href: string; label: string; icon: Icon };
 
 const BASE_ITEMS: NavItem[] = [
   { href: "/menu", label: "La carte", icon: ForkKnife },
+  { href: "/mes-commandes", label: "Mes commandes", icon: Receipt },
   { href: "/service", label: "Service", icon: HandWaving },
 ];
 

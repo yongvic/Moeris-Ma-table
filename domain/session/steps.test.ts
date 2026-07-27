@@ -12,7 +12,7 @@ describe("resolveResumeTarget", () => {
   it("maps steps to client routes", () => {
     assert.equal(resolveResumeTarget(SessionStep.WELCOME), "/accueil");
     assert.equal(resolveResumeTarget(SessionStep.MENU), "/menu");
-    assert.equal(resolveResumeTarget(SessionStep.ORDER), "/commande");
+    assert.equal(resolveResumeTarget(SessionStep.ORDER), "/mes-commandes");
     assert.equal(resolveResumeTarget(SessionStep.END), "/fin");
   });
 

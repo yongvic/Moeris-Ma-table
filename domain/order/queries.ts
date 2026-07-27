@@ -64,6 +64,18 @@ export async function sessionHasReceivedOrder(
   return count > 0;
 }
 
+/** Toutes les commandes du séjour courant (plus récentes en premier). */
+export async function listSessionOrders(
+  sessionId: string,
+): Promise<OrderBoView[]> {
+  const rows = await prisma.order.findMany({
+    where: { sessionId },
+    include: { lines: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return rows.map(toView);
+}
+
 /** Latest order for a client session (post-commande surface). */
 export async function getLatestSessionOrder(
   sessionId: string,

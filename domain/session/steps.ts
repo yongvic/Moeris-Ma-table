@@ -19,7 +19,7 @@ export const SEJOUR_STEP_TOTAL = SEJOUR_STEPS.length;
 const STEP_ROUTES: Record<SessionStep, StepRoute> = {
   WELCOME: { step: SessionStep.WELCOME, labelFr: "Accueil", href: "/accueil" },
   MENU: { step: SessionStep.MENU, labelFr: "Menu", href: "/menu" },
-  ORDER: { step: SessionStep.ORDER, labelFr: "Commande", href: "/commande" },
+  ORDER: { step: SessionStep.ORDER, labelFr: "Commande", href: "/mes-commandes" },
   END: { step: SessionStep.END, labelFr: "Fin", href: "/fin" },
 };
 

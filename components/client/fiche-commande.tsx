@@ -69,7 +69,7 @@ export function FicheCommande({
           </button>
           <button
             type="button"
-            onClick={() => router.push("/commande")}
+            onClick={() => router.push("/mes-commandes")}
             className="inline-flex min-h-tap-min items-center justify-center rounded-full bg-accent px-6 text-[16px] font-bold text-ink-onaccent shadow-glow transition-transform hover:bg-accent-deep active:scale-[0.98]"
           >
             Voir ma commande
