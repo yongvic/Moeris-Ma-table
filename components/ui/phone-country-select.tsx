@@ -19,6 +19,17 @@ type CountryOption = {
   label: string;
 };
 
+/** Compare sans tenir compte des accents (é vs é) ni de la casse. */
+function normalizeForSearch(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/['’`-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 type PhoneCountrySelectProps = {
   name?: string;
   value?: Country;
@@ -61,16 +72,22 @@ export const PhoneCountrySelect = forwardRef<
   );
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return countries;
+    const raw = query.trim();
+    if (!raw) return countries;
 
-    const digits = q.replace(/\D/g, "");
+    const q = normalizeForSearch(raw);
+    const digits = raw.replace(/\D/g, "");
+
     return countries.filter((option) => {
+      const label = normalizeForSearch(option.label);
       const dial = getCountryCallingCode(option.value);
+      const iso = option.value.toLowerCase();
+
       return (
-        option.label.toLowerCase().includes(q) ||
-        (digits.length > 0 && dial.includes(digits)) ||
-        `+${dial}`.includes(q.replace(/\s/g, ""))
+        label.includes(q) ||
+        iso.startsWith(q.replace(/\s/g, "")) ||
+        (digits.length > 0 &&
+          (dial.includes(digits) || `+${dial}`.includes(raw.replace(/\s/g, ""))))
       );
     });
   }, [countries, query]);
