@@ -41,6 +41,7 @@ export async function advanceOrderStatusAction(
     id: updated.id,
     tableId: updated.tableId,
     status: updated.status,
+    sessionId: updated.sessionId,
     at: new Date().toISOString(),
   });
 

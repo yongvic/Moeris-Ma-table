@@ -1,11 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { OrderStatus } from "@prisma/client";
-import { CookingPot, ArrowRight, Check, Note } from "@phosphor-icons/react/dist/ssr";
+import {
+  CookingPot,
+  ArrowRight,
+  Check,
+  Note,
+  Funnel,
+} from "@phosphor-icons/react/dist/ssr";
 import { advanceOrderStatusAction } from "@/domain/order/actions";
 import { orderStatusLabelFr, type OrderBoView } from "@/domain/order/queries";
+
+type StatusFilter = "all" | "RECEIVED" | "PREPARING";
 
 function OrderStatusPill({ status }: { status: OrderStatus }) {
   const styles: Record<OrderStatus, string> = {
@@ -31,6 +39,8 @@ export function BoOrdersPanel({
 }) {
   const router = useRouter();
   const orders = initialOrders;
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [tableFilter, setTableFilter] = useState("");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -70,37 +80,110 @@ export function BoOrdersPanel({
     };
   }, [pusher, refresh]);
 
+  const filtered = useMemo(() => {
+    const tableQ = tableFilter.trim().toLowerCase();
+    return orders
+      .filter((o) => {
+        if (statusFilter !== "all" && o.status !== statusFilter) return false;
+        if (tableQ && !o.tableId.toLowerCase().includes(tableQ)) return false;
+        return true;
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+  }, [orders, statusFilter, tableFilter]);
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2 text-sm font-semibold text-ink-secondary">
-        <span className="relative flex size-2.5">
-          <span className="absolute inline-flex size-full animate-ping rounded-full bg-sage-deep opacity-60" />
-          <span className="relative inline-flex size-2.5 rounded-full bg-sage-deep" />
-        </span>
-        En direct · {orders.length} en cours
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-sm font-semibold text-ink-secondary">
+          <span className="relative flex size-2.5">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-sage-deep opacity-60" />
+            <span className="relative inline-flex size-2.5 rounded-full bg-sage-deep" />
+          </span>
+          En direct · {filtered.length} affichée{filtered.length > 1 ? "s" : ""}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-[0.08em] text-ink-secondary">
+            <Funnel size={14} weight="bold" />
+            Filtres
+          </span>
+          <div
+            className="inline-flex rounded-full border border-border bg-surface-raised/60 p-1"
+            role="radiogroup"
+            aria-label="Filtrer par statut"
+          >
+            {(
+              [
+                ["all", "Toutes"],
+                [OrderStatus.RECEIVED, "Reçues"],
+                [OrderStatus.PREPARING, "En préparation"],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={statusFilter === value}
+                onClick={() => setStatusFilter(value)}
+                className={`rounded-full px-3 py-1.5 text-sm font-bold transition-colors ${
+                  statusFilter === value
+                    ? "bg-accent text-ink-onaccent shadow-soft"
+                    : "text-ink-secondary hover:text-ink-primary"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <input
+            type="search"
+            value={tableFilter}
+            onChange={(e) => setTableFilter(e.target.value)}
+            placeholder="Table…"
+            aria-label="Filtrer par table"
+            className="min-h-[36px] w-[120px] rounded-full border border-border bg-surface-base px-3 text-sm font-medium text-ink-primary placeholder:text-ink-secondary/60 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          />
+        </div>
       </div>
 
-      {orders.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-dashed border-border-strong bg-surface-raised/40 p-12 text-center">
           <CookingPot size={34} weight="duotone" className="text-ink-secondary" />
           <p className="font-display text-[18px] font-semibold text-ink-primary">
-            Rien en cuisine
+            {orders.length === 0 ? "Rien en cuisine" : "Aucune commande pour ce filtre"}
           </p>
           <p className="text-sm text-ink-secondary">
-            Les nouvelles commandes apparaissent ici, en direct.
+            {orders.length === 0
+              ? "Les nouvelles commandes apparaissent ici, les plus récentes en premier."
+              : "Essaie un autre statut ou une autre table."}
           </p>
         </div>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2">
-          {orders.map((order) => (
+          {filtered.map((order) => (
             <li
               key={order.id}
               className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-border/70 bg-surface-base p-4 shadow-soft"
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="font-display text-[18px] font-semibold text-ink-primary">
-                  Table {order.tableId}
-                </p>
+                <div className="flex flex-col gap-0.5">
+                  <p className="font-display text-[18px] font-semibold text-ink-primary">
+                    Table {order.tableId}
+                  </p>
+                  <time
+                    className="text-xs font-semibold text-ink-secondary"
+                    dateTime={order.createdAt}
+                  >
+                    {new Intl.DateTimeFormat("fr-FR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      timeZone: "Africa/Dakar",
+                    }).format(new Date(order.createdAt))}
+                  </time>
+                </div>
                 <OrderStatusPill status={order.status} />
               </div>
               <ul className="flex flex-col gap-0.5 text-[15px] text-ink-primary">

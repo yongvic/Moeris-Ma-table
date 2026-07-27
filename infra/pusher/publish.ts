@@ -6,6 +6,8 @@ export type FloorEvent = {
   tableId: string;
   status: string;
   at: string;
+  /** Pour notifier le client sur son canal privé de session. */
+  sessionId?: string;
 };
 
 let client: Pusher | null | undefined;
@@ -44,6 +46,13 @@ export async function publishFloorEvent(event: FloorEvent): Promise<void> {
   }
   try {
     await pusher.trigger("bo-floor", "floor-update", event);
+    if (event.kind === "order" && event.sessionId) {
+      await pusher.trigger(`client-session-${event.sessionId}`, "order-status", {
+        orderId: event.id,
+        status: event.status,
+        at: event.at,
+      });
+    }
   } catch (error) {
     console.error("[pusher] publish failed", error);
   }

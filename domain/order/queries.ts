@@ -27,7 +27,7 @@ export async function listOpenOrders(): Promise<OrderBoView[]> {
       status: { in: [OrderStatus.RECEIVED, OrderStatus.PREPARING] },
     },
     include: { lines: true },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
   });
   return rows.map(toView);
 }
@@ -131,5 +131,17 @@ export function orderStatusLabelFr(status: OrderStatus): string {
       return "Servie";
     default:
       return status;
+  }
+}
+
+/** Message chaleureux affiché au client quand le statut avance. */
+export function orderStatusClientMessage(status: OrderStatus): string | null {
+  switch (status) {
+    case OrderStatus.PREPARING:
+      return "Ta commande est en préparation — l'équipe s'en occupe.";
+    case OrderStatus.SERVED:
+      return "C'est prêt ! Bon appétit — ta commande est servie.";
+    default:
+      return null;
   }
 }

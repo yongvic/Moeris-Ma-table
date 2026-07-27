@@ -92,6 +92,7 @@
 
   /* Z-index scale */
   --z-nav: 40;
+  --z-toast: 50;
   --z-banner: 45;
   --z-overlay: 60;
   --z-grain: 70;

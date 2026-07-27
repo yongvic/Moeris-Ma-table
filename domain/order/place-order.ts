@@ -106,6 +106,7 @@ export async function placeOrderAction(input: {
       id: order.id,
       tableId: order.tableId,
       status: order.status,
+      sessionId: order.sessionId,
       at: new Date().toISOString(),
     });
 
