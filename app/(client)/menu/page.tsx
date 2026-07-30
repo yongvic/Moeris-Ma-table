@@ -7,11 +7,15 @@ import { getActiveSession } from "@/domain/session/get-current";
 import { listPublishedMenu } from "@/domain/menu/queries";
 import { updateSessionStepAction } from "@/domain/session/update-step";
 import { MenuCard } from "@/components/client/menu-card";
+import { MenuImageViewer } from "@/components/client/menu-image-viewer";
 import { Reveal } from "@/components/ui/reveal";
+import {
+  MENU_PAGE_IMAGES,
+  USE_IMAGE_MENU,
+} from "@/domain/menu/image-menu";
 
 export default async function MenuPage() {
   const session = await getActiveSession();
-  const items = await listPublishedMenu();
 
   if (!session) {
     return (
@@ -38,6 +42,28 @@ export default async function MenuPage() {
   if (session.step === SessionStep.WELCOME) {
     await updateSessionStepAction({ step: SessionStep.MENU });
   }
+
+  // ——— Mode carte images (actif) ———
+  if (USE_IMAGE_MENU) {
+    return (
+      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-5 px-margin-mobile py-6 md:px-7 md:py-8">
+        <Reveal className="flex flex-col gap-1.5" as="section">
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-ink-secondary">
+            Résidence Moeris
+          </span>
+          <h1 className="font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink-primary sm:text-[36px]">
+            La carte
+          </h1>
+        </Reveal>
+
+        <MenuImageViewer pages={MENU_PAGE_IMAGES} />
+      </main>
+    );
+  }
+
+  // ——— Ancienne logique interactive (sourdine) ———
+  // Réactiver : USE_IMAGE_MENU = false dans domain/menu/image-menu.ts
+  const items = await listPublishedMenu();
 
   return (
     <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-7 px-margin-mobile py-8 md:px-7">
