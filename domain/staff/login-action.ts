@@ -14,7 +14,7 @@ export async function staffLoginAction(
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/bo/menu",
+      redirectTo: "/bo/avis",
     });
     return { error: false };
   } catch (error) {

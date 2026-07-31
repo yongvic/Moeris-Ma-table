@@ -10,7 +10,7 @@ export default async function BoConnexionPage({
 }) {
   const session = await auth();
   if (session?.user) {
-    redirect("/bo/menu");
+    redirect("/bo/avis");
   }
 
   const params = await searchParams;

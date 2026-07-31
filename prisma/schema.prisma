@@ -135,10 +135,12 @@ enum ServiceStatus {
 
 model Review {
   id           String   @id @default(cuid())
-  sessionId    String   @unique
-  session      Session  @relation(fields: [sessionId], references: [id])
+  sessionId    String?  @unique
+  session      Session? @relation(fields: [sessionId], references: [id])
   orderId      String?  @unique
   order        Order?   @relation(fields: [orderId], references: [id])
+  guestId      String?
+  guest        Guest?   @relation(fields: [guestId], references: [id])
   stars        Int // note du repas (1..5) — sert aussi au ton du "Merci chef"
   starsService Int? // note du service (1..5)
   starsPlace   Int? // note du restaurant (1..5)
@@ -146,6 +148,9 @@ model Review {
   highlights   Json     @default("[]") // coups de cœur multiples
   dishEmoji    String? // legacy (non utilisé) — conservé pour compat
   createdAt    DateTime @default(now())
+
+  @@index([guestId])
+  @@index([createdAt])
 }
 
 model Guest {
@@ -159,6 +164,7 @@ model Guest {
   updatedAt          DateTime      @updatedAt
   sessions           Session[]
   preferences        Preference[]
+  reviews            Review[]
 }
 
 model Preference {

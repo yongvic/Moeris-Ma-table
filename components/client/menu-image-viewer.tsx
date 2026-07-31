@@ -143,7 +143,7 @@ export function MenuImageViewer({ pages }: Props) {
       </div>
 
       <p className="text-center text-xs text-ink-secondary">
-        Glisse pour tourner les pages · pour commander, appelle le serveur
+        Glisse pour tourner les pages
       </p>
     </div>
   );

@@ -124,7 +124,7 @@ export function AvisForm() {
             setError(res.message);
             return;
           }
-          router.push("/fin/merci");
+          router.push("/merci");
         });
       }}
     >

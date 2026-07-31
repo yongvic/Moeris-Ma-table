@@ -6,7 +6,7 @@ import Link from "next/link";
  * Used in client nav and back-office header.
  */
 export function MoerisMark({
-  href = "/accueil",
+  href = "/avis",
   compact = false,
 }: {
   href?: string;
@@ -16,7 +16,7 @@ export function MoerisMark({
     <Link
       href={href}
       className="group inline-flex items-center gap-2.5 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
-      aria-label="Ma table — Résidence Moeris, accueil"
+      aria-label="Résidence Moeris — avis"
     >
       <span className="relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-raised ring-1 ring-border shadow-soft">
         <Image

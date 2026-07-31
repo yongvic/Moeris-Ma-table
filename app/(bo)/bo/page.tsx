@@ -3,5 +3,5 @@ import { auth } from "@/infra/auth/auth";
 
 export default async function BoHomePage() {
   const session = await auth();
-  redirect(session?.user ? "/bo/menu" : "/bo/connexion");
+  redirect(session?.user ? "/bo/avis" : "/bo/connexion");
 }

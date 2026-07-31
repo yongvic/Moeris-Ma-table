@@ -4,19 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ForkKnife,
-  CookingPot,
-  HandWaving,
   AddressBook,
-  ClockCounterClockwise,
+  Star,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 
 const TABS: { href: string; label: string; icon: Icon }[] = [
-  { href: "/bo/menu", label: "Menu", icon: ForkKnife },
-  { href: "/bo/commandes", label: "Commandes", icon: CookingPot },
-  { href: "/bo/historique", label: "Historique", icon: ClockCounterClockwise },
-  { href: "/bo/service", label: "Service", icon: HandWaving },
+  { href: "/bo/avis", label: "Avis", icon: Star },
   { href: "/bo/contacts", label: "Contacts", icon: AddressBook },
+  { href: "/bo/menu", label: "Menu", icon: ForkKnife },
 ];
 
 export function BoTabs() {

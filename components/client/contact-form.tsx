@@ -41,9 +41,9 @@ export function ContactForm() {
         <button
           type="button"
           className="inline-flex min-h-tap-min items-center rounded-full border border-border bg-surface-base px-5 text-[16px] font-bold text-ink-primary shadow-soft transition-transform active:scale-[0.98]"
-          onClick={() => router.push("/accueil")}
+          onClick={() => router.push("/avis")}
         >
-          Retour à l&apos;accueil
+          Retour à l&apos;avis
         </button>
       </div>
     );
@@ -134,7 +134,7 @@ export function ContactForm() {
       <button
         type="button"
         className="text-sm font-semibold text-ink-secondary underline underline-offset-4 transition-colors hover:text-ink-primary"
-        onClick={() => router.push("/accueil")}
+        onClick={() => router.push("/avis")}
       >
         Non merci
       </button>

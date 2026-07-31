@@ -18,7 +18,7 @@ export default async function BoLayout({
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-3 px-margin-mobile py-3 md:px-7">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <MoerisMark href="/bo/menu" compact />
+                <MoerisMark href="/bo/avis" compact />
                 <div className="hidden flex-col leading-none sm:flex">
                   <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink-secondary">
                     Espace équipe
