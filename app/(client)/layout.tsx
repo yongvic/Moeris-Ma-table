@@ -13,7 +13,7 @@ export default function ClientLayout({
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
       <CookieHygiene />
       <ClientNav />
-      <div className="relative z-[1] flex flex-1 flex-col pb-28 sm:pb-10">
+      <div className="relative z-[1] flex flex-1 flex-col pb-10">
         {children}
       </div>
     </div>

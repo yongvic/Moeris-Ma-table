@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
 
-/** Entrée plateforme → avis. */
+/** Entrée plateforme → menu. */
 export default function AccueilPage() {
-  redirect("/avis");
+  redirect("/menu");
 }

@@ -8,10 +8,10 @@ import { MoerisMark } from "@/components/ui/moeris-mark";
 
 type NavItem = { href: string; label: string; icon: Icon };
 
-/** Nav mode avis_contact : Avis | La carte (Contact uniquement dans le flux). */
+/** Navigation principale client : La carte en premier, puis Avis. */
 const ITEMS: NavItem[] = [
-  { href: "/avis", label: "Avis", icon: Star },
   { href: "/menu", label: "La carte", icon: ForkKnife },
+  { href: "/avis", label: "Avis", icon: Star },
 ];
 
 export function ClientNav() {
@@ -21,59 +21,31 @@ export function ClientNav() {
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <>
-      <header className="sticky top-0 z-[var(--z-nav)] hidden border-b border-border/70 bg-surface-base/85 backdrop-blur-md sm:block">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-margin-mobile py-3 md:px-7">
-          <MoerisMark href="/avis" />
-          <nav aria-label="Navigation" className="flex items-center gap-1">
-            {ITEMS.map(({ href, label, icon: IconCmp }) => {
-              const active = isActive(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  className={`inline-flex min-h-tap-min items-center gap-2 rounded-full px-4 text-[15px] font-bold transition-colors duration-300 ${
-                    active
-                      ? "bg-accent-soft text-ink-primary"
-                      : "text-ink-secondary hover:bg-surface-raised hover:text-ink-primary"
-                  }`}
-                >
-                  <IconCmp size={19} weight={active ? "fill" : "regular"} />
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </header>
+    <header className="sticky top-0 z-[var(--z-nav)] border-b border-border/70 bg-surface-base/90 shadow-soft backdrop-blur-xl transition-all duration-300">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-margin-mobile py-2.5 sm:py-3 md:px-7">
+        <MoerisMark href="/menu" />
 
-      <nav
-        aria-label="Navigation"
-        className="fixed inset-x-0 bottom-0 z-[var(--z-nav)] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:hidden"
-      >
-        <ul className="mx-auto flex max-w-sm items-stretch justify-around gap-1 rounded-full border border-border/70 bg-surface-base/90 p-1.5 shadow-lift backdrop-blur-xl">
+        <nav aria-label="Navigation principale" className="flex items-center gap-1.5 sm:gap-2">
           {ITEMS.map(({ href, label, icon: IconCmp }) => {
             const active = isActive(href);
             return (
-              <li key={href} className="flex-1">
-                <Link
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  className={`flex min-h-tap-min flex-col items-center justify-center gap-0.5 rounded-full py-1.5 text-[11px] font-bold transition-colors duration-300 ${
-                    active
-                      ? "bg-accent text-ink-onaccent"
-                      : "text-ink-secondary"
-                  }`}
-                >
-                  <IconCmp size={22} weight={active ? "fill" : "regular"} />
-                  {label}
-                </Link>
-              </li>
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={`inline-flex min-h-[40px] items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px] font-bold transition-all duration-300 sm:px-4 sm:text-[14px] ${
+                  active
+                    ? "bg-accent text-ink-onaccent shadow-sm"
+                    : "bg-surface-raised/70 text-ink-secondary hover:bg-surface-raised hover:text-ink-primary"
+                }`}
+              >
+                <IconCmp size={18} weight={active ? "fill" : "bold"} />
+                <span>{label}</span>
+              </Link>
             );
           })}
-        </ul>
-      </nav>
-    </>
+        </nav>
+      </div>
+    </header>
   );
 }

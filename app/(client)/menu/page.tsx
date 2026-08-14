@@ -13,14 +13,17 @@ export default async function MenuPage() {
   // ——— Mode carte images (actif) ———
   if (USE_IMAGE_MENU) {
     return (
-      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-5 px-margin-mobile py-6 md:px-7 md:py-8">
-        <Reveal className="flex flex-col gap-1.5" as="section">
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-ink-secondary">
+      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-6 px-margin-mobile py-6 md:px-7 md:py-8">
+        <Reveal className="flex flex-col gap-2" as="section">
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-accent-dark">
             Résidence Moeris
           </span>
-          <h1 className="font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink-primary sm:text-[36px]">
-            La carte
+          <h1 className="font-display text-[32px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink-primary sm:text-[40px]">
+            Nos cartes & menus
           </h1>
+          <p className="max-w-xl text-[15px] text-ink-secondary">
+            Parcours nos cartes Fast-Food, Menu Simple et VIP. Touche n&apos;importe quelle photo pour l&apos;afficher en grand écran.
+          </p>
         </Reveal>
 
         <MenuImageViewer pages={MENU_PAGE_IMAGES} />
