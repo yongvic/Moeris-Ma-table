@@ -47,7 +47,8 @@ export async function submitContactAction(input: {
       data: { guestId: result.guestId },
     });
 
-    await clearReviewCookieId();
+    // Ne pas effacer mt_review ici : ça refresh la page /contact
+    // et redirige vers /avis avant que le popup de merci puisse s'afficher.
     return result;
   }
 
@@ -66,4 +67,9 @@ export async function submitContactAction(input: {
     email: input.channel === "email" ? input.value : undefined,
     sessionId: session.sessionId,
   });
+}
+
+/** Après fermeture du popup merci — libère le cookie d'enchaînement avis → contact. */
+export async function acknowledgeContactAction(): Promise<void> {
+  await clearReviewCookieId();
 }
