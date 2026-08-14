@@ -9,7 +9,7 @@ export type MenuCategoryInfo = {
   key: MenuCategoryKey;
   label: string;
   badge: string;
-  icon: string;
+  iconName: "hamburger" | "fork-knife" | "crown";
   description: string;
 };
 
@@ -18,21 +18,21 @@ export const MENU_CATEGORIES: MenuCategoryInfo[] = [
     key: "fast_food",
     label: "Fast-Food",
     badge: "Rapide & Gourmand",
-    icon: "🍔",
+    iconName: "hamburger",
     description: "Pizzas, pâtes, snacks, burgers et boissons fraîches.",
   },
   {
     key: "menu_simple",
     label: "Menu Simple",
     badge: "Carte Classic",
-    icon: "🍽️",
+    iconName: "fork-knife",
     description: "Plats africains, grillades, petit-déjeuner et desserts.",
   },
   {
     key: "vip",
     label: "VIP & Prestige",
     badge: "Expérience Élite",
-    icon: "✨",
+    iconName: "crown",
     description: "Vins fins, champagnes, alcools d'exception et poissons nobles.",
   },
 ];
@@ -43,10 +43,9 @@ export type MenuPageImage = {
   alt: string;
   title: string;
   category: MenuCategoryKey;
-  tag?: string;
 };
 
-/** Pages de la carte classées par univers. */
+/** Pages de la carte classées par univers (sans stickers/tags). */
 export const MENU_PAGE_IMAGES: MenuPageImage[] = [
   // --- FAST-FOOD ---
   {
@@ -55,7 +54,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Pizzas artisanales — Résidence Moeris",
     title: "Pizzas Artisanales",
     category: "fast_food",
-    tag: "Populaire",
   },
   {
     id: "ff-pates-snacks",
@@ -63,7 +61,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Pâtes, snacks et casse-croûtes",
     title: "Pâtes, Snacks & Casse-Croûtes",
     category: "fast_food",
-    tag: "Snacking",
   },
   {
     id: "ff-jus-cocktails",
@@ -71,7 +68,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Jus frais, boissons chaudes et cocktails",
     title: "Jus Frais & Cocktails Softs",
     category: "fast_food",
-    tag: "Boissons",
   },
 
   // --- MENU SIMPLE (CLASSIC) ---
@@ -81,7 +77,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Présentation de la carte — Résidence Moeris",
     title: "Présentation de la Carte",
     category: "menu_simple",
-    tag: "Accueil",
   },
   {
     id: "ms-petit-dej",
@@ -89,7 +84,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Petit-déjeuner, entrées et soupes",
     title: "Petit-Déjeuner, Entrées & Soupes",
     category: "menu_simple",
-    tag: "Matin & Entrées",
   },
   {
     id: "ms-grillades",
@@ -97,7 +91,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Grillades barbecue, garnitures et plats africains",
     title: "Grillades Barbecue & Plats Africains",
     category: "menu_simple",
-    tag: "Spécialités",
   },
   {
     id: "ms-boissons",
@@ -105,7 +98,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Carte des boissons et rafraîchissements",
     title: "Boissons & Rafraîchissements",
     category: "menu_simple",
-    tag: "Rafraîchissements",
   },
   {
     id: "ms-desserts",
@@ -113,7 +105,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Desserts et douceurs",
     title: "Desserts & Gourmandises",
     category: "menu_simple",
-    tag: "Douceurs",
   },
 
   // --- VIP & PRESTIGE ---
@@ -123,7 +114,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Vins fins, grands crus et champagnes prestige",
     title: "Vins Fins, Grands Crus & Champagnes",
     category: "vip",
-    tag: "Exception",
   },
   {
     id: "vip-alcools",
@@ -131,7 +121,6 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Alcools d'exception, whiskies et bouteilles de prestige",
     title: "Alcools & Bouteilles de Prestige",
     category: "vip",
-    tag: "Prestige",
   },
   {
     id: "vip-poissons",
@@ -139,6 +128,5 @@ export const MENU_PAGE_IMAGES: MenuPageImage[] = [
     alt: "Poissons nobles, fruits de mer et viandes braisées",
     title: "Poissons Nobles & Viandes d'Exception",
     category: "vip",
-    tag: "Gastronomie",
   },
 ];

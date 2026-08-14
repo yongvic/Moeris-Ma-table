@@ -6,8 +6,8 @@ import {
   CaretLeft,
   CaretRight,
   X,
-  ArrowsOutSimple,
   MagnifyingGlassPlus,
+  MagnifyingGlassMinus,
 } from "@phosphor-icons/react";
 import type { MenuPageImage } from "@/domain/menu/image-menu";
 
@@ -64,7 +64,7 @@ export function MenuLightbox({
       }
     };
 
-    // Empêcher le scroll du body quand la modale est ouverte
+    // Bloquer le défilement du fond
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
 
@@ -74,7 +74,7 @@ export function MenuLightbox({
     };
   }, [isOpen, onClose, goNext, goPrev]);
 
-  // Gestes Swipe mobile
+  // Support des gestes Swipe mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       setTouchStartX(e.touches[0].clientX);
@@ -86,10 +86,9 @@ export function MenuLightbox({
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
 
-    // Seuil de swipe 50px
-    if (diff > 50) {
+    if (diff > 40) {
       goNext();
-    } else if (diff < -50) {
+    } else if (diff < -40) {
       goPrev();
     }
 
@@ -100,102 +99,97 @@ export function MenuLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[var(--z-modal)] flex flex-col justify-between bg-black/92 p-3 text-white backdrop-blur-md transition-opacity duration-300 sm:p-5"
+      className="fixed inset-0 z-[var(--z-modal)] flex flex-col justify-between bg-black/96 p-2.5 text-white backdrop-blur-xl transition-opacity duration-300 sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Affichage grand écran du menu"
     >
-      {/* Barre supérieure Header */}
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3 pt-1">
+      {/* En-tête Modale (Mobile & Desktop) */}
+      <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5 pt-1 px-1">
         <div className="flex items-center gap-2 overflow-hidden">
-          {currentPage.tag ? (
-            <span className="shrink-0 rounded-full bg-accent/90 px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wider text-black">
-              {currentPage.tag}
-            </span>
-          ) : null}
-          <h2 className="truncate font-display text-[15px] font-semibold text-white sm:text-[18px]">
+          <span className="shrink-0 rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-bold text-accent-light">
+            {index + 1} / {total}
+          </span>
+          <h2 className="truncate font-display text-sm font-semibold text-white sm:text-base">
             {currentPage.title}
           </h2>
-          <span className="shrink-0 text-xs text-white/60">
-            ({index + 1} / {total})
-          </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsZoomed((z) => !z)}
-            className="inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-            title={isZoomed ? "Réduire" : "Agrandir"}
-            aria-label={isZoomed ? "Réduire la taille" : "Zoomer la taille"}
+            className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 active:scale-95 sm:size-10"
+            aria-label={isZoomed ? "Réduire l'image" : "Agrandir l'image"}
           >
-            {isZoomed ? <ArrowsOutSimple size={20} /> : <MagnifyingGlassPlus size={20} />}
+            {isZoomed ? <MagnifyingGlassMinus size={18} /> : <MagnifyingGlassPlus size={18} />}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex size-10 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/30"
+            className="flex size-9 items-center justify-center rounded-full bg-accent text-ink-onaccent transition-all hover:bg-accent-dark active:scale-95 sm:size-10"
             aria-label="Fermer le grand écran"
           >
-            <X size={22} weight="bold" />
+            <X size={20} weight="bold" />
           </button>
         </div>
       </div>
 
-      {/* Zone Image Centrale */}
+      {/* Zone Image Centrale Principale */}
       <div
         className="relative flex flex-1 items-center justify-center overflow-auto py-2"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Bouton Précédent Desktop/Mobile */}
+        {/* Bouton Flèche Précédent */}
         {index > 0 ? (
           <button
             type="button"
             onClick={goPrev}
-            className="absolute left-2 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-black/90 sm:left-4 sm:size-12"
-            aria-label="Photo précédente"
+            className="absolute left-1 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-black/90 active:scale-95 sm:left-4 sm:size-12"
+            aria-label="Page précédente"
           >
-            <CaretLeft size={24} weight="bold" />
+            <CaretLeft size={22} weight="bold" />
           </button>
         ) : null}
 
-        {/* Image Principale */}
+        {/* Image du menu */}
         <div
           className={`relative transition-all duration-300 ${
             isZoomed
-              ? "h-auto w-full max-w-none cursor-zoom-out"
-              : "flex max-h-[80vh] w-full max-w-4xl justify-center cursor-zoom-in"
+              ? "h-auto w-full max-w-none cursor-zoom-out overflow-auto"
+              : "flex max-h-[82vh] w-full max-w-3xl items-center justify-center cursor-zoom-in"
           }`}
           onClick={() => setIsZoomed((z) => !z)}
         >
           <Image
             src={currentPage.src}
             alt={currentPage.alt}
-            width={1200}
-            height={1700}
+            width={1000}
+            height={1400}
             priority
             sizes="100vw"
-            className="max-h-[78vh] w-auto rounded-lg object-contain shadow-2xl"
+            className="max-h-[80vh] w-auto rounded-lg object-contain shadow-2xl"
           />
         </div>
 
-        {/* Bouton Suivant Desktop/Mobile */}
+        {/* Bouton Flèche Suivant */}
         {index < total - 1 ? (
           <button
             type="button"
             onClick={goNext}
-            className="absolute right-2 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-black/90 sm:right-4 sm:size-12"
-            aria-label="Photo suivante"
+            className="absolute right-1 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-black/90 active:scale-95 sm:right-4 sm:size-12"
+            aria-label="Page suivante"
           >
-            <CaretRight size={24} weight="bold" />
+            <CaretRight size={22} weight="bold" />
           </button>
         ) : null}
       </div>
 
-      {/* Barre d'onglets / vignettes en bas */}
-      <div className="flex flex-col gap-2 border-t border-white/10 pt-3">
-        <div className="flex items-center justify-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+      {/* Barre Inférieure */}
+      <div className="flex flex-col gap-2 border-t border-white/10 pt-2.5">
+        {/* Navigation Vignettes sur Desktop */}
+        <div className="hidden items-center justify-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex">
           {pages.map((p, i) => (
             <button
               key={p.id}
@@ -204,24 +198,43 @@ export function MenuLightbox({
                 setIndex(i);
                 setIsZoomed(false);
               }}
-              className={`relative h-12 w-10 shrink-0 overflow-hidden rounded-md border-2 transition-all ${
+              className={`relative h-11 w-9 shrink-0 overflow-hidden rounded-md border-2 transition-all ${
                 i === index
                   ? "scale-105 border-accent ring-2 ring-accent/50"
-                  : "border-transparent opacity-50 hover:opacity-100"
+                  : "border-transparent opacity-40 hover:opacity-100"
               }`}
             >
               <Image
                 src={p.src}
                 alt=""
                 fill
-                sizes="40px"
+                sizes="36px"
                 className="object-cover"
               />
             </button>
           ))}
         </div>
-        <p className="text-center text-[11px] text-white/50">
-          Utilise les flèches ou glisse vers la gauche/droite pour défiler. Touche pour zoomer.
+
+        {/* Puces de navigation sur Mobile */}
+        <div className="flex items-center justify-center gap-1.5 sm:hidden">
+          {pages.map((p, i) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-label={`Aller à ${p.title}`}
+              onClick={() => {
+                setIndex(i);
+                setIsZoomed(false);
+              }}
+              className={`h-2 rounded-full transition-all ${
+                i === index ? "w-6 bg-accent" : "w-2 bg-white/30"
+              }`}
+            />
+          ))}
+        </div>
+
+        <p className="text-center text-[11px] text-white/60">
+          Glisse vers la gauche ou la droite pour changer de page · Touche pour zoomer
         </p>
       </div>
     </div>

@@ -1,8 +1,9 @@
 import { ClientNav } from "@/components/client/client-nav";
+import { ClientFooter } from "@/components/client/client-footer";
 import { CookieHygiene } from "@/components/client/cookie-hygiene";
 
 /**
- * Shell client — mode avis_contact : nav Avis | La carte.
+ * Shell client — nav en haut, contenu central, footer contacts/réseaux sociaux.
  */
 export default function ClientLayout({
   children,
@@ -13,9 +14,10 @@ export default function ClientLayout({
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
       <CookieHygiene />
       <ClientNav />
-      <div className="relative z-[1] flex flex-1 flex-col pb-10">
+      <div className="relative z-[1] flex flex-1 flex-col">
         {children}
       </div>
+      <ClientFooter />
     </div>
   );
 }
