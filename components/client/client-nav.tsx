@@ -20,7 +20,7 @@ export function ClientNav() {
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-[var(--z-nav)] border-b border-border/70 bg-surface-base/90 shadow-soft backdrop-blur-xl transition-all duration-300">
+    <header className="fixed top-0 inset-x-0 z-[var(--z-nav)] border-b border-border/70 bg-surface-base/95 shadow-soft backdrop-blur-xl transition-all duration-300">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-2 px-3 py-2.5 sm:px-6 sm:py-3">
         {/* Brand Lockup */}
         <div className="shrink-0">

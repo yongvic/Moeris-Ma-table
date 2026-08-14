@@ -94,7 +94,7 @@ export function MenuImageViewer({ pages }: Props) {
   // Helper Icônes Phosphor pour chaque catégorie
   const renderCategoryIcon = (iconName: string, isActive: boolean) => {
     const weight = isActive ? "fill" : "bold";
-    const size = 18;
+    const size = 20;
     if (iconName === "hamburger") return <Hamburger size={size} weight={weight} />;
     if (iconName === "fork-knife") return <ForkKnife size={size} weight={weight} />;
     if (iconName === "crown") return <Crown size={size} weight={weight} />;
@@ -103,73 +103,65 @@ export function MenuImageViewer({ pages }: Props) {
 
   return (
     <div className="flex w-full flex-col gap-5 sm:gap-6">
-      {/* Barre de Sélection des Catégories (Univers) — 100% Responsive */}
-      <div className="flex flex-col gap-2.5">
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink-secondary">
-          <Sparkle size={14} weight="fill" className="text-accent-dark" />
-          <span>Univers culinaire</span>
-        </div>
-
-        {/* Grille responsive sur mobile & desktop */}
-        <div className="grid grid-cols-3 gap-1.5 rounded-2xl border border-border/80 bg-surface-raised/60 p-1.5 shadow-inner sm:flex sm:flex-wrap sm:items-center sm:gap-2 sm:bg-transparent sm:p-0 sm:border-0 sm:shadow-none">
-          {MENU_CATEGORIES.map((cat) => {
-            const isActive = activeCategory === cat.key;
-            const count = pages.filter((p) => p.category === cat.key).length;
-
-            return (
-              <button
-                key={cat.key}
-                type="button"
-                onClick={() => setActiveCategory(cat.key)}
-                className={`flex flex-col items-center justify-center gap-1 rounded-xl py-2 px-2 text-center text-xs font-bold transition-all duration-300 sm:flex-row sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-2.5 sm:text-sm ${
-                  isActive
-                    ? "bg-accent text-ink-onaccent shadow-lift ring-2 ring-accent/60"
-                    : "bg-surface-base text-ink-secondary hover:bg-surface-raised hover:text-ink-primary sm:border sm:border-border/80"
-                }`}
-              >
-                <div className="flex items-center gap-1">
-                  {renderCategoryIcon(cat.iconName, isActive)}
-                  <span className="truncate">{cat.label}</span>
-                </div>
-                <span
-                  className={`rounded-full px-1.5 py-0.2 text-[10px] font-extrabold sm:px-2 sm:py-0.5 sm:text-[11px] ${
-                    isActive
-                      ? "bg-black/15 text-black"
-                      : "bg-surface-raised text-ink-secondary"
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Bouton secondaire Tout Voir */}
-        <div className="flex items-center justify-between gap-2">
-          {currentCategoryInfo ? (
-            <p className="truncate text-xs font-medium text-ink-secondary">
-              {currentCategoryInfo.description}
-            </p>
-          ) : (
-            <p className="text-xs font-medium text-ink-secondary">
-              Toutes les cartes consultables
-            </p>
-          )}
+      {/* Selection de l'Univers : Icône AU-DESSUS du texte, sans chiffres */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2 px-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink-secondary">
+            <Sparkle size={15} weight="fill" className="text-accent-dark" />
+            <span>Choisis ton univers</span>
+          </div>
 
           <button
             type="button"
             onClick={() => setActiveCategory(activeCategory === "all" ? "fast_food" : "all")}
             className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold transition-all ${
               activeCategory === "all"
-                ? "bg-accent text-ink-onaccent"
+                ? "bg-accent text-ink-onaccent shadow-sm"
                 : "bg-surface-raised text-ink-secondary hover:text-ink-primary"
             }`}
           >
             <Funnel size={13} weight="bold" />
-            <span>{activeCategory === "all" ? "Filtrer" : `Tout (${pages.length})`}</span>
+            <span>{activeCategory === "all" ? "Filtrer" : "Tout voir"}</span>
           </button>
         </div>
+
+        {/* Disposition verticale (Icône au-dessus du texte) en 3 colonnes */}
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-border/70 bg-surface-raised/50 p-2 shadow-inner sm:gap-3 sm:p-2.5">
+          {MENU_CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat.key;
+
+            return (
+              <button
+                key={cat.key}
+                type="button"
+                onClick={() => setActiveCategory(cat.key)}
+                className={`flex flex-col items-center justify-center gap-2 rounded-xl py-3 px-1.5 text-center transition-all duration-300 ${
+                  isActive
+                    ? "bg-accent text-ink-onaccent shadow-lift ring-2 ring-accent/60"
+                    : "bg-surface-base text-ink-secondary hover:bg-surface-raised hover:text-ink-primary border border-border/60"
+                }`}
+              >
+                <div
+                  className={`grid size-10 place-items-center rounded-full transition-colors ${
+                    isActive
+                      ? "bg-black/15 text-black"
+                      : "bg-surface-raised text-ink-primary"
+                  }`}
+                >
+                  {renderCategoryIcon(cat.iconName, isActive)}
+                </div>
+                <span className="text-xs font-bold sm:text-sm">{cat.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Description de la catégorie active */}
+        {currentCategoryInfo ? (
+          <p className="px-1 text-center text-xs font-medium text-ink-secondary sm:text-left">
+            {currentCategoryInfo.description}
+          </p>
+        ) : null}
       </div>
 
       {/* En-tête carrousel : Titre page + Compteur + Boutons de navigation */}
@@ -205,7 +197,7 @@ export function MenuImageViewer({ pages }: Props) {
         </div>
       </div>
 
-      {/* Carrousel d'Images (sans stickers/tags) */}
+      {/* Carrousel d'Images (Cliquer pour afficher l'image seule en grand) */}
       <div
         ref={scrollerRef}
         className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-5"
@@ -243,12 +235,12 @@ export function MenuImageViewer({ pages }: Props) {
                   {page.title}
                 </span>
                 <span className="text-[11px] font-medium text-ink-secondary">
-                  Touche pour ouvrir en grand écran
+                  Touche pour agrandir la photo
                 </span>
               </div>
               <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-bold text-ink-primary group-hover:bg-accent group-hover:text-ink-onaccent sm:px-3 sm:py-1.5 sm:text-xs">
                 <MagnifyingGlassPlus size={14} weight="bold" />
-                <span>Grand écran</span>
+                <span>Agrandir</span>
               </span>
             </div>
           </div>
@@ -278,11 +270,7 @@ export function MenuImageViewer({ pages }: Props) {
         ))}
       </div>
 
-      <p className="text-center text-xs text-ink-secondary">
-        Astuce : Glisse pour tourner les pages ou clique sur une photo pour l'afficher en grand écran.
-      </p>
-
-      {/* Modale Grand Écran */}
+      {/* Modale Grand Écran (Affiche la photo cliquée en grand) */}
       <MenuLightbox
         pages={filteredPages}
         initialIndex={selectedPageIndex}

@@ -2,13 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import {
-  CaretLeft,
-  CaretRight,
-  X,
-  MagnifyingGlassPlus,
-  MagnifyingGlassMinus,
-} from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, X } from "@phosphor-icons/react";
 import type { MenuPageImage } from "@/domain/menu/image-menu";
 
 type MenuLightboxProps = {
@@ -26,28 +20,20 @@ export function MenuLightbox({
 }: MenuLightboxProps) {
   const [index, setIndex] = useState(initialIndex);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
     setIndex(initialIndex);
-    setIsZoomed(false);
   }, [initialIndex, isOpen]);
 
   const total = pages.length;
   const currentPage = pages[index];
 
   const goNext = useCallback(() => {
-    if (index < total - 1) {
-      setIndex((prev) => prev + 1);
-      setIsZoomed(false);
-    }
+    if (index < total - 1) setIndex((prev) => prev + 1);
   }, [index, total]);
 
   const goPrev = useCallback(() => {
-    if (index > 0) {
-      setIndex((prev) => prev - 1);
-      setIsZoomed(false);
-    }
+    if (index > 0) setIndex((prev) => prev - 1);
   }, [index]);
 
   // Raccourcis clavier (Flèches & Échap)
@@ -55,16 +41,11 @@ export function MenuLightbox({
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      } else if (e.key === "ArrowRight") {
-        goNext();
-      } else if (e.key === "ArrowLeft") {
-        goPrev();
-      }
+      if (e.key === "Escape") onClose();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
     };
 
-    // Bloquer le défilement du fond
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
 
@@ -86,11 +67,8 @@ export function MenuLightbox({
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
 
-    if (diff > 40) {
-      goNext();
-    } else if (diff < -40) {
-      goPrev();
-    }
+    if (diff > 40) goNext();
+    else if (diff < -40) goPrev();
 
     setTouchStartX(null);
   };
@@ -99,144 +77,72 @@ export function MenuLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[var(--z-modal)] flex flex-col justify-between bg-black/96 p-2.5 text-white backdrop-blur-xl transition-opacity duration-300 sm:p-4"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-black/95 p-3 backdrop-blur-md transition-opacity duration-300 sm:p-6"
       role="dialog"
       aria-modal="true"
-      aria-label="Affichage grand écran du menu"
+      aria-label="Affichage grand écran"
+      onClick={onClose}
     >
-      {/* En-tête Modale (Mobile & Desktop) */}
-      <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5 pt-1 px-1">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <span className="shrink-0 rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-bold text-accent-light">
-            {index + 1} / {total}
-          </span>
-          <h2 className="truncate font-display text-sm font-semibold text-white sm:text-base">
-            {currentPage.title}
-          </h2>
-        </div>
+      {/* Bouton Fermer X fixe en haut à droite */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
+        className="fixed right-4 top-4 z-30 flex size-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20 transition-transform active:scale-95 hover:bg-black/80 hover:scale-105"
+        aria-label="Fermer"
+      >
+        <X size={24} weight="bold" />
+      </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsZoomed((z) => !z)}
-            className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 active:scale-95 sm:size-10"
-            aria-label={isZoomed ? "Réduire l'image" : "Agrandir l'image"}
-          >
-            {isZoomed ? <MagnifyingGlassMinus size={18} /> : <MagnifyingGlassPlus size={18} />}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex size-9 items-center justify-center rounded-full bg-accent text-ink-onaccent transition-all hover:bg-accent-dark active:scale-95 sm:size-10"
-            aria-label="Fermer le grand écran"
-          >
-            <X size={20} weight="bold" />
-          </button>
-        </div>
-      </div>
+      {/* Flèche Précédent */}
+      {index > 0 ? (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            goPrev();
+          }}
+          className="fixed left-3 top-1/2 z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20 transition-all active:scale-95 hover:bg-black/80 sm:left-6 sm:size-12"
+          aria-label="Photo précédente"
+        >
+          <CaretLeft size={26} weight="bold" />
+        </button>
+      ) : null}
 
-      {/* Zone Image Centrale Principale */}
+      {/* Conteneur de l'image cliquée en grand */}
       <div
-        className="relative flex flex-1 items-center justify-center overflow-auto py-2"
+        className="relative flex max-h-[92vh] max-w-[95vw] items-center justify-center overflow-hidden rounded-xl"
+        onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Bouton Flèche Précédent */}
-        {index > 0 ? (
-          <button
-            type="button"
-            onClick={goPrev}
-            className="absolute left-1 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-black/90 active:scale-95 sm:left-4 sm:size-12"
-            aria-label="Page précédente"
-          >
-            <CaretLeft size={22} weight="bold" />
-          </button>
-        ) : null}
+        <Image
+          src={currentPage.src}
+          alt={currentPage.alt}
+          width={1200}
+          height={1600}
+          priority
+          sizes="100vw"
+          className="max-h-[90vh] w-auto max-w-[95vw] rounded-lg object-contain shadow-2xl"
+        />
+      </div>
 
-        {/* Image du menu */}
-        <div
-          className={`relative transition-all duration-300 ${
-            isZoomed
-              ? "h-auto w-full max-w-none cursor-zoom-out overflow-auto"
-              : "flex max-h-[82vh] w-full max-w-3xl items-center justify-center cursor-zoom-in"
-          }`}
-          onClick={() => setIsZoomed((z) => !z)}
+      {/* Flèche Suivant */}
+      {index < total - 1 ? (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            goNext();
+          }}
+          className="fixed right-3 top-1/2 z-30 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20 transition-all active:scale-95 hover:bg-black/80 sm:right-6 sm:size-12"
+          aria-label="Photo suivante"
         >
-          <Image
-            src={currentPage.src}
-            alt={currentPage.alt}
-            width={1000}
-            height={1400}
-            priority
-            sizes="100vw"
-            className="max-h-[80vh] w-auto rounded-lg object-contain shadow-2xl"
-          />
-        </div>
-
-        {/* Bouton Flèche Suivant */}
-        {index < total - 1 ? (
-          <button
-            type="button"
-            onClick={goNext}
-            className="absolute right-1 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-black/90 active:scale-95 sm:right-4 sm:size-12"
-            aria-label="Page suivante"
-          >
-            <CaretRight size={22} weight="bold" />
-          </button>
-        ) : null}
-      </div>
-
-      {/* Barre Inférieure */}
-      <div className="flex flex-col gap-2 border-t border-white/10 pt-2.5">
-        {/* Navigation Vignettes sur Desktop */}
-        <div className="hidden items-center justify-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex">
-          {pages.map((p, i) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => {
-                setIndex(i);
-                setIsZoomed(false);
-              }}
-              className={`relative h-11 w-9 shrink-0 overflow-hidden rounded-md border-2 transition-all ${
-                i === index
-                  ? "scale-105 border-accent ring-2 ring-accent/50"
-                  : "border-transparent opacity-40 hover:opacity-100"
-              }`}
-            >
-              <Image
-                src={p.src}
-                alt=""
-                fill
-                sizes="36px"
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
-
-        {/* Puces de navigation sur Mobile */}
-        <div className="flex items-center justify-center gap-1.5 sm:hidden">
-          {pages.map((p, i) => (
-            <button
-              key={p.id}
-              type="button"
-              aria-label={`Aller à ${p.title}`}
-              onClick={() => {
-                setIndex(i);
-                setIsZoomed(false);
-              }}
-              className={`h-2 rounded-full transition-all ${
-                i === index ? "w-6 bg-accent" : "w-2 bg-white/30"
-              }`}
-            />
-          ))}
-        </div>
-
-        <p className="text-center text-[11px] text-white/60">
-          Glisse vers la gauche ou la droite pour changer de page · Touche pour zoomer
-        </p>
-      </div>
+          <CaretRight size={26} weight="bold" />
+        </button>
+      ) : null}
     </div>
   );
 }
